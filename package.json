@@ -1,0 +1,72 @@
+{
+  "name": "@themarkup/blacklight",
+  "version": "0.0.0",
+  "description": "A tool for inspecting how a website's third parties collect information about you",
+  "main": "build/index.js",
+  "scripts": {
+    "clean": "rimraf build *.log",
+    "commit": "npx git-cz",
+    "build": "run-s clean && run-s build:main",
+    "build:main": "tsc -p tsconfig.json",
+    "test": "jest",
+    "test-server": "node ./config/test-server.js",
+    "fix": "run-s fix:*",
+    "fix:prettier": "prettier \"src/**/*.ts\" --write",
+    "fix:tslint": "tslint -t verbose --fix --project .",
+    "prepare": "run-s build test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/the_markup/blacklight.git"
+  },
+  "author": "Surya Mattu",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/the_markup/blacklight/issues"
+  },
+  "homepage": "https://gitlab.com/the_markup/blacklight#readme",
+  "dependencies": {
+    "psl": "^1.6.0",
+    "puppeteer": "^2.0.0",
+    "puppeteer-har": "^1.1.1",
+    "stacktrace-js": "^2.0.1",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/psl": "^1.1.0",
+    "@types/puppeteer": "^2.0.0",
+    "@types/stacktrace-js": "^2.0.3",
+    "@types/winston": "^2.4.4",
+    "cz-conventional-changelog": "^3.0.2",
+    "express": "^4.17.1",
+    "jest": "^24.9.0",
+    "jest-dev-server": "^4.3.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.19.1",
+    "ts-jest": "^24.2.0",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "shared",
+      "stack.js"
+    ],
+    "preset": "ts-jest",
+    "globals": {
+      "__DEV_SERVER__": "http://localhost:8125",
+      "ts-jest": {
+        "diagnostics": false
+      }
+    },
+    "globalSetup": "./config/test-server-setup.js",
+    "globalTeardown": "./config/test-server-teardown.js"
+  }
+}
