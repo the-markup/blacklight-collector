@@ -3,6 +3,7 @@ import fs from "fs";
 import psl from "psl";
 import url from "url";
 import { groupBy, loadJSONSafely } from "./utils";
+import { getCanvasFp } from "./canvas-fingerprinting";
 // import {  } from "lodash";
 
 export const generateReport = function(reportType, messages) {
@@ -10,16 +11,18 @@ export const generateReport = function(reportType, messages) {
     case "Cookies":
       break;
     case "DataExfiltration":
-      return reportDataExiltration(
-        filterByEvent(messages, ["DataExfiltration"])
-      );
+      return reportDataExiltration(filterByEvent(messages, "DataExfiltration"));
       break;
     case "EventListeners":
-      return reportEventListeners(
-        filterByEvent(messages, ["AddEventListener"])
+      return reportEventListeners(filterByEvent(messages, "AddEventListener"));
+    case "CanvasFingerprinting":
+      return reportCanvasFingerprinters(
+        filterByEvent(messages, "JsInstrument")
       );
-    case "Fingerprinting":
-      break;
+    case "CanvasFontFingerprinting":
+      return reportCanvasFontFingerprinters(
+        filterByEvent(messages, "JsInstrument")
+      );
     case "WebBeacons":
       break;
     default:
@@ -33,9 +36,10 @@ export const loadEventData = (dir, filename = "inspection-log.ndjson") => {
     .filter(m => m)
     .map(m => loadJSONSafely(m));
 };
-const filterByEvent = (messages, eventTypes) => {
+
+const filterByEvent = (messages, typePattern) => {
   const parsed = messages.map(m => m.message);
-  return parsed.filter(p => eventTypes.includes(p.type));
+  return parsed.filter(p => typePattern.indexOf(p.type) > -1);
 };
 
 const reportEventListeners = messages => {
@@ -48,6 +52,14 @@ const reportEventListeners = messages => {
 
     return acc;
   }, new Map());
+};
+
+const reportCanvasFingerprinters = messages => {
+  return getCanvasFp(messages.map(m => m.message));
+};
+
+const reportCanvasFontFingerprinters = messages => {
+  return getCanvasFp(messages.map(m => m.message));
 };
 
 const reportDataExiltration = messages => {
