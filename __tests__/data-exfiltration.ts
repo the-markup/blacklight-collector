@@ -1,10 +1,10 @@
 // import { launchBrowser } from "../../src";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { fillForms } from "../src/pptr-utils/interaction-utils";
-import { Browser, Page } from "puppeteer";
+import { Browser, Page, launch } from "puppeteer";
 import { setupBlacklightInspector, BlacklightEvent } from "../src/inspector";
-
-let browser = {} as Browser;
+import { Global } from "../src/types";
+declare var global: Global;
 const INPUT_VALUES_RESULT = [
   { type: "email", value: "blacklight@themarkup.org", name: "email" },
   {
@@ -149,6 +149,7 @@ const DATA_EXFILTRATION = [
     }
   }
 ];
+let browser = {} as Browser;
 beforeAll(async () => {
   browser = await launch({
     ...defaultPuppeteerBrowserOptions,
@@ -219,7 +220,6 @@ describe("DataExfiltration", () => {
     await fillForms(page);
     await page.waitFor(100);
     await page.close();
-    console.log(rows.filter(r => r.type === "DataExfiltration").sort());
     expect(rows.filter(r => r.type === "DataExfiltration").sort()).toEqual(
       DATA_EXFILTRATION.sort()
     );

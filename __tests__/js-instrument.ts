@@ -2,7 +2,7 @@ import { Browser, Page, launch } from "puppeteer";
 import { Global } from "../src/types";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { setupBlacklightInspector, BlacklightEvent } from "../src/inspector";
-
+declare var global: Global;
 const GETS_AND_SETS = [
   ["prop1", "get", "prop1"],
   ["prop1", "set", "blah1"],

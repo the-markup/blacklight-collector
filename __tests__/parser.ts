@@ -5,7 +5,6 @@ it("can parse AddEventlistener events", async () => {
   const TEST_DIR = join(__dirname, "test-data", "collector");
   const rawEvents = loadEventData(TEST_DIR);
   const report = generateReport("EventListeners", rawEvents);
-  console.log(report.entries());
   expect(report.get("KEYBOARD")).toEqual(
     new Set([
       "http://localhost:8125/shared/event-listener.js",
