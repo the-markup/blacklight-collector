@@ -9,25 +9,33 @@ import devices from "puppeteer/DeviceDescriptors";
 import PuppeteerHar from "puppeteer-har";
 import { setupBlacklightInspector } from "./inspector";
 import { writeFileSync } from "fs";
-import { fillForms } from "./pptr-utils/interaction-utils";
+import { fillForms, autoScroll } from "./pptr-utils/interaction-utils";
 import { defaultPuppeteerBrowserOptions } from "./pptr-utils/default";
 import { generateReport } from "./parser";
-
+import { getLinks } from "./pptr-utils/get-links";
+import { sampleSize } from "lodash";
 export const collector = async ({
   inUrl,
-  outDir = "",
+  outDir,
   headless = true,
   title = "Blacklight Inspection",
   emulateDevice = "",
   captureHar = true,
-  quiet = true
+  saveBrowserProfile = false,
+  quiet = true,
+  numPages = 3
 }) => {
   const FIRST_PARTY_PS = getFirstPartyPs(inUrl);
-  // console.log(RESF_REGEXP);
   clearDir(outDir);
   const logger = getLogger({ outDir, quiet });
-  const options = { ...defaultPuppeteerBrowserOptions, headless };
-  // options.userDataDir = outDir ? join(outDir, "browser-profile") : undefined;
+  const userDataDir = saveBrowserProfile
+    ? join(outDir, "browser-profile")
+    : undefined;
+  const options = {
+    ...defaultPuppeteerBrowserOptions,
+    headless,
+    userDataDir
+  };
   const browser = await puppeteer.launch(options);
 
   let output: any = {
@@ -39,10 +47,11 @@ export const collector = async ({
     host: url.parse(inUrl).hostname,
     script: {
       host: os.hostname(),
-      version: {
-        // npm: testing ? require("./package.json").version :require("./package.json").version,
-        commit: null
-      },
+      //TODO:
+      // version: {
+      // npm: testing ? require("./package.json").version :require("./package.json").version,
+      // commit: null
+      // },
       node_version: process.version
     },
     browser: {
@@ -62,6 +71,10 @@ export const collector = async ({
     requests: {
       first_party: new Set(),
       third_party: new Set()
+    },
+    links: {
+      first_party: new Set(),
+      third_party: new Set()
     }
   };
 
@@ -70,6 +83,7 @@ export const collector = async ({
   if (emulateDevice) {
     const deviceOptions = devices[emulateDevice];
     page.emulate(deviceOptions);
+    output.deviceEmulated = deviceOptions;
   }
 
   // record all requested hosts
@@ -96,9 +110,26 @@ export const collector = async ({
 
   let page_response = await page.goto(inUrl, {
     timeout: 0,
-    waitUntil: "networkidle0"
+    waitUntil: "networkidle2"
   });
 
+  const links = await getLinks(page);
+  output.links = {
+    first_party: [],
+    third_party: []
+  };
+
+  for (const link of links) {
+    const l = url.parse(link.href);
+
+    if (isFirstParty(FIRST_PARTY_PS, l)) {
+      output.links.first_party.push(link);
+      hosts.links.first_party.add(l.hostname);
+    } else {
+      output.links.third_party.push(link);
+      hosts.links.third_party.add(l.hostname);
+    }
+  }
   await fillForms(page);
   output.uri_redirects = page_response
     .request()
@@ -107,6 +138,23 @@ export const collector = async ({
       return req.url();
     });
 
+  output.uri_dest = page.url();
+
+  let browse_links = sampleSize(output.links.first_party, numPages);
+  output.browsing_history = [output.uri_dest].concat(
+    browse_links.map(l => l.href)
+  );
+
+  for (const link of output.browsing_history.slice(1)) {
+    logger.log("info", `browsing now to ${link}`, { type: "Browser" });
+    await page.goto(link, { timeout: 0, waitUntil: "networkidle2" });
+
+    await page.waitFor(500); // in ms
+    await fillForms(page);
+    await page.waitFor(100);
+    await autoScroll(page);
+  }
+
   if (captureHar) {
     await har.stop();
   }
@@ -114,8 +162,6 @@ export const collector = async ({
 
   output.end_time = new Date();
 
-  // go to first page and collect links for additional pages
-  // go to multiple pages
   // generate report
   output.hosts = {
     requests: {
@@ -123,7 +169,7 @@ export const collector = async ({
       third_party: Array.from(hosts.requests.third_party)
     }
   };
-  // analyse cookies and web beacons
+
   let event_data_all: any = await new Promise((resolve, reject) => {
     logger.query(
       {
@@ -138,7 +184,6 @@ export const collector = async ({
     );
   });
 
-  // console.log(event_data_all);
   // filter only events with type set
   let event_data = event_data_all.filter(event => {
     return !!event.message.type;
@@ -155,5 +200,5 @@ export const collector = async ({
 
   let json_dump = JSON.stringify({ ...output, reports }, null, 2);
   writeFileSync(join(outDir, "inspection.json"), json_dump);
-  return output;
+  return { ...output, reports };
 };
