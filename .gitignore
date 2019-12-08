@@ -65,3 +65,4 @@ target/
 .vscode/
 *.rdb
 build
+examples-dir/
