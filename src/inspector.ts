@@ -64,7 +64,7 @@ export const setupBlacklightInspector = async function(
 
           eventDataHandler({
             type: "AddEventListener",
-            url: window.location.href,
+            url: parsed.url,
             stack: parsed.stack,
             data: {
               name: values[0],
@@ -77,10 +77,10 @@ export const setupBlacklightInspector = async function(
     } catch (error) {
       eventDataHandler({
         type: `Error.AddEventListener`,
-        url: window.location.href,
+        url: "",
         stack: [],
         data: {
-          message: error
+          message: JSON.stringify(eventData)
         }
       });
     }
@@ -120,7 +120,7 @@ export const setupBlacklightInspector = async function(
           url: request.frame().url(),
           stack,
           data: {
-            message: error
+            message: JSON.stringify(error)
           }
         });
       }

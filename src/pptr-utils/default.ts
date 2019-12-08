@@ -8,6 +8,7 @@ const pptrOptsProduction = {
   args: [
     "--no-sandbox",
     "--disable-dev-shm-usage",
+    "--ignore-certificate-errors",
     "--autoplay-policy=no-user-gesture-required"
   ],
   executablePath: "google-chrome-unstable",
@@ -21,6 +22,7 @@ const pptrOptsDev = {
   args: [
     "--no-sandbox",
     "--disable-dev-shm-usage",
+    "--ignore-certificate-errors",
     "--autoplay-policy=no-user-gesture-required"
   ],
   headless: true

@@ -22,37 +22,34 @@ export interface BlacklightEvent {
   data: BlacklightData;
 }
 
-export type BlacklightData = JsInstrumentData &
-  DataExfiltrationData &
-  AddEventListenerData &
-  BlacklightError;
+export type BlacklightData =
+  | JsInstrumentData
+  | DataExfiltrationData
+  | AddEventListenerData
+  | BlacklightError;
 
 export interface DataExfiltrationData {
-  post_request_url?: string;
-  post_data?: string;
-  base_64?: boolean;
-  filter?: string[];
+  post_request_url: string;
+  post_data: string;
+  base_64: boolean;
+  filter: string[];
 }
 
 export interface AddEventListenerData {
-  name?: string;
-  event_group?: string;
+  name: string;
+  event_group: string;
 }
 export interface JsInstrumentData {
-  symbol?: string;
-  value?: string;
-  operation?: string;
+  symbol: string;
+  value: string;
+  operation: string;
   arguments?: any[];
   logSettings?: any;
 }
 
 export interface BlacklightError {
-  message?: any;
+  message: any;
   objectName?: string;
   propertyName?: string;
   object?: string;
 }
-
-// interface EventListener {
-//   name: string;
-// };

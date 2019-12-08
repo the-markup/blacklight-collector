@@ -7,7 +7,7 @@ import { BlacklightEvent, JsInstrumentData } from "./types";
  */
 
 import { parse } from "url";
-// import { JsOpenWPM } from "../data-store/entity/JsOpenWPM";
+import { getScriptUrl, serializeCanvasCallMap } from "./utils";
 
 const MIN_CANVAS_IMAGE_WIDTH = 16;
 const MIN_CANVAS_IMAGE_HEIGHT = 16;
@@ -71,10 +71,9 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
   const cBanned = new Map() as CanvasCallMap;
   const cStyles = new Map() as CanvasCallMap;
   for (const item of canvasCalls) {
-    // return;
-    const { url, stack, data } = item;
+    const { url, data } = item;
     const url_host = parse(url).hostname;
-    const script_url = stack[0].fileName;
+    const script_url = getScriptUrl(item);
     const { symbol, operation, value } = <JsInstrumentData>data;
     const args = data["arguments"];
     if (script_url.indexOf("http:") < -1 || script_url.indexOf("https:") < -1) {
@@ -88,14 +87,12 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
       ) {
         continue;
       }
-
       cReads.has(script_url)
         ? cReads.get(script_url).add(url_host)
         : cReads.set(script_url, new Set([url_host]));
     } else if (CANVAS_WRITE_FUNCS.includes(symbol)) {
-      // TODO: Determine if I need to read ascii charachters exclusively to deal with false positives.
-      // This was a check the OpenWPM notebook had.
       const text = getCanvasText(args);
+
       cWrites.has(script_url)
         ? cWrites.get(script_url).add(url_host)
         : cWrites.set(script_url, new Set([url_host]));
@@ -133,8 +130,13 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
  * @see {@link sortCanvasCalls}
  * @param canvasCalls
  */
-export const getCanvasFp = (canvasCalls): Set<string> => {
-  const { cReads, cWrites, cBanned } = sortCanvasCalls(canvasCalls);
+export const getCanvasFp = (
+  canvasCalls
+): { fingerprinters: string[]; texts: any; styles: any } => {
+  const { cReads, cWrites, cBanned, cTexts, cStyles } = sortCanvasCalls(
+    canvasCalls
+  );
+
   const fingerprinters: Set<string> = new Set();
   for (const [script_url, url_hosts] of cReads.entries()) {
     if (fingerprinters.has(script_url)) {
@@ -163,7 +165,11 @@ export const getCanvasFp = (canvasCalls): Set<string> => {
       fingerprinters.add(script_url);
     }
   }
-  return new Set([...fingerprinters]);
+  return {
+    fingerprinters: Array.from(fingerprinters),
+    texts: serializeCanvasCallMap(cTexts),
+    styles: serializeCanvasCallMap(cStyles)
+  };
 };
 
 export const getCanvasFontFp = jsCalls => {
@@ -175,10 +181,9 @@ export const getCanvasFontFp = jsCalls => {
   const textMeasure = new Map() as CanvasCallMap;
   const canvasFont = new Map() as CanvasCallMap;
   for (const item of jsCalls) {
-    const { data, stack } = item;
-    const script_url = stack[0].fileName;
-    const { symbol, value } = <JsInstrumentData>data;
-    const args = data["arguments"];
+    const script_url = getScriptUrl(item);
+    const { symbol, value } = <JsInstrumentData>item.data;
+    const args = item.data["arguments"];
     if (CANVAS_FONT.includes(symbol)) {
       if (symbol.indexOf("measureText") > -1) {
         const textToMeasure = args()[0];

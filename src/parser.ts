@@ -1,72 +1,116 @@
-import { join } from "path";
-import fs from "fs";
 import psl from "psl";
 import url from "url";
-import { groupBy, loadJSONSafely } from "./utils";
-import { getCanvasFp } from "./canvas-fingerprinting";
+import { groupBy, getScriptUrl } from "./utils";
+import { getCanvasFp, getCanvasFontFp } from "./canvas-fingerprinting";
+import {
+  DataExfiltrationData,
+  BlacklightEvent,
+  AddEventListenerData
+} from "./types";
 
 export const generateReport = function(reportType, messages) {
+  const eventData = getEventData(reportType, messages);
   switch (reportType) {
-    case "Cookies":
-      break;
-    case "DataExfiltration":
-      return reportDataExiltration(filterByEvent(messages, "DataExfiltration"));
-      break;
-    case "EventListeners":
-      return reportEventListeners(filterByEvent(messages, "AddEventListener"));
-    case "CanvasFingerprinting":
-      return reportCanvasFingerprinters(
-        filterByEvent(messages, "JsInstrument")
-      );
-    case "CanvasFontFingerprinting":
-      return reportCanvasFontFingerprinters(
-        filterByEvent(messages, "JsInstrument")
-      );
-    case "WebBeacons":
-      break;
+    case "cookies":
+      return {};
+    case "data_exfiltration":
+      return reportDataExiltration(eventData);
+    case "behaviour_event_listeners":
+      return reportEventListeners(eventData);
+    case "canvas_fingerprinters":
+      return reportCanvasFingerprinters(eventData);
+    case "canvas_font_fingerprinters":
+      return reportCanvasFontFingerprinters(eventData);
+    case "web_beacons":
+      return {};
     default:
-      break;
+      return {};
   }
-};
-export const loadEventData = (dir, filename = "inspection-log.ndjson") => {
-  return fs
-    .readFileSync(join(dir, filename), "utf-8")
-    .split("\n")
-    .filter(m => m)
-    .map(m => loadJSONSafely(m));
 };
 
 const filterByEvent = (messages, typePattern) => {
-  const parsed = messages.map(m => m.message);
-  return parsed.filter(p => typePattern.indexOf(p.type) > -1);
+  return messages.filter(
+    m =>
+      m.message.type.includes(typePattern) && !m.message.type.includes("Error")
+  );
+};
+const getEventData = function(reportType, messages): BlacklightEvent[] {
+  let filtered = [];
+  switch (reportType) {
+    case "cookies":
+      break;
+    case "data_exfiltration":
+      filtered = filterByEvent(messages, "DataExfiltration");
+      break;
+    case "behaviour_event_listeners":
+      filtered = filterByEvent(messages, "AddEventListener");
+      break;
+    case "canvas_fingerprinters":
+      filtered = filterByEvent(messages, "JsInstrument");
+      break;
+    case "canvas_font_fingerprinters":
+      filtered = filterByEvent(messages, "JsInstrument");
+      break;
+    case "web_beacons":
+      break;
+    default:
+      return [];
+  }
+  return filtered.map(m => m.message);
 };
 
-const reportEventListeners = messages => {
-  return messages.reduce((acc, cur) => {
-    if (acc.has(cur.data.event_group)) {
-      acc.get(cur.data.event_group).add(cur.stack[0].fileName);
-    } else {
-      acc.set(cur.data.event_group, new Set([cur.stack[0].fileName]));
+const reportEventListeners = (eventData: BlacklightEvent[]) => {
+  return eventData.reduce((acc, cur) => {
+    const script = getScriptUrl(cur);
+    const data = <AddEventListenerData>cur.data;
+    if (!script) {
+      return acc;
     }
-
+    if (Object.keys(acc).includes(data.event_group)) {
+      acc[data.event_group].includes(script)
+        ? ""
+        : acc[data.event_group].push(script);
+    } else {
+      acc[data.event_group] = [script];
+    }
     return acc;
-  }, new Map());
+  }, {});
 };
 
-const reportCanvasFingerprinters = messages => {
-  return getCanvasFp(messages.map(m => m.message));
+export const reportCanvasFingerprinters = (eventData: BlacklightEvent[]) => {
+  return getCanvasFp(eventData);
 };
 
-const reportCanvasFontFingerprinters = messages => {
-  return getCanvasFp(messages.map(m => m.message));
+export const reportCanvasFontFingerprinters = (
+  eventData: BlacklightEvent[]
+) => {
+  return getCanvasFontFp(eventData);
 };
 
-const reportDataExiltration = messages => {
+const reportDataExiltration = (eventData: BlacklightEvent[]) => {
   const groupByRequestPs = groupBy("post_request_ps");
   return groupByRequestPs(
-    messages.map(m => ({
+    eventData.map(m => ({
       ...m.data,
-      post_request_ps: psl.get(url.parse(m.data.post_request_url).hostname)
+      post_request_ps: getPsSafely(<DataExfiltrationData>m.data)
     }))
   );
+};
+
+const getPsSafely = (message: DataExfiltrationData) => {
+  try {
+    if (message.post_request_url) {
+      return psl.get(url.parse(message.post_request_url).hostname);
+    } else {
+      console.error(
+        "message.data missing post_request_url",
+        JSON.stringify(message)
+      );
+      return "";
+    }
+  } catch (error) {
+    console.log(error);
+    console.log(JSON.stringify(message));
+    return "";
+  }
 };

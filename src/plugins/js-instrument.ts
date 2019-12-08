@@ -208,7 +208,6 @@ export function jsInstruments(loggerHandler, StackTrace) {
     propertyName,
     logSettings: LogSettings = {}
   ) {
-    console.log(objectName, propertyName);
     const origDescriptor = Object.getPropertyDescriptor(object, propertyName);
     if (!origDescriptor) {
       sendMessagesToLogger({
@@ -355,7 +354,6 @@ export function jsInstruments(loggerHandler, StackTrace) {
         logSettings.excludedProperties &&
         logSettings.excludedProperties.indexOf(property) > -1
       ) {
-        console.log("skipping", property);
         continue;
       }
       // console.log("observing", property);

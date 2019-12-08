@@ -65,7 +65,7 @@ export const collector = async ({
     }
   };
 
-  const page = await browser.newPage();
+  const page = (await browser.pages())[0];
 
   if (emulateDevice) {
     const deviceOptions = devices[emulateDevice];
@@ -138,15 +138,16 @@ export const collector = async ({
     );
   });
 
+  // console.log(event_data_all);
   // filter only events with type set
   let event_data = event_data_all.filter(event => {
-    return !!event.type;
+    return !!event.message.type;
   });
-
   const reports = [
-    "DataExfiltration",
-    "CanvasFingerprinting",
-    "CanvasFontFingerprinting"
+    "behaviour_event_listeners",
+    "data_exfiltration",
+    "canvas_fingerprinters",
+    "canvas_font_fingerprinters"
   ].reduce((acc, cur) => {
     acc[cur] = generateReport(cur, event_data);
     return acc;
