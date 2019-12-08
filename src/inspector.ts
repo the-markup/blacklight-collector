@@ -5,13 +5,8 @@ import { injectPlugins } from "./pptr-utils/eval-scripts";
 import { jsInstruments } from "./plugins/js-instrument";
 import { instrumentAddEventListener } from "./plugins/add-event-listener";
 import { instrumentFingerprintingApis } from "./plugins/fingerprinting-apis";
+import { BlacklightEvent, JsInstrumentData } from "./types";
 
-export type BlacklightEvent = {
-  type: string;
-  url: string;
-  stack: any[];
-  data: any;
-};
 function isBase64(str) {
   if (str === "" || str.trim() === "") {
     return false;
@@ -59,37 +54,35 @@ export const setupBlacklightInspector = async function(
   await page.exposeFunction("reportEvent", eventData => {
     try {
       const parsed: BlacklightEvent = JSON.parse(eventData);
-
-      if (parsed.data.symbol.indexOf("addEventListener") > -1) {
-        const values = JSON.parse(parsed.data.value);
+      const data = <JsInstrumentData>parsed.data;
+      if (data.symbol.indexOf("addEventListener") > -1) {
+        const values = JSON.parse(data.value);
         if (MONITORED_EVENTS.includes(values[0])) {
-          const eventGroup = Object.keys(BEHAVIOUR_TRACKING_EVENTS).filter(
-            key => BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0])
-          );
+          const eventGroup = Object.keys(
+            BEHAVIOUR_TRACKING_EVENTS
+          ).filter(key => BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0]));
 
-          const eventData = {
-            type: `AddEventListener`,
+          eventDataHandler({
+            type: "AddEventListener",
             url: window.location.href,
             stack: parsed.stack,
             data: {
               name: values[0],
               event_group: eventGroup.length ? eventGroup[0] : ""
             }
-          };
-          eventDataHandler(eventData);
+          });
         }
       }
       eventDataHandler(parsed);
     } catch (error) {
-      const eventData = {
+      eventDataHandler({
         type: `Error.AddEventListener`,
         url: window.location.href,
         stack: [],
         data: {
           message: error
         }
-      };
-      eventDataHandler(eventData);
+      });
     }
   });
 
@@ -122,15 +115,14 @@ export const setupBlacklightInspector = async function(
           });
         }
       } catch (error) {
-        const eventData = {
+        eventDataHandler({
           type: `Error.DataExfiltration`,
           url: request.frame().url(),
           stack,
           data: {
             message: error
           }
-        };
-        eventDataHandler(eventData);
+        });
       }
     }
   });

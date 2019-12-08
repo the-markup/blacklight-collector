@@ -4,7 +4,6 @@ import psl from "psl";
 import url from "url";
 import { groupBy, loadJSONSafely } from "./utils";
 import { getCanvasFp } from "./canvas-fingerprinting";
-// import {  } from "lodash";
 
 export const generateReport = function(reportType, messages) {
   switch (reportType) {

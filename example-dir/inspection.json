@@ -1,0 +1,90 @@
+{
+  "title": "Blacklight Inspection",
+  "uri_ins": "https://huffingtonpost.com",
+  "uri_dest": null,
+  "uri_redirects": [
+    "https://huffingtonpost.com/",
+    "https://www.huffingtonpost.com/"
+  ],
+  "secure_connection": {},
+  "host": "huffingtonpost.com",
+  "script": {
+    "host": "shakaal",
+    "version": {
+      "commit": null
+    },
+    "node_version": "v10.16.3"
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "HeadlessChrome/79.0.3945.0",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/79.0.3945.0 Safari/537.36",
+    "platform": {
+      "name": "Linux",
+      "version": "4.15.0-70-generic"
+    }
+  },
+  "start_time": "2019-12-08T00:55:14.739Z",
+  "end_time": "2019-12-08T00:55:27.145Z",
+  "hosts": {
+    "requests": {
+      "first_party": [
+        "huffingtonpost.com",
+        "www.huffingtonpost.com",
+        "img.huffingtonpost.com"
+      ],
+      "third_party": [
+        "www.huffpost.com",
+        "fonts.gstatic.com",
+        "cambria.assets.huffpost.com",
+        "fonts.googleapis.com",
+        "consent.cmp.oath.com",
+        "s.yimg.com",
+        "o.aolcdn.com",
+        "delivery.vidible.tv",
+        "guce.huffpost.com",
+        "udc.yahoo.com",
+        "8154892.fls.doubleclick.net",
+        "cdn.taboola.com",
+        "cdn-ssl.vidible.tv",
+        "trk.vidible.tv",
+        "s.aolcdn.com",
+        "at.atwola.com",
+        "ganon.yahoo.com",
+        "sb.scorecardresearch.com",
+        "cdn.vidible.tv",
+        "readmo.yahoo.com",
+        "geo.yahoo.com",
+        "ads.yap.yahoo.com",
+        "adservice.google.com",
+        "z.moatads.com",
+        "video.adaptv.advertising.com",
+        "img.vidible.tv",
+        "px.moatads.com",
+        "js-agent.newrelic.com",
+        "opus.analytics.yahoo.com",
+        "d1z2jf7jlzjs58.cloudfront.net",
+        "bam.nr-data.net",
+        "ads.adaptv.advertising.com",
+        "srv-2019-12-08-00.config.parsely.com",
+        "log.adaptv.advertising.com",
+        "tag.idsync.analytics.yahoo.com",
+        "s0.2mdn.net",
+        "service.idsync.analytics.yahoo.com",
+        "imasdk.googleapis.com",
+        "cms.analytics.yahoo.com",
+        "audex.userreport.com",
+        "tags.bluekai.com",
+        "aa.agkn.com",
+        "dpm.demdex.net",
+        "pubads.g.doubleclick.net",
+        "tpc.googlesyndication.com"
+      ]
+    }
+  },
+  "reports": {
+    "DataExfiltration": {},
+    "CanvasFingerprinting": {},
+    "CanvasFontFingerprinting": {}
+  }
+}

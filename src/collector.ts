@@ -11,6 +11,7 @@ import { setupBlacklightInspector } from "./inspector";
 import { writeFileSync } from "fs";
 import { fillForms } from "./pptr-utils/interaction-utils";
 import { defaultPuppeteerBrowserOptions } from "./pptr-utils/default";
+import { generateReport } from "./parser";
 
 export const collector = async ({
   inUrl,
@@ -122,6 +123,36 @@ export const collector = async ({
       third_party: Array.from(hosts.requests.third_party)
     }
   };
-  let json_dump = JSON.stringify(output, null, 2);
+  // analyse cookies and web beacons
+  let event_data_all: any = await new Promise((resolve, reject) => {
+    logger.query(
+      {
+        start: 0,
+        order: "desc",
+        limit: Infinity
+      },
+      (err, results) => {
+        if (err) return reject(err);
+        return resolve(results.file);
+      }
+    );
+  });
+
+  // filter only events with type set
+  let event_data = event_data_all.filter(event => {
+    return !!event.type;
+  });
+
+  const reports = [
+    "DataExfiltration",
+    "CanvasFingerprinting",
+    "CanvasFontFingerprinting"
+  ].reduce((acc, cur) => {
+    acc[cur] = generateReport(cur, event_data);
+    return acc;
+  }, {});
+
+  let json_dump = JSON.stringify({ ...output, reports }, null, 2);
   writeFileSync(join(outDir, "inspection.json"), json_dump);
+  return output;
 };

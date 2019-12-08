@@ -1,4 +1,4 @@
-import { BlacklightEvent } from "./inspector";
+import { BlacklightEvent, JsInstrumentData } from "./types";
 
 /**
  *  @fileOverview Utility functions for canvas finerprinting analysis.
@@ -72,10 +72,11 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
   const cStyles = new Map() as CanvasCallMap;
   for (const item of canvasCalls) {
     // return;
-    const { url, stack } = item;
+    const { url, stack, data } = item;
     const url_host = parse(url).hostname;
     const script_url = stack[0].fileName;
-    const { symbol, operation, value } = item.data;
+    const { symbol, operation, value } = <JsInstrumentData>data;
+    const args = data["arguments"];
     if (script_url.indexOf("http:") < -1 || script_url.indexOf("https:") < -1) {
       continue;
     }
@@ -83,7 +84,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     if (CANVAS_READ_FUNCS.includes(symbol) && operation === "call") {
       if (
         symbol === "CanvasRenderingContext2D.getImageData" &&
-        isGetImageDataDimsTooSmall(item.data.arguments)
+        isGetImageDataDimsTooSmall(args)
       ) {
         continue;
       }
@@ -94,7 +95,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     } else if (CANVAS_WRITE_FUNCS.includes(symbol)) {
       // TODO: Determine if I need to read ascii charachters exclusively to deal with false positives.
       // This was a check the OpenWPM notebook had.
-      const text = getCanvasText(item.data.arguments);
+      const text = getCanvasText(args);
       cWrites.has(script_url)
         ? cWrites.get(script_url).add(url_host)
         : cWrites.set(script_url, new Set([url_host]));
@@ -174,23 +175,24 @@ export const getCanvasFontFp = jsCalls => {
   const textMeasure = new Map() as CanvasCallMap;
   const canvasFont = new Map() as CanvasCallMap;
   for (const item of jsCalls) {
-    const { url, stack } = item;
-    const url_host = parse(url).hostname;
+    const { data, stack } = item;
     const script_url = stack[0].fileName;
-    const { symbol, operation, value } = item.data;
+    const { symbol, value } = <JsInstrumentData>data;
+    const args = data["arguments"];
     if (CANVAS_FONT.includes(symbol)) {
       if (symbol.indexOf("measureText") > -1) {
-        const textToMeasure = item.data.arguments()[0];
+        const textToMeasure = args()[0];
         textMeasure.has(script_url)
           ? textMeasure.get(script_url).add(textToMeasure)
           : textMeasure.set(script_url, new Set([textToMeasure]));
       }
 
       if (symbol.indexOf("font") > -1) {
-        const t = value.match(font_shorthand);
-        canvasFont.has(script_url)
-          ? canvasFont.get(script_url).add(value)
-          : canvasFont.set(script_url, new Set([value]));
+        if (font_shorthand.test(value)) {
+          canvasFont.has(script_url)
+            ? canvasFont.get(script_url).add(value)
+            : canvasFont.set(script_url, new Set([value]));
+        }
       }
     }
   }

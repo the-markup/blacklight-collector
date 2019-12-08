@@ -1,4 +1,4 @@
-import { BlacklightEvent } from "../inspector";
+import { BlacklightEvent } from "../types";
 declare global {
   interface Object {
     getPropertyDescriptor(subject: any, name: any): PropertyDescriptor;
