@@ -75,7 +75,6 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     const url_host = parse(url).hostname;
     const script_url = getScriptUrl(item);
     const { symbol, operation, value } = <JsInstrumentData>data;
-    const args = data["arguments"];
     if (script_url.indexOf("http:") < -1 || script_url.indexOf("https:") < -1) {
       continue;
     }
@@ -83,7 +82,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     if (CANVAS_READ_FUNCS.includes(symbol) && operation === "call") {
       if (
         symbol === "CanvasRenderingContext2D.getImageData" &&
-        isGetImageDataDimsTooSmall(args)
+        isGetImageDataDimsTooSmall(data["arguments"])
       ) {
         continue;
       }
@@ -91,7 +90,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
         ? cReads.get(script_url).add(url_host)
         : cReads.set(script_url, new Set([url_host]));
     } else if (CANVAS_WRITE_FUNCS.includes(symbol)) {
-      const text = getCanvasText(args);
+      const text = getCanvasText(data["arguments"]);
 
       cWrites.has(script_url)
         ? cWrites.get(script_url).add(url_host)
@@ -183,10 +182,9 @@ export const getCanvasFontFp = jsCalls => {
   for (const item of jsCalls) {
     const script_url = getScriptUrl(item);
     const { symbol, value } = <JsInstrumentData>item.data;
-    const args = item.data["arguments"];
     if (CANVAS_FONT.includes(symbol)) {
       if (symbol.indexOf("measureText") > -1) {
-        const textToMeasure = args()[0];
+        const textToMeasure = item.data["arguments"][0];
         textMeasure.has(script_url)
           ? textMeasure.get(script_url).add(textToMeasure)
           : textMeasure.set(script_url, new Set([textToMeasure]));
