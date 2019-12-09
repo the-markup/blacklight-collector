@@ -2,8 +2,9 @@
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { fillForms } from "../src/pptr-utils/interaction-utils";
 import { Browser, Page, launch } from "puppeteer";
-import { setupBlacklightInspector, BlacklightEvent } from "../src/inspector";
-import { Global } from "../src/types";
+import { setupBlacklightInspector } from "../src/inspector";
+import { setupDataExfiltrationInspector } from "../src/data-exfiltration";
+import { Global, BlacklightEvent } from "../src/types";
 declare var global: Global;
 const INPUT_VALUES_RESULT = [
   { type: "email", value: "blacklight@themarkup.org", name: "email" },
@@ -214,7 +215,7 @@ describe("DataExfiltration", () => {
     const eventHandler = event => {
       rows.push(event);
     };
-    await setupBlacklightInspector(page, eventHandler, true);
+    await setupDataExfiltrationInspector(page, eventHandler, true);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
     await page.waitFor(1000);
     await fillForms(page);

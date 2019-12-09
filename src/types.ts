@@ -6,6 +6,7 @@ type BlacklightEventType =
   | "AddEventListener"
   | "DataExfiltration"
   | "Error"
+  | "Error.BlacklightInspector"
   | "Error.AddEventListener"
   | "Error.DataExfiltration"
   | "Error.JsInstrument"
@@ -52,4 +53,10 @@ export interface BlacklightError {
   objectName?: string;
   propertyName?: string;
   object?: string;
+}
+
+export interface LinkObject {
+  href: string;
+  innerHtml: string;
+  innerText: string;
 }

@@ -8,11 +8,12 @@ import os from "os";
 import devices from "puppeteer/DeviceDescriptors";
 import PuppeteerHar from "puppeteer-har";
 import { setupBlacklightInspector } from "./inspector";
+import { setupDataExfiltrationInspector } from "./data-exfiltration";
 import { writeFileSync } from "fs";
 import { fillForms, autoScroll } from "./pptr-utils/interaction-utils";
 import { defaultPuppeteerBrowserOptions } from "./pptr-utils/default";
 import { generateReport } from "./parser";
-import { getLinks } from "./pptr-utils/get-links";
+import { getLinks, dedupLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { sampleSize } from "lodash";
 export const collector = async ({
   inUrl,
@@ -100,6 +101,8 @@ export const collector = async ({
   });
 
   await setupBlacklightInspector(page, event => logger.warn(event));
+  await setupDataExfiltrationInspector(page, event => logger.warn(event));
+
   let har = {} as any;
   if (captureHar) {
     har = new PuppeteerHar(page);
@@ -113,20 +116,19 @@ export const collector = async ({
     waitUntil: "networkidle2"
   });
 
-  const links = await getLinks(page);
-  output.links = {
+  let duplicatedLinks = await getLinks(page);
+  const outputLinks = {
     first_party: [],
     third_party: []
   };
-
-  for (const link of links) {
+  for (const link of dedupLinks(duplicatedLinks)) {
     const l = url.parse(link.href);
 
     if (isFirstParty(FIRST_PARTY_PS, l)) {
-      output.links.first_party.push(link);
+      outputLinks.first_party.push(link);
       hosts.links.first_party.add(l.hostname);
     } else {
-      output.links.third_party.push(link);
+      outputLinks.third_party.push(link);
       hosts.links.third_party.add(l.hostname);
     }
   }
@@ -140,7 +142,7 @@ export const collector = async ({
 
   output.uri_dest = page.url();
 
-  let browse_links = sampleSize(output.links.first_party, numPages);
+  let browse_links = sampleSize(outputLinks.first_party, numPages);
   output.browsing_history = [output.uri_dest].concat(
     browse_links.map(l => l.href)
   );
@@ -152,6 +154,7 @@ export const collector = async ({
     await page.waitFor(500); // in ms
     await fillForms(page);
     await page.waitFor(100);
+    duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
     await autoScroll(page);
   }
 
@@ -160,8 +163,20 @@ export const collector = async ({
   }
   await browser.close();
 
+  const links = dedupLinks(duplicatedLinks);
+  output.social = getSocialLinks(links);
   output.end_time = new Date();
+  for (const link of links) {
+    const l = url.parse(link.href);
 
+    if (isFirstParty(FIRST_PARTY_PS, l)) {
+      outputLinks.first_party.push(link);
+      hosts.links.first_party.add(l.hostname);
+    } else {
+      outputLinks.third_party.push(link);
+      hosts.links.third_party.add(l.hostname);
+    }
+  }
   // generate report
   output.hosts = {
     requests: {

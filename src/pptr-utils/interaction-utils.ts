@@ -44,13 +44,15 @@ export const autoScroll = async function(page) {
     return new Promise((resolve, reject) => {
       try {
         var totalHeight = 0;
-        var distance = 100;
+        var distance = 150;
+        var COUNT_MAX = 5;
+        var count = 0;
         var timer = setInterval(() => {
           var scrollHeight = document.body.scrollHeight;
           window.scrollBy(0, distance);
           totalHeight += distance;
-
-          if (totalHeight >= scrollHeight) {
+          count += 1;
+          if (totalHeight >= scrollHeight || count > COUNT_MAX) {
             clearInterval(timer);
             resolve();
           }
