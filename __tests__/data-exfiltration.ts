@@ -182,31 +182,7 @@ describe("DataExfiltration", () => {
     expect(inputValues.sort()).toEqual(INPUT_VALUES_RESULT.sort());
     await page.close();
   });
-  it("can observe which scripts are monitoring behaviour events", async () => {
-    const page = await browser.newPage();
-    const testUrl = `${global.__DEV_SERVER__}/session_recorder.html`;
 
-    const rows = [];
-    const eventHandler = (event: BlacklightEvent) => {
-      rows.push(event);
-    };
-    await setupBlacklightInspector(page, eventHandler, true);
-    await page.goto(testUrl, { waitUntil: "networkidle2" });
-    const result = rows
-      .filter(r => r.type === "AddEventListener")
-      .reduce((acc, cur) => {
-        if (acc.has(cur.data.event_group)) {
-          acc.get(cur.data.event_group).add(cur.stack[0].fileName);
-        } else {
-          acc.set(cur.data.event_group, new Set([cur.stack[0].fileName]));
-        }
-
-        return acc;
-      }, new Map());
-
-    expect(result).toEqual(EVENT_LISTENER_RESULT);
-    await page.close();
-  });
   it("can observe network requests and check for data that matches input that was typed on the page ", async () => {
     const page = await browser.newPage();
     const testUrl = `${global.__DEV_SERVER__}/session_recorder.html`;
