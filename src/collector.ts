@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import { getLogger } from "./logger";
-import { isFirstParty, clearDir, getFirstPartyPs } from "./utils";
+import { clearDir } from "./utils";
 import { join } from "path";
 import url from "url";
 import os from "os";
@@ -15,18 +15,23 @@ import { defaultPuppeteerBrowserOptions } from "./pptr-utils/default";
 import { generateReport } from "./parser";
 import { getLinks, dedupLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { sampleSize } from "lodash";
+import { setupWebBeaconInspector } from "./web-beacon-recording";
+import { parse } from "tldts";
 export const collector = async ({
   inUrl,
   outDir,
   headless = true,
   title = "Blacklight Inspection",
-  emulateDevice = "",
+  emulateDevice = "iPhone X",
   captureHar = true,
+  captureLinks = false,
+  enableAdBlock = false,
   saveBrowserProfile = false,
+
   quiet = true,
   numPages = 3
 }) => {
-  const FIRST_PARTY_PS = getFirstPartyPs(inUrl);
+  const FIRST_PARTY = parse(inUrl);
   clearDir(outDir);
   const logger = getLogger({ outDir, quiet });
   const userDataDir = saveBrowserProfile
@@ -46,6 +51,14 @@ export const collector = async ({
     uri_redirects: null,
     secure_connection: {},
     host: url.parse(inUrl).hostname,
+    config: {
+      captureHar,
+      captureLinks,
+      enableAdBlock,
+      emulateDevice,
+      numPages,
+      saveBrowserProfile
+    },
     script: {
       host: os.hostname(),
       //TODO:
@@ -89,12 +102,12 @@ export const collector = async ({
 
   // record all requested hosts
   await page.on("request", request => {
-    const l = url.parse(request.url());
+    const l = parse(request.url());
     // note that hosts may appear as first and third party depending on the path
-    if (isFirstParty(FIRST_PARTY_PS, l)) {
+    if (FIRST_PARTY.domain === l.domain) {
       hosts.requests.first_party.add(l.hostname);
     } else {
-      if (l.protocol != "data:") {
+      if (request.url().indexOf("data://") < 0) {
         hosts.requests.third_party.add(l.hostname);
       }
     }
@@ -102,6 +115,11 @@ export const collector = async ({
 
   await setupBlacklightInspector(page, event => logger.warn(event));
   await setupDataExfiltrationInspector(page, event => logger.warn(event));
+  await setupWebBeaconInspector(
+    page,
+    event => logger.warn(event),
+    enableAdBlock
+  );
 
   let har = {} as any;
   if (captureHar) {
@@ -122,9 +140,9 @@ export const collector = async ({
     third_party: []
   };
   for (const link of dedupLinks(duplicatedLinks)) {
-    const l = url.parse(link.href);
+    const l = parse(link.href);
 
-    if (isFirstParty(FIRST_PARTY_PS, l)) {
+    if (FIRST_PARTY.domain === l.domain) {
       outputLinks.first_party.push(link);
       hosts.links.first_party.add(l.hostname);
     } else {
@@ -164,12 +182,11 @@ export const collector = async ({
   await browser.close();
 
   const links = dedupLinks(duplicatedLinks);
-  output.social = getSocialLinks(links);
   output.end_time = new Date();
   for (const link of links) {
-    const l = url.parse(link.href);
+    const l = parse(link.href);
 
-    if (isFirstParty(FIRST_PARTY_PS, l)) {
+    if (FIRST_PARTY.domain === l.domain) {
       outputLinks.first_party.push(link);
       hosts.links.first_party.add(l.hostname);
     } else {
@@ -184,6 +201,11 @@ export const collector = async ({
       third_party: Array.from(hosts.requests.third_party)
     }
   };
+
+  if (captureLinks) {
+    output.links = outputLinks;
+    output.social = getSocialLinks(links);
+  }
 
   let event_data_all: any = await new Promise((resolve, reject) => {
     logger.query(
@@ -207,7 +229,8 @@ export const collector = async ({
     "behaviour_event_listeners",
     "data_exfiltration",
     "canvas_fingerprinters",
-    "canvas_font_fingerprinters"
+    "canvas_font_fingerprinters",
+    "web_beacons"
   ].reduce((acc, cur) => {
     acc[cur] = generateReport(cur, event_data);
     return acc;

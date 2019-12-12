@@ -11,9 +11,8 @@ import {
   dedupLinks,
   getSocialLinks
 } from "../src/pptr-utils/get-links";
-import { SourceMapConsumer } from "source-map";
 declare var global: Global;
-jest.setTimeout(80000);
+// jest.setTimeout(1000);
 
 const TEST_LINKS = [
   {

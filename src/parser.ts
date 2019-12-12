@@ -1,11 +1,11 @@
-import psl from "psl";
-import url from "url";
+import { getDomain } from "tldts";
 import { groupBy, getScriptUrl } from "./utils";
 import { getCanvasFp, getCanvasFontFp } from "./canvas-fingerprinting";
 import {
   DataExfiltrationData,
   BlacklightEvent,
-  AddEventListenerData
+  AddEventListenerData,
+  BlacklightEventType
 } from "./types";
 
 export const generateReport = function(reportType, messages) {
@@ -22,13 +22,13 @@ export const generateReport = function(reportType, messages) {
     case "canvas_font_fingerprinters":
       return reportCanvasFontFingerprinters(eventData);
     case "web_beacons":
-      return {};
+      return eventData;
     default:
       return {};
   }
 };
 
-const filterByEvent = (messages, typePattern) => {
+const filterByEvent = (messages, typePattern: BlacklightEventType) => {
   return messages.filter(
     m =>
       m.message.type.includes(typePattern) && !m.message.type.includes("Error")
@@ -51,7 +51,15 @@ const getEventData = function(reportType, messages): BlacklightEvent[] {
     case "canvas_font_fingerprinters":
       filtered = filterByEvent(messages, "JsInstrument");
       break;
+    case "enumerate_devices":
+      //TODO
+      break;
+    case "web_audio":
+      //TODO
+      break;
     case "web_beacons":
+      filtered = filterByEvent(messages, "TrackingRequest");
+
       break;
     default:
       return [];
@@ -92,15 +100,19 @@ const reportDataExiltration = (eventData: BlacklightEvent[]) => {
   return groupByRequestPs(
     eventData.map(m => ({
       ...m.data,
-      post_request_ps: getPsSafely(<DataExfiltrationData>m.data)
+      post_request_ps: getDomainSafely(<DataExfiltrationData>m.data)
     }))
   );
 };
 
-const getPsSafely = (message: DataExfiltrationData) => {
+// const reportWebBeacons = (eventData: BlacklightEvent[]) => {
+//   filtered = filterByEvent(messages, "DataExfiltration");
+// };
+
+const getDomainSafely = (message: DataExfiltrationData) => {
   try {
     if (message.post_request_url) {
-      return psl.get(url.parse(message.post_request_url).hostname);
+      return getDomain(message.post_request_url);
     } else {
       console.error(
         "message.data missing post_request_url",

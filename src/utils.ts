@@ -1,16 +1,12 @@
-import url, { UrlWithStringQuery } from "url";
 import fs from "fs";
-import psl from "psl";
 import { join } from "path";
-
+import { getPublicSuffix } from "tldts";
 export const getFirstPartyPs = firstPartyUri => {
-  const topLevel = url.parse(firstPartyUri);
-  return psl.get(topLevel.hostname);
+  return getPublicSuffix(firstPartyUri);
 };
 
-export const isFirstParty = (firstPartyPs, testUri: UrlWithStringQuery) => {
-  const testPs = psl.get(testUri.hostname) || "";
-  return firstPartyPs === testPs;
+export const isFirstParty = (firstPartyPs, testUri) => {
+  return firstPartyPs === testUri;
 };
 
 const deleteFolderRecursive = function(path) {

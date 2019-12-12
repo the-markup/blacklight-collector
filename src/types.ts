@@ -2,19 +2,21 @@ export interface Global {
   __DEV_SERVER__: string;
 }
 
-type BlacklightEventType =
+export type BlacklightEventType =
   | "AddEventListener"
   | "DataExfiltration"
   | "Error"
-  | "Error.BlacklightInspector"
   | "Error.AddEventListener"
+  | "Error.BlacklightInspector"
   | "Error.DataExfiltration"
   | "Error.JsInstrument"
+  | "JsInstrument"
   | "JsInstrument.Debug"
   | "JsInstrument.Error"
   | "JsInstrument.Function"
   | "JsInstrument.FunctionProxy"
-  | "JsInstrument.ObjectProperty";
+  | "JsInstrument.ObjectProperty"
+  | "TrackingRequest";
 
 export interface BlacklightEvent {
   type: BlacklightEventType;
@@ -27,7 +29,8 @@ export type BlacklightData =
   | JsInstrumentData
   | DataExfiltrationData
   | AddEventListenerData
-  | BlacklightError;
+  | BlacklightError
+  | TrackingRequestData;
 
 export interface DataExfiltrationData {
   post_request_url: string;
@@ -48,6 +51,12 @@ export interface JsInstrumentData {
   logSettings?: any;
 }
 
+export interface TrackingRequestData {
+  urls: string;
+  query?: string | object;
+  filter: string;
+  listName: string;
+}
 export interface BlacklightError {
   message: any;
   objectName?: string;
