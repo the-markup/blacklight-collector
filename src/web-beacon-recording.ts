@@ -5,6 +5,7 @@ import {
 import fs from "fs";
 import path from "path";
 import url from "url";
+import { BlacklightEvent } from "./types";
 
 // This code is a slightly modified version of  https://github.com/EU-EDPS/website-evidence-collector/blob/master/lib/setup-beacon-recording.js
 // The following options make sure that blocker will behave optimally for the
@@ -75,7 +76,7 @@ const parseJSONSafely = str => {
 };
 export const setupWebBeaconInspector = async (
   page,
-  eventDataHandler,
+  eventDataHandler: (event: BlacklightEvent) => void,
   blockRequests = false
 ) => {
   if (blockRequests) {
@@ -108,9 +109,9 @@ export const setupWebBeaconInspector = async (
         }
         eventDataHandler({
           type: "TrackingRequest",
+          url: request.url(),
           stack: stack,
           data: {
-            url: request.url(),
             query: query,
             filter: filter.toString(),
             listName: listName

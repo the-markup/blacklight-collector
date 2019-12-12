@@ -1,7 +1,7 @@
 import { Browser, launch } from "puppeteer";
-import { Global, BlacklightEvent } from "../src/types";
+import { Global, BlacklightEvent, JsInstrumentData } from "../src/types";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
-import { setupBlacklightInspector, } from "../src/inspector";
+import { setupBlacklightInspector } from "../src/inspector";
 // jest.setTimeout(10000);
 declare var global: Global;
 let browser = {} as Browser;
@@ -26,6 +26,7 @@ const PROPERTIES = [
   "window.navigator.geolocation",
   "window.navigator.language",
   "window.navigator.languages",
+  "window.navigator.mediaDevices.enumerateDevices",
   "window.navigator.onLine",
   "window.navigator.platform",
   "window.navigator.product",
@@ -176,7 +177,7 @@ const WEBRTC_SDP_OFFER_STRINGS = [
 ];
 
 describe("Blacklight Fingerprinting Inspector", () => {
-  it("checks for available window properties", async () => {
+  it.only("checks for available window properties", async () => {
     const PROPERTIES_URL = `${global.__DEV_SERVER__}/property-enumeration.html`;
     const rows = [];
     const eventDataHandler = event => rows.push(event);
@@ -185,7 +186,8 @@ describe("Blacklight Fingerprinting Inspector", () => {
     await page.goto(PROPERTIES_URL, { waitUntil: "networkidle0" });
     const testData = [];
     rows.forEach((d: BlacklightEvent) => {
-      testData.push(d.data.symbol);
+      const data = <JsInstrumentData>d.data;
+      testData.push(data.symbol);
       expect(d.stack[0].fileName).toBe(PROPERTIES_URL);
     });
     await page.close();

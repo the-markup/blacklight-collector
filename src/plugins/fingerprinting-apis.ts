@@ -1,7 +1,13 @@
 export function instrumentFingerprintingApis({
   instrumentObjectProperty,
-  instrumentObject
+  instrumentObject,
+  instrumentFunctionViaProxy
 }) {
+  navigator.mediaDevices.enumerateDevices = instrumentFunctionViaProxy(
+    window.navigator.mediaDevices,
+    "window.navigator.mediaDevices",
+    "enumerateDevices"
+  );
   // Access to navigator properties
   const navigatorProperties = [
     "appCodeName",

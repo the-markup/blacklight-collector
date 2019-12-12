@@ -91,7 +91,8 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
         : cReads.set(script_url, new Set([url_host]));
     } else if (CANVAS_WRITE_FUNCS.includes(symbol)) {
       const text = getCanvasText(data["arguments"]);
-
+      // if (text.length < 10) {
+      // }
       cWrites.has(script_url)
         ? cWrites.get(script_url).add(url_host)
         : cWrites.set(script_url, new Set([url_host]));

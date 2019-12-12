@@ -1,6 +1,7 @@
 import fs from "fs";
 import { join } from "path";
 import { getPublicSuffix } from "tldts";
+import { BlacklightEvent } from "./types";
 export const getFirstPartyPs = firstPartyUri => {
   return getPublicSuffix(firstPartyUri);
 };
@@ -65,7 +66,7 @@ export function mapToObj(inputMap) {
 
   return obj;
 }
-export const getScriptUrl = item => {
+export const getScriptUrl = (item: BlacklightEvent) => {
   const { stack } = item;
 
   if (stack.length < 1) {

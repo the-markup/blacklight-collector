@@ -4,7 +4,7 @@ import { injectPlugins } from "./pptr-utils/eval-scripts";
 import { jsInstruments } from "./plugins/js-instrument";
 import { instrumentAddEventListener } from "./plugins/add-event-listener";
 import { instrumentFingerprintingApis } from "./plugins/fingerprinting-apis";
-import { BlacklightEvent, JsInstrumentData } from "./types";
+import { BlacklightEvent } from "./types";
 
 function getPageScriptAsString(observers, testing = false) {
   let observersString = "";
@@ -17,13 +17,8 @@ function getPageScriptAsString(observers, testing = false) {
     testing ? "true" : "false"
   }))`;
 }
-const BEHAVIOUR_TRACKING_EVENTS = {
-  MOUSE: ["click", "mousedown", "mouseup", "mousemove", "select", "dblclick"],
-  KEYBOARD: ["keydown", "keypress", "keyup", "input"],
-  TOUCH: ["touchmove", "touchstart", "touchend", "touchcancel"],
-  SENSOR: ["devicemotion", "deviceorientation", "orientationchange"]
-};
-const MONITORED_EVENTS = [].concat(...Object.values(BEHAVIOUR_TRACKING_EVENTS));
+//scroll
+
 export const setupBlacklightInspector = async function(
   page: Page,
   eventDataHandler: (event: BlacklightEvent) => void,
@@ -39,26 +34,7 @@ export const setupBlacklightInspector = async function(
 
   await page.exposeFunction("reportEvent", eventData => {
     try {
-      const parsed: BlacklightEvent = JSON.parse(eventData);
-      const data = <JsInstrumentData>parsed.data;
-      if (data.symbol.indexOf("addEventListener") > -1) {
-        const values = JSON.parse(data.value);
-        if (MONITORED_EVENTS.includes(values[0])) {
-          const eventGroup = Object.keys(
-            BEHAVIOUR_TRACKING_EVENTS
-          ).filter(key => BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0]));
-
-          eventDataHandler({
-            type: "AddEventListener",
-            url: parsed.url,
-            stack: parsed.stack,
-            data: {
-              name: values[0],
-              event_group: eventGroup.length ? eventGroup[0] : ""
-            }
-          });
-        }
-      }
+      const parsed = JSON.parse(eventData);
       eventDataHandler(parsed);
     } catch (error) {
       eventDataHandler({
