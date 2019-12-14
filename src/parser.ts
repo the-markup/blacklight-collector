@@ -2,12 +2,11 @@ import { getDomain } from "tldts";
 import { groupBy, getScriptUrl } from "./utils";
 import { getCanvasFp, getCanvasFontFp } from "./canvas-fingerprinting";
 import {
-  DataExfiltrationData,
   BlacklightEvent,
-  BlacklightEventType,
   FINGERPRINTABLE_WINDOW_APIS,
-  JsInstrumentData,
-  BEHAVIOUR_TRACKING_EVENTS
+  BEHAVIOUR_TRACKING_EVENTS,
+  JsInstrumentEvent,
+  DataExfiltrationEvent
 } from "./types";
 
 export const generateReport = function(reportType, messages) {
@@ -32,7 +31,7 @@ export const generateReport = function(reportType, messages) {
   }
 };
 
-const filterByEvent = (messages, typePattern: BlacklightEventType) => {
+const filterByEvent = (messages, typePattern) => {
   return messages.filter(
     m =>
       m.message.type.includes(typePattern) && !m.message.type.includes("Error")
@@ -71,8 +70,8 @@ const getEventData = function(reportType, messages): BlacklightEvent[] {
 const MONITORED_EVENTS = [].concat(...Object.values(BEHAVIOUR_TRACKING_EVENTS));
 const reportEventListeners = (eventData: BlacklightEvent[]) => {
   const parsedEvents = [];
-  eventData.forEach((event: BlacklightEvent) => {
-    const data = <JsInstrumentData>event.data;
+  eventData.forEach((event: JsInstrumentEvent) => {
+    const data = event.data;
     if (data.symbol.indexOf("addEventListener") > -1) {
       const values = JSON.parse(data.value);
       if (MONITORED_EVENTS.includes(values[0])) {
@@ -133,9 +132,9 @@ export const reportCanvasFontFingerprinters = (
 const reportDataExiltration = (eventData: BlacklightEvent[]) => {
   const groupByRequestPs = groupBy("post_request_ps");
   return groupByRequestPs(
-    eventData.map(m => ({
+    eventData.map((m: DataExfiltrationEvent) => ({
       ...m.data,
-      post_request_ps: getDomainSafely(<DataExfiltrationData>m.data)
+      post_request_ps: getDomainSafely(m)
     }))
   );
 };
@@ -143,8 +142,8 @@ const reportDataExiltration = (eventData: BlacklightEvent[]) => {
 const WINDOW_FP_LIST = [].concat(...Object.values(FINGERPRINTABLE_WINDOW_APIS));
 const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
   const parsedEvents = [];
-  eventData.forEach(event => {
-    const data = <JsInstrumentData>event.data;
+  eventData.forEach((event: JsInstrumentEvent) => {
+    const data = event.data;
     if (WINDOW_FP_LIST.includes(data.symbol)) {
       const windowApiGroup = Object.keys(
         FINGERPRINTABLE_WINDOW_APIS
@@ -185,10 +184,10 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
   return serializable;
 };
 
-const getDomainSafely = (message: DataExfiltrationData) => {
+const getDomainSafely = (message: DataExfiltrationEvent) => {
   try {
-    if (message.post_request_url) {
-      return getDomain(message.post_request_url);
+    if (message.data.post_request_url) {
+      return getDomain(message.data.post_request_url);
     } else {
       console.error(
         "message.data missing post_request_url",

@@ -1,4 +1,4 @@
-import { BlacklightEvent, JsInstrumentData } from "./types";
+import { BlacklightEvent, JsInstrumentEvent } from "./types";
 
 /**
  *  @fileOverview Utility functions for canvas finerprinting analysis.
@@ -71,10 +71,10 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
   const cBanned = new Map() as CanvasCallMap;
   const cStyles = new Map() as CanvasCallMap;
   for (const item of canvasCalls) {
-    const { url, data } = item;
+    const { url, data } = <JsInstrumentEvent>item;
     const url_host = parse(url).hostname;
     const script_url = getScriptUrl(item);
-    const { symbol, operation, value } = <JsInstrumentData>data;
+    const { symbol, operation, value } = data;
     if (script_url.indexOf("http:") < -1 || script_url.indexOf("https:") < -1) {
       continue;
     }
@@ -91,6 +91,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
         : cReads.set(script_url, new Set([url_host]));
     } else if (CANVAS_WRITE_FUNCS.includes(symbol)) {
       const text = getCanvasText(data["arguments"]);
+      // TODO
       // if (text.length < 10) {
       // }
       cWrites.has(script_url)
@@ -182,7 +183,7 @@ export const getCanvasFontFp = jsCalls => {
   const canvasFont = new Map() as CanvasCallMap;
   for (const item of jsCalls) {
     const script_url = getScriptUrl(item);
-    const { symbol, value } = <JsInstrumentData>item.data;
+    const { symbol, value } = item.data;
     if (CANVAS_FONT.includes(symbol)) {
       if (symbol.indexOf("measureText") > -1) {
         const textToMeasure = item.data["arguments"][0];

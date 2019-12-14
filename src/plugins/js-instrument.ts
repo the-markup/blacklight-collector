@@ -131,7 +131,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
       });
     } catch (error) {
       sendMessagesToLogger({
-        type: "JsInstrument.Error",
+        type: "Error.JsInstrument",
         url: window.location.href,
         stack: [],
         data: {

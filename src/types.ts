@@ -2,58 +2,63 @@ export interface Global {
   __DEV_SERVER__: string;
 }
 
-export type BlacklightEventType =
-  | "DataExfiltration"
-  | "Error"
-  | "Error.BlacklightInspector"
-  | "Error.DataExfiltration"
-  | "Error.JsInstrument"
-  | "JsInstrument"
-  | "JsInstrument.Debug"
-  | "JsInstrument.Error"
-  | "JsInstrument.Function"
-  | "JsInstrument.FunctionProxy"
-  | "JsInstrument.ObjectProperty"
-  | "TrackingRequest";
+export type BlacklightEvent =
+  | JsInstrumentEvent
+  | DataExfiltrationEvent
+  | BlacklightErrorEvent
+  | TrackingRequestEvent;
 
-export interface BlacklightEvent {
-  type: BlacklightEventType;
+export interface DataExfiltrationEvent {
+  type: "DataExfiltration";
   url: string;
   stack: any[];
-  data: BlacklightData;
+  data: {
+    post_request_url: string;
+    post_data: string;
+    base_64: boolean;
+    filter: string[];
+  };
 }
 
-export type BlacklightData =
-  | JsInstrumentData
-  | DataExfiltrationData
-  | BlacklightError
-  | TrackingRequestData;
-
-export interface DataExfiltrationData {
-  post_request_url: string;
-  post_data: string;
-  base_64: boolean;
-  filter: string[];
+export interface JsInstrumentEvent {
+  type:
+    | "JsInstrument"
+    | "JsInstrument.Debug"
+    | "JsInstrument.Error"
+    | "JsInstrument.Function"
+    | "JsInstrument.FunctionProxy"
+    | "JsInstrument.ObjectProperty";
+  url: string;
+  stack: any[];
+  data: {
+    symbol: string;
+    value: string;
+    operation: string;
+    arguments?: any[];
+    logSettings?: any;
+  };
 }
 
-export interface JsInstrumentData {
-  symbol: string;
-  value: string;
-  operation: string;
-  arguments?: any[];
-  logSettings?: any;
+export interface TrackingRequestEvent {
+  type: "TrackingRequest";
+  url: string;
+  stack: any[];
+  data: { query?: string | object; filter: string; listName: string };
 }
-
-export interface TrackingRequestData {
-  query?: string | object;
-  filter: string;
-  listName: string;
-}
-export interface BlacklightError {
-  message: any;
-  objectName?: string;
-  propertyName?: string;
-  object?: string;
+export interface BlacklightErrorEvent {
+  type:
+    | "Error"
+    | "Error.BlacklightInspector"
+    | "Error.DataExfiltration"
+    | "Error.JsInstrument";
+  url: string;
+  stack: any[];
+  data: {
+    message: any;
+    objectName?: string;
+    propertyName?: string;
+    object?: string;
+  };
 }
 
 export interface LinkObject {
@@ -99,12 +104,7 @@ export const FINGERPRINTABLE_WINDOW_APIS = {
   BATTERY: ["window.navigator.getBattery", "window.BatteryManager"],
   PLUGIN: ["window.navigator.plugins"],
   MEDIA_DEVICES: ["window.navigator.mediaDevices.enumerateDevices"],
-  SCREEN: [
-    "window.screen.width",
-    "window.screen.height",
-    "window.screen.pixelDepth",
-    "window.screen.colorDepth"
-  ],
+  SCREEN: ["window.screen.pixelDepth", "window.screen.colorDepth"],
   MIME: ["window.navigator.mimeTypes"],
   AUDIO: [
     "AudioContext.createOscillator",
@@ -128,12 +128,6 @@ export const FINGERPRINTABLE_WINDOW_APIS = {
     "ScriptProcessorNode.connect",
     "ScriptProcessorNode.onaudioprocess",
     "ScriptProcessorNode.disconnect"
-  ],
-  WINDOW: [
-    "window.localStorage",
-    "window.sessionStorage",
-    "window.storage",
-    "window.document"
   ],
   WEBRTC: ["RTCPeerConnection"],
   CANVAS: [
