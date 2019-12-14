@@ -1,6 +1,6 @@
 import fs from "fs";
 import { join } from "path";
-import { getPublicSuffix } from "tldts";
+import { getPublicSuffix, getDomain } from "tldts";
 import { BlacklightEvent } from "./types";
 export const getFirstPartyPs = firstPartyUri => {
   return getPublicSuffix(firstPartyUri);
@@ -66,20 +66,20 @@ export function mapToObj(inputMap) {
 
   return obj;
 }
+// Go through the stack trace and get the first filename.
+// If no fileName is found return the source of the last function in
+// the trace
 export const getScriptUrl = (item: BlacklightEvent) => {
   const { stack } = item;
 
-  if (stack.length < 1) {
-    return "";
-  }
-  if (typeof stack[0].fileName === "undefined") {
-    if (typeof stack[0].fileName === "undefined") {
-      return "";
+  for (let i = 0; i < stack.length; i++) {
+    if (stack[i].hasOwnProperty("fileName")) {
+      return stack[i].fileName;
     } else {
-      return stack[0].source;
+      if (i === stack.length - 1) {
+        return stack[i].source;
+      }
     }
-  } else {
-    return stack[0].fileName;
   }
 };
 
@@ -90,7 +90,28 @@ export const loadEventData = (dir, filename = "inspection-log.ndjson") => {
     .filter(m => m)
     .map(m => loadJSONSafely(m));
 };
-
+// Not using this atm but leaving it in because it might be useful in the future
+export const getStackType = (stack, firstPartyDomain) => {
+  let hasFirstParty = false;
+  let hasThirdParty = false;
+  stack.forEach(s => {
+    if (s.hasOwnProperty("fileName")) {
+      const scriptDomain = getDomain(s.fileName);
+      if (scriptDomain === firstPartyDomain) {
+        hasFirstParty = true;
+      } else {
+        hasThirdParty = true;
+      }
+    }
+  });
+  if (hasFirstParty && !hasThirdParty) {
+    return "first-party-only";
+  } else if (hasThirdParty && !hasFirstParty) {
+    return "third-party-only";
+  } else {
+    return "mixed";
+  }
+};
 export function isBase64(str) {
   if (str === "" || str.trim() === "") {
     return false;

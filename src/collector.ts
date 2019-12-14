@@ -230,6 +230,7 @@ export const collector = async ({
     "data_exfiltration",
     "canvas_fingerprinters",
     "canvas_font_fingerprinters",
+    "fingerprintable_api_calls",
     "web_beacons"
   ].reduce((acc, cur) => {
     acc[cur] = generateReport(cur, event_data);

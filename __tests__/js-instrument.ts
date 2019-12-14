@@ -90,82 +90,6 @@ const SET_PREVENT_GETS_AND_SETS = [
   ["window.test3.obj1.prop2", "get", "newprop2"]
 ];
 
-const JS_STACK_TEST_URL = `${global.__DEV_SERVER__}/js-call-stack.html`;
-const JS_STACK_TEST_SCRIPT_URL = `${global.__DEV_SERVER__}/stack.js`;
-
-const JS_STACK_CALLS = [
-  [
-    JS_STACK_TEST_URL,
-    14,
-    17,
-    "eval",
-    // "1",
-    "",
-    "window.navigator.appName",
-    "get"
-  ],
-  [
-    JS_STACK_TEST_URL,
-    3,
-    19,
-    "eval",
-    // "1",
-    "",
-    "window.navigator.appCodeName",
-    "get"
-  ],
-  [
-    JS_STACK_TEST_URL,
-    8,
-    38,
-    "check_navigator",
-    // "",
-    "",
-    "window.navigator.userAgent",
-    "get"
-  ],
-  [
-    JS_STACK_TEST_SCRIPT_URL,
-    11,
-    11,
-    "eval",
-    // "1",
-    "",
-    "window.navigator.vendor",
-    "get"
-  ],
-  [
-    JS_STACK_TEST_SCRIPT_URL,
-    14,
-    1,
-    "eval",
-    // "3",
-    "",
-    "window.navigator.appVersion",
-    "get"
-  ],
-  [
-    JS_STACK_TEST_SCRIPT_URL,
-    3,
-    32,
-    "js_check_navigator",
-    // "",
-    "",
-    "window.navigator.userAgent",
-    "get"
-  ],
-  [
-    JS_STACK_TEST_SCRIPT_URL,
-    4,
-    13,
-    "eval",
-    // "1",
-    "",
-    "window.navigator.platform",
-    "get"
-  ]
-];
-
 const TOP_URL = `${global.__DEV_SERVER__}/js-instrument/instrument-object.html`;
 const FRAME1_URL = `${global.__DEV_SERVER__}/js-instrument/framed1.html`;
 const FRAME2_URL = `${global.__DEV_SERVER__}/js-instrument/framed2.html`;
@@ -296,30 +220,5 @@ describe("JS Instrument", () => {
       SET_PREVENT_GETS_AND_SETS.sort()
     );
     // await page.close();
-  });
-  it("Captures all call stack information", async () => {
-    const page = await browser.newPage();
-    let rows = [];
-    const eventDataHandler = event => rows.push(event);
-    await setupBlacklightInspector(page, eventDataHandler);
-    await page.goto(JS_STACK_TEST_URL, {
-      waitUntil: "networkidle0"
-    });
-    const testData = [];
-    // rows = rows.filter(row => !!row.stack);
-    rows.forEach(row => {
-      testData.push([
-        row["stack"][0]["fileName"],
-        row["stack"][0]["lineNumber"],
-        row["stack"][0]["columnNumber"],
-        row["stack"][0]["functionName"],
-        // row["stack"][0]["script_loc_eval"],
-        "",
-        row.data["symbol"],
-        row.data["operation"]
-      ]);
-    });
-    expect(testData.sort()).toEqual(JS_STACK_CALLS.sort());
-    await page.close();
   });
 });

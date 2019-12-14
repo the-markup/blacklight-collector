@@ -102,95 +102,39 @@ it("can parse DataExfiltration events", async () => {
   expect(Object.keys(report)).toEqual(["leadid.com", "fullstory.com"]);
 });
 
-const NAVIGATOR_SYMBOLS = [
-  {
-    symbol: "window.navigator.appCodeName",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.appName",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.appVersion",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.cookieEnabled",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.doNotTrack",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.geolocation",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.language",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.languages",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.onLine",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.platform",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.product",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.productSub",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.userAgent",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.vendorSub",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.navigator.vendor",
-    script: "http://localhost:8125/property-enumeration.html"
-  }
-];
+const NAVIGATOR_SYMBOLS = {
+  "http://localhost:8125/property-enumeration.html": [
+    "window.navigator.appCodeName",
+    "window.navigator.appName",
+    "window.navigator.appVersion",
+    "window.navigator.cookieEnabled",
+    "window.navigator.doNotTrack",
+    "window.navigator.geolocation",
+    "window.navigator.language",
+    "window.navigator.languages",
+    "window.navigator.onLine",
+    "window.navigator.platform",
+    "window.navigator.product",
+    "window.navigator.productSub",
+    "window.navigator.userAgent",
+    "window.navigator.vendorSub",
+    "window.navigator.vendor"
+  ]
+};
 
-const SCREEN_SYMBOLS = [
-  {
-    symbol: "window.screen.height",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.screen.width",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.screen.pixelDepth",
-    script: "http://localhost:8125/property-enumeration.html"
-  },
-  {
-    symbol: "window.screen.colorDepth",
-    script: "http://localhost:8125/property-enumeration.html"
-  }
-];
+const SCREEN_SYMBOLS = {
+  "http://localhost:8125/property-enumeration.html": [
+    "window.screen.pixelDepth",
+    "window.screen.colorDepth"
+  ]
+};
 
-const MEDIA_DEVICES_SYMBOLS = [
-  {
-    symbol: "window.navigator.mediaDevices.enumerateDevices",
-    script: "http://localhost:8125/property-enumeration.html"
-  }
-];
-it("can group fingerprintable window objects", async () => {
+const MEDIA_DEVICES_SYMBOLS = {
+  "http://localhost:8125/property-enumeration.html": [
+    "window.navigator.mediaDevices.enumerateDevices"
+  ]
+};
+it.only("can group fingerprintable window objects", async () => {
   const browser = await launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];

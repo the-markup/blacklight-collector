@@ -2,6 +2,7 @@ import { Browser, launch } from "puppeteer";
 import { Global, BlacklightEvent, JsInstrumentData } from "../src/types";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { setupBlacklightInspector } from "../src/inspector";
+import { getScriptUrl } from "../src/utils";
 // jest.setTimeout(10000);
 declare var global: Global;
 let browser = {} as Browser;
@@ -177,7 +178,7 @@ const WEBRTC_SDP_OFFER_STRINGS = [
 ];
 
 describe("Blacklight Fingerprinting Inspector", () => {
-  it.only("checks for available window properties", async () => {
+  it("checks for available window properties", async () => {
     const PROPERTIES_URL = `${global.__DEV_SERVER__}/property-enumeration.html`;
     const rows = [];
     const eventDataHandler = event => rows.push(event);
@@ -188,7 +189,7 @@ describe("Blacklight Fingerprinting Inspector", () => {
     rows.forEach((d: BlacklightEvent) => {
       const data = <JsInstrumentData>d.data;
       testData.push(data.symbol);
-      expect(d.stack[0].fileName).toBe(PROPERTIES_URL);
+      expect(getScriptUrl(d)).toBe(PROPERTIES_URL);
     });
     await page.close();
     expect(testData.sort()).toEqual(PROPERTIES.sort());
@@ -203,7 +204,7 @@ describe("Blacklight Fingerprinting Inspector", () => {
     const testData = [];
     rows.forEach(row => {
       testData.push([
-        row.stack[0].fileName,
+        getScriptUrl(row),
         row.data["symbol"],
         row.data["operation"],
         row.data["value"],
@@ -246,7 +247,7 @@ describe("Blacklight Fingerprinting Inspector", () => {
         ).toContain(true);
       } else {
         testData.add([
-          row["stack"][0].fileName,
+          getScriptUrl(row),
           row.data["symbol"],
           row.data["operation"],
           row.data["value"],

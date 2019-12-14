@@ -90,19 +90,34 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
       }
     }
   });
-  return parsedEvents.reduce((acc, cur) => {
+  const output = parsedEvents.reduce((acc, cur) => {
     const script = getScriptUrl(<BlacklightEvent>cur);
     const data = cur.data;
     if (!script) {
       return acc;
     }
-    if (Object.keys(acc).includes(data.event_group)) {
-      acc[data.event_group].push({ name: data.name, script });
+
+    if (acc.hasOwnProperty(data.event_group)) {
+      // console.log(data.event_group, script, cur.symbol);
+      if (acc[data.event_group].hasOwnProperty(script)) {
+        acc[data.event_group][script].add(data.name);
+      } else {
+        acc[data.event_group][script] = new Set([data.name]);
+      }
     } else {
-      acc[data.event_group] = [{ name: data.name, script }];
+      acc[data.event_group] = { [script]: new Set([data.name]) };
     }
     return acc;
   }, {});
+
+  const serializable = {};
+  for (let [event_group, script_obj] of Object.entries(output)) {
+    serializable[event_group] = {};
+    for (let [script, events] of Object.entries(script_obj)) {
+      serializable[event_group][script] = Array.from(<any>events);
+    }
+  }
+  return serializable;
 };
 
 export const reportCanvasFingerprinters = (eventData: BlacklightEvent[]) => {
@@ -141,19 +156,33 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
       });
     }
   });
-
-  return parsedEvents.reduce((acc, cur) => {
+  const output = parsedEvents.reduce((acc, cur) => {
     const script = getScriptUrl(<BlacklightEvent>cur);
     if (!script) {
       return acc;
     }
-    if (Object.keys(acc).includes(cur.api_group)) {
-      acc[cur.api_group].push({ symbol: cur.symbol, script });
+
+    if (acc.hasOwnProperty(cur.api_group)) {
+      // console.log(cur.api_group, script, cur.symbol);
+      if (acc[cur.api_group].hasOwnProperty(script)) {
+        acc[cur.api_group][script].add(cur.symbol);
+      } else {
+        acc[cur.api_group][script] = new Set([cur.symbol]);
+      }
     } else {
-      acc[cur.api_group] = [{ symbol: cur.symbol, script }];
+      acc[cur.api_group] = { [script]: new Set([cur.symbol]) };
     }
     return acc;
   }, {});
+
+  const serializable = {};
+  for (let [api_group, script_obj] of Object.entries(output)) {
+    serializable[api_group] = {};
+    for (let [script, events] of Object.entries(script_obj)) {
+      serializable[api_group][script] = Array.from(<any>events);
+    }
+  }
+  return serializable;
 };
 
 const getDomainSafely = (message: DataExfiltrationData) => {

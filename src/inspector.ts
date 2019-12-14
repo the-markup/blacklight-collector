@@ -17,7 +17,6 @@ function getPageScriptAsString(observers, testing = false) {
     testing ? "true" : "false"
   }))`;
 }
-//scroll
 
 export const setupBlacklightInspector = async function(
   page: Page,

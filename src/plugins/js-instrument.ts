@@ -35,7 +35,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
         sendMessagesToLogger({
           type: "JsInstrument.FunctionProxy",
           url: window.location.href,
-          stack: stack.slice(1, 3),
+          stack: stack,
           data: {
             symbol: `${objectName}.${property}`,
             value: serializeObject(args, true),
@@ -190,7 +190,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
       sendMessagesToLogger({
         type: "JsInstrument.Function",
         url: window.location.href,
-        stack: stack.slice(1, 3),
+        stack: stack,
         data: {
           operation: "call",
           value: "",
@@ -271,7 +271,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
           sendMessagesToLogger({
             type: "JsInstrument.ObjectProperty",
             url: window.location.href,
-            stack: stack.slice(1, 3),
+            stack: stack,
             data: {
               symbol: `${objectName}.${propertyName}`,
               value: serializeObject(origProperty),
@@ -293,7 +293,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
           sendMessagesToLogger({
             type: "JsInstrument.ObjectProperty",
             url: window.location.href,
-            stack: stack.slice(1, 3),
+            stack: stack,
             data: {
               symbol: `${objectName}.${propertyName}`,
               value: serializeObject(value),
@@ -320,7 +320,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
           sendMessagesToLogger({
             type: "Error.JsInstrument",
             url: window.location.href,
-            stack: stack.slice(1, 3),
+            stack: stack,
             data: {
               message: `Property descriptor for, ${objectName}.${propertyName}, doesn't have setter or value?`
             }
@@ -331,7 +331,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
         sendMessagesToLogger({
           type: "JsInstrument.ObjectProperty",
           url: window.location.href,
-          stack: stack.slice(1, 3),
+          stack: stack,
           data: {
             symbol: `${objectName}.${propertyName}`,
             value: serializeObject(value),
