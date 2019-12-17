@@ -71,7 +71,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
   const cBanned = new Map() as CanvasCallMap;
   const cStyles = new Map() as CanvasCallMap;
   for (const item of canvasCalls) {
-    const { url, data } = <JsInstrumentEvent>item;
+    const { url, data } = item as JsInstrumentEvent;
     const url_host = parse(url).hostname;
     const script_url = getScriptUrl(item);
     const { symbol, operation, value } = data;
@@ -82,7 +82,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     if (CANVAS_READ_FUNCS.includes(symbol) && operation === "call") {
       if (
         symbol === "CanvasRenderingContext2D.getImageData" &&
-        isGetImageDataDimsTooSmall(data["arguments"])
+        isGetImageDataDimsTooSmall(data.arguments)
       ) {
         continue;
       }
@@ -90,7 +90,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
         ? cReads.get(script_url).add(url_host)
         : cReads.set(script_url, new Set([url_host]));
     } else if (CANVAS_WRITE_FUNCS.includes(symbol)) {
-      const text = getCanvasText(data["arguments"]);
+      const text = getCanvasText(data.arguments);
       // TODO
       // if (text.length < 10) {
       // }
@@ -168,8 +168,8 @@ export const getCanvasFp = (
   }
   return {
     fingerprinters: Array.from(fingerprinters),
-    texts: serializeCanvasCallMap(cTexts),
-    styles: serializeCanvasCallMap(cStyles)
+    styles: serializeCanvasCallMap(cStyles),
+    texts: serializeCanvasCallMap(cTexts)
   };
 };
 
@@ -186,7 +186,7 @@ export const getCanvasFontFp = jsCalls => {
     const { symbol, value } = item.data;
     if (CANVAS_FONT.includes(symbol)) {
       if (symbol.indexOf("measureText") > -1) {
-        const textToMeasure = item.data["arguments"][0];
+        const textToMeasure = item.data.arguments[0];
         textMeasure.has(script_url)
           ? textMeasure.get(script_url).add(textToMeasure)
           : textMeasure.set(script_url, new Set([textToMeasure]));

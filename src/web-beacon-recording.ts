@@ -1,6 +1,6 @@
 import {
-  PuppeteerBlocker,
-  fromPuppeteerDetails
+  fromPuppeteerDetails,
+  PuppeteerBlocker
 } from "@cliqz/adblocker-puppeteer";
 import fs from "fs";
 import path from "path";
@@ -32,7 +32,7 @@ const blockerOptions = {
 
 // setup easyprivacy matching
 // https://github.com/cliqz-oss/adblocker/issues/123
-let blockers = {
+const blockers = {
   "easyprivacy.txt": PuppeteerBlocker.parse(
     fs.readFileSync(
       path.join(__dirname, "../data/blocklists/easyprivacy.txt"),
@@ -55,15 +55,13 @@ const decodeURLParams = search => {
     const split = hash.indexOf("=");
 
     if (split < 0) {
-      return Object.assign(params, {
-        [hash]: null
-      });
+      return { ...params, [hash]: null };
     }
 
     const key = hash.slice(0, split);
     const val = hash.slice(split + 1);
 
-    return Object.assign(params, { [key]: decodeURIComponent(val) });
+    return { ...params, [key]: decodeURIComponent(val) };
   }, {});
 };
 const parseJSONSafely = str => {
@@ -91,7 +89,7 @@ export const setupWebBeaconInspector = async (
       } = blocker.match(fromPuppeteerDetails(request));
 
       if (match) {
-        let stack = [
+        const stack = [
           {
             fileName: request.frame().url(),
             source: `requested from ${request
@@ -103,19 +101,21 @@ export const setupWebBeaconInspector = async (
         let query = null;
         if (parsedUrl.query) {
           query = decodeURLParams(parsedUrl.query);
-          for (let param in query) {
-            query[param] = parseJSONSafely(query[param]);
+          for (const param in query) {
+            if (query.hasOwnProperty(param)) {
+              query[param] = parseJSONSafely(query[param]);
+            }
           }
         }
         eventDataHandler({
-          type: "TrackingRequest",
-          url: request.url(),
-          stack: stack,
           data: {
-            query: query,
             filter: filter.toString(),
-            listName: listName
-          }
+            listName,
+            query
+          },
+          stack,
+          type: "TrackingRequest",
+          url: request.url()
         });
         if (blockRequests) {
           request.abort();

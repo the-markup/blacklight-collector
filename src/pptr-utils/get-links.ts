@@ -1,13 +1,13 @@
 import { LinkObject } from "../types";
 
 export const getLinks = async (page): Promise<LinkObject[]> => {
-  return await page.evaluate(() => {
+  return page.evaluate(() => {
     return [].map
       .call(document.querySelectorAll("a[href]"), a => {
         return {
           href: a.href.split("#")[0], // link without fragment
-          inner_text: a.innerText,
-          inner_html: a.innerHTML.trim()
+          inner_html: a.innerHTML.trim(),
+          inner_text: a.innerText
         };
       })
       .filter(link => {

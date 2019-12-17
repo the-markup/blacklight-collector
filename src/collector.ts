@@ -1,22 +1,28 @@
-import puppeteer from "puppeteer";
-import { getLogger } from "./logger";
-import { clearDir } from "./utils";
-import { join } from "path";
-import url from "url";
+/* tslint:disable:no-submodule-imports object-literal-sort-keys*/
+import { writeFileSync } from "fs";
+import { sampleSize } from "lodash";
 import os from "os";
+import { join } from "path";
+import puppeteer from "puppeteer";
+import PuppeteerHar from "puppeteer-har";
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 import devices from "puppeteer/DeviceDescriptors";
-import PuppeteerHar from "puppeteer-har";
-import { setupBlacklightInspector } from "./inspector";
-import { setupDataExfiltrationInspector } from "./data-exfiltration";
-import { writeFileSync } from "fs";
-import { fillForms, autoScroll } from "./pptr-utils/interaction-utils";
-import { defaultPuppeteerBrowserOptions } from "./pptr-utils/default";
-import { generateReport } from "./parser";
-import { getLinks, dedupLinks, getSocialLinks } from "./pptr-utils/get-links";
-import { sampleSize } from "lodash";
-import { setupWebBeaconInspector } from "./web-beacon-recording";
 import { parse } from "tldts";
+import url from "url";
+import {
+  captureBrowserCookies,
+  clearCookiesCache,
+  setupHttpCookieCapture
+} from "./cookie-collector";
+import { setupDataExfiltrationInspector } from "./data-exfiltration";
+import { setupBlacklightInspector } from "./inspector";
+import { getLogger } from "./logger";
+import { generateReport } from "./parser";
+import { defaultPuppeteerBrowserOptions } from "./pptr-utils/default";
+import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
+import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
+import { clearDir } from "./utils";
+import { setupWebBeaconInspector } from "./web-beacon-recording";
 export const collector = async ({
   inUrl,
   outDir,
@@ -26,6 +32,8 @@ export const collector = async ({
   captureHar = true,
   captureLinks = false,
   enableAdBlock = false,
+  clearCache = false,
+
   saveBrowserProfile = false,
 
   quiet = true,
@@ -44,14 +52,15 @@ export const collector = async ({
   };
   const browser = await puppeteer.launch(options);
 
-  let output: any = {
-    title: title,
+  const output: any = {
+    title,
     uri_ins: inUrl,
     uri_dest: null,
     uri_redirects: null,
     secure_connection: {},
     host: url.parse(inUrl).hostname,
     config: {
+      clearCache,
       captureHar,
       captureLinks,
       enableAdBlock,
@@ -61,7 +70,7 @@ export const collector = async ({
     },
     script: {
       host: os.hostname(),
-      //TODO:
+      // TODO:
       // version: {
       // npm: testing ? require("./package.json").version :require("./package.json").version,
       // commit: null
@@ -81,7 +90,7 @@ export const collector = async ({
     end_time: null
   };
 
-  let hosts = {
+  const hosts = {
     requests: {
       first_party: new Set(),
       third_party: new Set()
@@ -112,9 +121,12 @@ export const collector = async ({
       }
     }
   });
-
+  if (clearCache) {
+    await clearCookiesCache(page);
+  }
   await setupBlacklightInspector(page, event => logger.warn(event));
   await setupDataExfiltrationInspector(page, event => logger.warn(event));
+  await setupHttpCookieCapture(page, event => logger.warn(event));
   await setupWebBeaconInspector(
     page,
     event => logger.warn(event),
@@ -129,7 +141,7 @@ export const collector = async ({
     });
   }
 
-  let page_response = await page.goto(inUrl, {
+  const page_response = await page.goto(inUrl, {
     timeout: 0,
     waitUntil: "networkidle2"
   });
@@ -160,7 +172,7 @@ export const collector = async ({
 
   output.uri_dest = page.url();
 
-  let browse_links = sampleSize(outputLinks.first_party, numPages);
+  const browse_links = sampleSize(outputLinks.first_party, numPages);
   output.browsing_history = [output.uri_dest].concat(
     browse_links.map(l => l.href)
   );
@@ -175,10 +187,11 @@ export const collector = async ({
     duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
     await autoScroll(page);
   }
-
+  await captureBrowserCookies(page, outDir);
   if (captureHar) {
     await har.stop();
   }
+
   await browser.close();
 
   const links = dedupLinks(duplicatedLinks);
@@ -207,7 +220,7 @@ export const collector = async ({
     output.social = getSocialLinks(links);
   }
 
-  let event_data_all: any = await new Promise((resolve, reject) => {
+  const event_data_all: any = await new Promise((resolve, reject) => {
     logger.query(
       {
         start: 0,
@@ -215,17 +228,20 @@ export const collector = async ({
         limit: Infinity
       },
       (err, results) => {
-        if (err) return reject(err);
+        if (err) {
+          return reject(err);
+        }
         return resolve(results.file);
       }
     );
   });
 
   // filter only events with type set
-  let event_data = event_data_all.filter(event => {
+  const event_data = event_data_all.filter(event => {
     return !!event.message.type;
   });
   const reports = [
+    "cookies",
     "behaviour_event_listeners",
     "data_exfiltration",
     "canvas_fingerprinters",
@@ -233,11 +249,11 @@ export const collector = async ({
     "fingerprintable_api_calls",
     "web_beacons"
   ].reduce((acc, cur) => {
-    acc[cur] = generateReport(cur, event_data);
+    acc[cur] = generateReport(cur, event_data, outDir, inUrl);
     return acc;
   }, {});
 
-  let json_dump = JSON.stringify({ ...output, reports }, null, 2);
+  const json_dump = JSON.stringify({ ...output, reports }, null, 2);
   writeFileSync(join(outDir, "inspection.json"), json_dump);
   return { ...output, reports };
 };

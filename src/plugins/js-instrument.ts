@@ -1,3 +1,4 @@
+/* tslint:disable:only-arrow-functions prefer-for-of */
 import { BlacklightEvent } from "../types";
 declare global {
   interface Object {
@@ -20,7 +21,9 @@ interface LogSettings {
 export function jsInstruments(loggerHandler, StackTrace) {
   let inLog = false;
   const sendMessagesToLogger = (msg: BlacklightEvent) => {
-    if (inLog) return;
+    if (inLog) {
+      return;
+    }
     loggerHandler(msg);
     inLog = false;
   };
@@ -30,17 +33,17 @@ export function jsInstruments(loggerHandler, StackTrace) {
     property: string
   ) {
     return new Proxy(object[property], {
-      apply: function(target, thisValue, args) {
+      apply(target, thisValue, args) {
         const stack = StackTrace.getSync({ offline: true });
         sendMessagesToLogger({
-          type: "JsInstrument.FunctionProxy",
-          url: window.location.href,
-          stack: stack,
           data: {
+            operation: "call",
             symbol: `${objectName}.${property}`,
-            value: serializeObject(args, true),
-            operation: "call"
-          }
+            value: serializeObject(args, true)
+          },
+          stack,
+          type: "JsInstrument.FunctionProxy",
+          url: window.location.href
         });
         return target.call(thisValue, ...args);
       }
@@ -131,18 +134,18 @@ export function jsInstruments(loggerHandler, StackTrace) {
       });
     } catch (error) {
       sendMessagesToLogger({
-        type: "Error.JsInstrument",
-        url: window.location.href,
-        stack: [],
         data: {
           message: `Serialization error: ${error}`
-        }
+        },
+        stack: [],
+        type: "Error.JsInstrument",
+        url: window.location.href
       });
 
       return "Serialization error: " + error;
     }
   };
-
+  // tslint:
   Object.getPropertyDescriptor = function(subject, name) {
     let pd = Object.getOwnPropertyDescriptor(subject, name);
     let proto = Object.getPrototypeOf(subject);
@@ -188,15 +191,15 @@ export function jsInstruments(loggerHandler, StackTrace) {
       const args = Array.prototype.slice.call(arguments, 0);
       const serialArgs = args.map(arg => serializeObject(arg, serialize));
       sendMessagesToLogger({
-        type: "JsInstrument.Function",
-        url: window.location.href,
-        stack: stack,
         data: {
+          arguments: serialArgs,
           operation: "call",
-          value: "",
           symbol: `${objectName}.${methodName}`,
-          arguments: serialArgs
-        }
+          value: ""
+        },
+        stack,
+        type: "JsInstrument.Function",
+        url: window.location.href
       });
       return func.apply(this, arguments);
     };
@@ -211,15 +214,15 @@ export function jsInstruments(loggerHandler, StackTrace) {
     const origDescriptor = Object.getPropertyDescriptor(object, propertyName);
     if (!origDescriptor) {
       sendMessagesToLogger({
-        type: "Error.JsInstrument",
-        url: window.location.href,
-        stack: [],
         data: {
           message: "Property descriptor not found for",
+          object,
           objectName,
-          propertyName,
-          object
-        }
+          propertyName
+        },
+        stack: [],
+        type: "Error.JsInstrument",
+        url: window.location.href
       });
       return;
     }
@@ -243,15 +246,15 @@ export function jsInstruments(loggerHandler, StackTrace) {
           );
 
           sendMessagesToLogger({
-            type: "JsInstrument.ObjectProperty",
-            url: window.location.href,
-            stack: stack,
             data: {
-              symbol: objectName + "." + propertyName,
-              value: "",
+              logSettings,
               operation: "get(failed)",
-              logSettings
-            }
+              symbol: objectName + "." + propertyName,
+              value: ""
+            },
+            stack,
+            type: "JsInstrument.ObjectProperty",
+            url: window.location.href
           });
           return;
         }
@@ -269,14 +272,14 @@ export function jsInstruments(loggerHandler, StackTrace) {
           return origProperty;
         } else {
           sendMessagesToLogger({
-            type: "JsInstrument.ObjectProperty",
-            url: window.location.href,
-            stack: stack,
             data: {
+              operation: "get",
               symbol: `${objectName}.${propertyName}`,
-              value: serializeObject(origProperty),
-              operation: "get"
-            }
+              value: serializeObject(origProperty)
+            },
+            stack,
+            type: "JsInstrument.ObjectProperty",
+            url: window.location.href
           });
           return origProperty;
         }
@@ -291,14 +294,14 @@ export function jsInstruments(loggerHandler, StackTrace) {
             typeof originalValue === "object")
         ) {
           sendMessagesToLogger({
-            type: "JsInstrument.ObjectProperty",
-            url: window.location.href,
-            stack: stack,
             data: {
+              operation: "set(prevented)",
               symbol: `${objectName}.${propertyName}`,
-              value: serializeObject(value),
-              operation: "set(prevented)"
-            }
+              value: serializeObject(value)
+            },
+            stack,
+            type: "JsInstrument.ObjectProperty",
+            url: window.location.href
           });
           return value;
         }
@@ -318,25 +321,25 @@ export function jsInstruments(loggerHandler, StackTrace) {
           inLog = false;
         } else {
           sendMessagesToLogger({
-            type: "Error.JsInstrument",
-            url: window.location.href,
-            stack: stack,
             data: {
               message: `Property descriptor for, ${objectName}.${propertyName}, doesn't have setter or value?`
-            }
+            },
+            stack,
+            type: "Error.JsInstrument",
+            url: window.location.href
           });
 
           return value;
         }
         sendMessagesToLogger({
-          type: "JsInstrument.ObjectProperty",
-          url: window.location.href,
-          stack: stack,
           data: {
+            operation: "set",
             symbol: `${objectName}.${propertyName}`,
-            value: serializeObject(value),
-            operation: "set"
-          }
+            value: serializeObject(value)
+          },
+          stack,
+          type: "JsInstrument.ObjectProperty",
+          url: window.location.href
         });
         return returnValue;
       }
@@ -379,12 +382,12 @@ export function jsInstruments(loggerHandler, StackTrace) {
         instrumentObjectProperty(object, objectName, property, logSettings);
       } catch (error) {
         sendMessagesToLogger({
-          type: "Error.JsInstrument",
-          url: window.location.href,
-          stack: [],
           data: {
             message: error
-          }
+          },
+          stack: [],
+          type: "Error.JsInstrument",
+          url: window.location.href
         });
         console.log(error);
       }

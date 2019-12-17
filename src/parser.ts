@@ -1,19 +1,20 @@
 import { getDomain } from "tldts";
-import { groupBy, getScriptUrl } from "./utils";
-import { getCanvasFp, getCanvasFontFp } from "./canvas-fingerprinting";
+import { getCanvasFontFp, getCanvasFp } from "./canvas-fingerprinting";
+import { loadBrowserCookies, matchCookiesToEvents } from "./cookie-collector";
 import {
-  BlacklightEvent,
-  FINGERPRINTABLE_WINDOW_APIS,
   BEHAVIOUR_TRACKING_EVENTS,
-  JsInstrumentEvent,
-  DataExfiltrationEvent
+  BlacklightEvent,
+  DataExfiltrationEvent,
+  FINGERPRINTABLE_WINDOW_APIS,
+  JsInstrumentEvent
 } from "./types";
+import { getScriptUrl, groupBy } from "./utils";
 
-export const generateReport = function(reportType, messages) {
+export const generateReport = (reportType, messages, dataDir, url) => {
   const eventData = getEventData(reportType, messages);
   switch (reportType) {
     case "cookies":
-      return {};
+      return reportCookieEvents(eventData, dataDir, url);
     case "data_exfiltration":
       return reportDataExiltration(eventData);
     case "behaviour_event_listeners":
@@ -37,10 +38,12 @@ const filterByEvent = (messages, typePattern) => {
       m.message.type.includes(typePattern) && !m.message.type.includes("Error")
   );
 };
-const getEventData = function(reportType, messages): BlacklightEvent[] {
+const getEventData = (reportType, messages): BlacklightEvent[] => {
   let filtered = [];
   switch (reportType) {
     case "cookies":
+      filtered = filterByEvent(messages, "JsInstrument");
+      filtered = filtered.concat(filterByEvent(messages, "Cookie.HTTP"));
       break;
     case "data_exfiltration":
       filtered = filterByEvent(messages, "DataExfiltration");
@@ -59,7 +62,6 @@ const getEventData = function(reportType, messages): BlacklightEvent[] {
       break;
     case "web_beacons":
       filtered = filterByEvent(messages, "TrackingRequest");
-
       break;
     default:
       return [];
@@ -79,18 +81,18 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
           BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0])
         );
         parsedEvents.push({
-          url: event.url,
-          stack: event.stack,
           data: {
-            name: values[0],
-            event_group: eventGroup.length ? eventGroup[0] : ""
-          }
+            event_group: eventGroup.length ? eventGroup[0] : "",
+            name: values[0]
+          },
+          stack: event.stack,
+          url: event.url
         });
       }
     }
   });
   const output = parsedEvents.reduce((acc, cur) => {
-    const script = getScriptUrl(<BlacklightEvent>cur);
+    const script = getScriptUrl(cur as BlacklightEvent);
     const data = cur.data;
     if (!script) {
       return acc;
@@ -110,10 +112,10 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
   }, {});
 
   const serializable = {};
-  for (let [event_group, script_obj] of Object.entries(output)) {
+  for (const [event_group, script_obj] of Object.entries(output)) {
     serializable[event_group] = {};
-    for (let [script, events] of Object.entries(script_obj)) {
-      serializable[event_group][script] = Array.from(<any>events);
+    for (const [script, events] of Object.entries(script_obj)) {
+      serializable[event_group][script] = Array.from(events as any);
     }
   }
   return serializable;
@@ -127,6 +129,15 @@ export const reportCanvasFontFingerprinters = (
   eventData: BlacklightEvent[]
 ) => {
   return getCanvasFontFp(eventData);
+};
+
+export const reportCookieEvents = (
+  eventData: BlacklightEvent[],
+  dataDir,
+  url
+) => {
+  const browser_cookies = loadBrowserCookies(dataDir);
+  return matchCookiesToEvents(browser_cookies, eventData, url);
 };
 
 const reportDataExiltration = (eventData: BlacklightEvent[]) => {
@@ -150,13 +161,13 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
       ).filter(key => FINGERPRINTABLE_WINDOW_APIS[key].includes(data.symbol));
       parsedEvents.push({
         api_group: windowApiGroup[0],
-        symbol: data.symbol,
-        stack: event.stack
+        stack: event.stack,
+        symbol: data.symbol
       });
     }
   });
   const output = parsedEvents.reduce((acc, cur) => {
-    const script = getScriptUrl(<BlacklightEvent>cur);
+    const script = getScriptUrl(cur as BlacklightEvent);
     if (!script) {
       return acc;
     }
@@ -175,10 +186,10 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
   }, {});
 
   const serializable = {};
-  for (let [api_group, script_obj] of Object.entries(output)) {
+  for (const [api_group, script_obj] of Object.entries(output)) {
     serializable[api_group] = {};
-    for (let [script, events] of Object.entries(script_obj)) {
-      serializable[api_group][script] = Array.from(<any>events);
+    for (const [script, events] of Object.entries(script_obj)) {
+      serializable[api_group][script] = Array.from(events as any);
     }
   }
   return serializable;

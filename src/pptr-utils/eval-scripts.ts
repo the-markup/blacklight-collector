@@ -1,13 +1,15 @@
+// tslint:disable-next-line:only-arrow-functions
 export function injectPlugins(
   jsInstruments: any,
   observerScripts: any,
   StackTraceJS: any,
   testing: boolean
 ) {
+  // tslint:disable-next-line:only-arrow-functions
   function sendMessagesToLogger(messages: any) {
     (window as any).reportEvent(JSON.stringify(messages));
   }
-  //WARN: This script makes the assumption that you have injected StackTrace js to the page context
+  // WARN: This script makes the assumption that you have injected StackTrace js to the page context
   const {
     instrumentFunctionViaProxy,
     instrumentObject,
@@ -27,8 +29,8 @@ export function injectPlugins(
     console.log(`Initializing ${script.name ? script.name : "anonymous"}`);
     script({
       instrumentFunctionViaProxy,
-      instrumentObjectProperty,
-      instrumentObject
+      instrumentObject,
+      instrumentObjectProperty
     });
   }
 }

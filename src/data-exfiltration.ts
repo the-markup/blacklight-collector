@@ -1,7 +1,7 @@
-import { isBase64 } from "./utils";
 import { Page, Request } from "puppeteer";
 import { DEFAULT_INPUT_VALUES } from "./pptr-utils/interaction-utils";
 import { BlacklightEvent } from "./types";
+import { isBase64 } from "./utils";
 const ts = Object.values(DEFAULT_INPUT_VALUES);
 
 export const setupDataExfiltrationInspector = async (
@@ -9,7 +9,7 @@ export const setupDataExfiltrationInspector = async (
   eventDataHandler: (event: BlacklightEvent) => void
 ) => {
   await page.on("request", (request: Request) => {
-    let stack = [
+    const stack = [
       {
         fileName: request.frame().url(),
         source: `RequestHandler`
@@ -18,32 +18,32 @@ export const setupDataExfiltrationInspector = async (
     if (request.method() === "POST") {
       try {
         let filter = [];
-        if (isBase64(request.postData())) {
-          filter = ts.filter(t => atob(request.postData()).indexOf(t) > -1);
-        } else {
-          filter = ts.filter(t => request.postData().indexOf(t) > -1);
-        }
+        filter = ts.filter(t =>
+          isBase64(request.postData())
+            ? atob(request.postData()).indexOf(t) > -1
+            : request.postData().indexOf(t) > -1
+        );
         if (filter.length > 0) {
           eventDataHandler({
-            type: `DataExfiltration`,
-            url: request.frame().url(),
-            stack,
             data: {
-              post_request_url: request.url(),
-              post_data: request.postData(),
               base_64: isBase64(request.postData()),
-              filter
-            }
+              filter,
+              post_data: request.postData(),
+              post_request_url: request.url()
+            },
+            stack,
+            type: `DataExfiltration`,
+            url: request.frame().url()
           });
         }
       } catch (error) {
         eventDataHandler({
-          type: `Error.DataExfiltration`,
-          url: request.frame().url(),
-          stack,
           data: {
             message: JSON.stringify(error)
-          }
+          },
+          stack,
+          type: `Error.DataExfiltration`,
+          url: request.frame().url()
         });
       }
     }

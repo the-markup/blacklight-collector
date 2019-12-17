@@ -1,10 +1,10 @@
 import { Page } from "puppeteer";
 export const DEFAULT_INPUT_VALUES = {
-  email: "blacklight@themarkup.org",
   date: "11/01/2019",
+  email: "blacklight@themarkup.org",
   password: "SUPERSECRETP@SSW0RD",
-  tel: "2121112222",
   search: "TheMarkup",
+  tel: "2121112222",
   text: "IdaTarbell",
   url: "https://themarkup.org"
 };
@@ -14,7 +14,7 @@ export const fillForms = async (
   inputText = DEFAULT_INPUT_VALUES
 ) => {
   const elements = await page.$$("input");
-  let count = 0;
+  const count = 0;
   for (const el of elements) {
     try {
       if (count > 100) {
@@ -25,13 +25,13 @@ export const fillForms = async (
 
       if (pValue === "submit" || pValue === "hidden") {
         continue;
-      } else if (Object.keys(inputText).includes(<string>pValue)) {
+      } else if (Object.keys(inputText).includes(pValue as string)) {
         await el.focus();
         await page.keyboard.press("Tab", {
           delay: 100
         });
         await el.press("Backspace");
-        await page.keyboard.type(inputText[<string>pValue]);
+        await page.keyboard.type(inputText[pValue as string]);
       }
       await page.waitFor(100);
     } catch (error) {
@@ -39,16 +39,16 @@ export const fillForms = async (
     }
   }
 };
-export const autoScroll = async function(page) {
+export const autoScroll = async page => {
   await page.evaluate(async () => {
     return new Promise((resolve, reject) => {
       try {
-        var totalHeight = 0;
-        var distance = 150;
-        var COUNT_MAX = 5;
-        var count = 0;
-        var timer = setInterval(() => {
-          var scrollHeight = document.body.scrollHeight;
+        let totalHeight = 0;
+        const distance = 150;
+        const COUNT_MAX = 5;
+        let count = 0;
+        const timer = setInterval(() => {
+          const scrollHeight = document.body.scrollHeight;
           window.scrollBy(0, distance);
           totalHeight += distance;
           count += 1;

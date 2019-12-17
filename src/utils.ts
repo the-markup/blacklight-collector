@@ -1,6 +1,6 @@
 import fs from "fs";
 import { join } from "path";
-import { getPublicSuffix, getDomain } from "tldts";
+import { getDomain, getPublicSuffix } from "tldts";
 import { BlacklightEvent } from "./types";
 export const getFirstPartyPs = firstPartyUri => {
   return getPublicSuffix(firstPartyUri);
@@ -10,10 +10,10 @@ export const isFirstParty = (firstPartyPs, testUri) => {
   return firstPartyPs === testUri;
 };
 
-const deleteFolderRecursive = function(path) {
+const deleteFolderRecursive = path => {
   if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(function(file) {
-      var curPath = path + "/" + file;
+    fs.readdirSync(path).forEach(file => {
+      const curPath = path + "/" + file;
       if (fs.lstatSync(curPath).isDirectory()) {
         // recurse
         deleteFolderRecursive(curPath);
@@ -48,24 +48,24 @@ export const groupBy = key => array =>
     return objectsByKeyValue;
   }, {});
 
-export function serializeCanvasCallMap(inputMap) {
-  let obj = {};
+export const serializeCanvasCallMap = inputMap => {
+  const obj = {};
 
-  inputMap.forEach(function(value, key) {
+  inputMap.forEach((value, key) => {
     obj[key] = Array.from(value);
   });
 
   return obj;
-}
-export function mapToObj(inputMap) {
-  let obj = {};
+};
+export const mapToObj = inputMap => {
+  const obj = {};
 
-  inputMap.forEach(function(value, key) {
+  inputMap.forEach((value, key) => {
     obj[key] = value;
   });
 
   return obj;
-}
+};
 // Go through the stack trace and get the first filename.
 // If no fileName is found return the source of the last function in
 // the trace
@@ -112,13 +112,13 @@ export const getStackType = (stack, firstPartyDomain) => {
     return "mixed";
   }
 };
-export function isBase64(str) {
+export const isBase64 = str => {
   if (str === "" || str.trim() === "") {
     return false;
   }
   try {
-    return btoa(atob(str)) == str;
+    return btoa(atob(str)) === str;
   } catch (err) {
     return false;
   }
-}
+};

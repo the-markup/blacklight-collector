@@ -142,8 +142,8 @@ it.only("can group fingerprintable window objects", async () => {
   await setupBlacklightInspector(page, e => rows.push({ message: e }));
   await page.goto(PROPERTIES_URL, { waitUntil: "networkidle0" });
   const output = await generateReport("fingerprintable_api_calls", rows);
+  await browser.close();
   expect(output["NAVIGATOR"]).toEqual(NAVIGATOR_SYMBOLS);
   expect(output["SCREEN"]).toEqual(SCREEN_SYMBOLS);
   expect(output["MEDIA_DEVICES"]).toEqual(MEDIA_DEVICES_SYMBOLS);
-  await browser.close();
 });

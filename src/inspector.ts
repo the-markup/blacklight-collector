@@ -1,11 +1,12 @@
-import { Page } from "puppeteer";
 import { readFileSync } from "fs";
-import { injectPlugins } from "./pptr-utils/eval-scripts";
-import { jsInstruments } from "./plugins/js-instrument";
+import { Page } from "puppeteer";
 import { instrumentAddEventListener } from "./plugins/add-event-listener";
 import { instrumentFingerprintingApis } from "./plugins/fingerprinting-apis";
+import { jsInstruments } from "./plugins/js-instrument";
+import { injectPlugins } from "./pptr-utils/eval-scripts";
 import { BlacklightEvent } from "./types";
 
+// tslint:disable-next-line:only-arrow-functions
 function getPageScriptAsString(observers, testing = false) {
   let observersString = "";
   let observersNameString = "";
@@ -18,12 +19,12 @@ function getPageScriptAsString(observers, testing = false) {
   }))`;
 }
 
-export const setupBlacklightInspector = async function(
+export const setupBlacklightInspector = async (
   page: Page,
   eventDataHandler: (event: BlacklightEvent) => void,
   testing = false,
   plugins = [instrumentAddEventListener, instrumentFingerprintingApis]
-) {
+) => {
   const stackTraceHelper = readFileSync(
     require.resolve("stacktrace-js/dist/stacktrace.js"),
     "utf8"
@@ -37,12 +38,12 @@ export const setupBlacklightInspector = async function(
       eventDataHandler(parsed);
     } catch (error) {
       eventDataHandler({
-        type: `Error.BlacklightInspector`,
-        url: "",
-        stack: [],
         data: {
           message: JSON.stringify(eventData)
-        }
+        },
+        stack: [],
+        type: `Error.BlacklightInspector`,
+        url: ""
       });
     }
   });

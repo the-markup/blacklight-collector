@@ -1,3 +1,4 @@
+/* tslint:disable:prefer-for-of only-arrow-functions */
 export function instrumentFingerprintingApis({
   instrumentObjectProperty,
   instrumentObject,

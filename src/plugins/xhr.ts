@@ -1,3 +1,4 @@
+/* tslint:disable:only-arrow-functions */
 export function instrumentNetworkRequestApis({
   instrumentObject,
   instrumentFunctionViaProxy

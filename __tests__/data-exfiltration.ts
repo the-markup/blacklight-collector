@@ -22,30 +22,6 @@ const INPUT_VALUES_RESULT = [
   { type: "submit", value: "Submit", name: "" }
 ];
 
-const EVENT_LISTENER_RESULT = new Map()
-  .set(
-    "KEYBOARD",
-    new Set([
-      "http://localhost:8125/shared/event-listener.js",
-      "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    ])
-  )
-  .set(
-    "MOUSE",
-    new Set([
-      "http://localhost:8125/shared/event-listener.js",
-      "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    ])
-  )
-  .set("SENSOR", new Set(["http://localhost:8125/shared/event-listener.js"]))
-  .set(
-    "TOUCH",
-    new Set([
-      "http://localhost:8125/shared/event-listener.js",
-      "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    ])
-  );
-
 const DATA_EXFILTRATION = [
   {
     type: "DataExfiltration",

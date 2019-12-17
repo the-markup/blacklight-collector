@@ -68,6 +68,7 @@ export interface LinkObject {
 }
 
 export const BEHAVIOUR_TRACKING_EVENTS = {
+  KEYBOARD: ["keydown", "keypress", "keyup", "input"],
   MOUSE: [
     "click",
     "mousedown",
@@ -77,35 +78,11 @@ export const BEHAVIOUR_TRACKING_EVENTS = {
     "dblclick",
     "scroll"
   ],
-  KEYBOARD: ["keydown", "keypress", "keyup", "input"],
-  TOUCH: ["touchmove", "touchstart", "touchend", "touchcancel"],
-  SENSOR: ["devicemotion", "deviceorientation", "orientationchange"]
+  SENSOR: ["devicemotion", "deviceorientation", "orientationchange"],
+  TOUCH: ["touchmove", "touchstart", "touchend", "touchcancel"]
 };
 
 export const FINGERPRINTABLE_WINDOW_APIS = {
-  NAVIGATOR: [
-    "window.navigator.appCodeName",
-    "window.navigator.appName",
-    "window.navigator.appVersion",
-    "window.navigator.clipboard",
-    "window.navigator.cookieEnabled",
-    "window.navigator.doNotTrack",
-    "window.navigator.geolocation",
-    "window.navigator.language",
-    "window.navigator.languages",
-    "window.navigator.onLine",
-    "window.navigator.platform",
-    "window.navigator.product",
-    "window.navigator.productSub",
-    "window.navigator.userAgent",
-    "window.navigator.vendorSub",
-    "window.navigator.vendor"
-  ],
-  BATTERY: ["window.navigator.getBattery", "window.BatteryManager"],
-  PLUGIN: ["window.navigator.plugins"],
-  MEDIA_DEVICES: ["window.navigator.mediaDevices.enumerateDevices"],
-  SCREEN: ["window.screen.pixelDepth", "window.screen.colorDepth"],
-  MIME: ["window.navigator.mimeTypes"],
   AUDIO: [
     "AudioContext.createOscillator",
     "AudioContext.createAnalyser",
@@ -129,7 +106,7 @@ export const FINGERPRINTABLE_WINDOW_APIS = {
     "ScriptProcessorNode.onaudioprocess",
     "ScriptProcessorNode.disconnect"
   ],
-  WEBRTC: ["RTCPeerConnection"],
+  BATTERY: ["window.BatteryManager", "window.navigator.getBattery"],
   CANVAS: [
     "CanvasRenderingContext2D.getImageData",
     "CanvasRenderingContext2D.fillText",
@@ -137,5 +114,28 @@ export const FINGERPRINTABLE_WINDOW_APIS = {
     "CanvasRenderingContext2D.save",
     "HTMLCanvasElement.toDataURL",
     "HTMLCanvasElement.addEventListener"
-  ]
+  ],
+  MEDIA_DEVICES: ["window.navigator.mediaDevices.enumerateDevices"],
+  MIME: ["window.navigator.mimeTypes"],
+  NAVIGATOR: [
+    "window.navigator.appCodeName",
+    "window.navigator.appName",
+    "window.navigator.appVersion",
+    "window.navigator.clipboard",
+    "window.navigator.cookieEnabled",
+    "window.navigator.doNotTrack",
+    "window.navigator.geolocation",
+    "window.navigator.language",
+    "window.navigator.languages",
+    "window.navigator.onLine",
+    "window.navigator.platform",
+    "window.navigator.product",
+    "window.navigator.productSub",
+    "window.navigator.userAgent",
+    "window.navigator.vendorSub",
+    "window.navigator.vendor"
+  ],
+  PLUGIN: ["window.navigator.plugins"],
+  SCREEN: ["window.screen.pixelDepth", "window.screen.colorDepth"],
+  WEBRTC: ["RTCPeerConnection"]
 };
