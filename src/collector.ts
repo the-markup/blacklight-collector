@@ -33,9 +33,7 @@ export const collector = async ({
   captureLinks = false,
   enableAdBlock = false,
   clearCache = false,
-
   saveBrowserProfile = false,
-
   quiet = true,
   numPages = 3
 }) => {

@@ -9,6 +9,8 @@
 
 `node example.js`.
 
+Results are stored in `example-result` by default
+
 `collector` takes the following argumnents:
 
 - `inUrl` **required**
@@ -27,6 +29,14 @@
   - Boolean flag to save the HTTP requests to a file in the HAR(Http Archive Format).
   - _TIP:_ Firefox lets you import a HAR file and visualize it using the network tab in the developer tools
   - You can also view it [here](https://toolbox.googleapps.com/apps/har_analyzer/)
+- `captureLinks`
+  - default: false
+  - Save first and third party links from the pages
+- `enableAdBlock`
+  - default: false
+- `clearCache`
+  - default: false
+  - Clear the browser cookies and cache
 - `saveBrowsingProfile`
   - default: false
   - Lets you optionally save the browsing profile to the `outDir`
