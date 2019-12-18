@@ -1,6 +1,6 @@
 {
   "name": "@themarkup/rowdypenguin",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.6",
   "description": "",
   "main": "build/index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:tslint": "tslint -t verbose --fix --project .",
     "prepare": "run-s build test",
-    "publish": "--accesspublic --tag beta",
+    "publish": "publish --access public --tag beta",
     "publish-please": "publish-please",
     "prepublishOnly": "publish-please guard",
     "version-beta": "git stash && standard-version --prerelease beta",
