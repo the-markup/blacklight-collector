@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.1-beta.10](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.9...@themarkup/blacklight@0.0.1-beta.10) (2019-12-18)
+
 ### [0.0.1-beta.9](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.8...@themarkup/blacklight@0.0.1-beta.9) (2019-12-18)
 
 ### [0.0.1-beta.8](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.7...@themarkup/blacklight@0.0.1-beta.8) (2019-12-18)
