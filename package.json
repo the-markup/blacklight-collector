@@ -1,7 +1,7 @@
 {
-  "name": "@themarkup/blacklight",
+  "name": "@themarkup/rowdypenguin",
   "version": "0.0.0",
-  "description": "A tool for inspecting how a website's third parties collect information about you",
+  "description": "",
   "main": "build/index.js",
   "scripts": {
     "clean": "rimraf build *.log",
@@ -14,7 +14,13 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:tslint": "tslint -t verbose --fix --project .",
-    "prepare": "run-s build test"
+    "prepare": "run-s build test",
+    "publish-please": "publish-please",
+    "prepublishOnly": "publish-please guard",
+    "version-beta": "git stash && standard-version --prerelease beta",
+    "version-major": "git stash && standard-version --release-as major",
+    "version-minor": "git stash && standard-version --release-as minor",
+    "version-patch": "git stash && standard-version --release-as patch"
   },
   "repository": {
     "type": "git",
@@ -52,6 +58,8 @@
     "jest-dev-server": "^4.3.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.19.1",
+    "publish-please": "^5.5.1",
+    "standard-version": "^7.0.1",
     "ts-jest": "^24.2.0",
     "ts-node": "^8.5.4",
     "tslint": "^5.20.1",

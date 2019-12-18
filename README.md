@@ -1,6 +1,3 @@
-## Blacklight
-
-A tool for inspecting how a website's third parties collect information about you
 
 ### Install
 
@@ -37,6 +34,3 @@ A tool for inspecting how a website's third parties collect information about yo
   - default: true
   - dont pipe raw event data to stdout
 - `title`
-
-Blacklight wouldnt be possible without the work of [OpenWPM](https://github.com/mozilla/OpenWPM)
-and EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/website-evidence-collector)

@@ -1,0 +1,5 @@
+{
+  "tagPrefix": "@themarkup/blacklight@",
+  "releaseCommitMessageFormat": "chore(release): @themarkup/blacklight@{{currentTag}}",
+  "infile": "README.md"
+}

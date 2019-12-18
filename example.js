@@ -3,14 +3,15 @@ const { join } = require("path");
 // Lisst of devices you can emulate
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 (async () => {
-  const URL = "nytimes.com";
-  const inUrl = `http://${URL}`;
-  const outDir = join(__dirname, "example-dir", URL);
+  const URL = "example.com";
+  const inUrl = `https://${URL}`;
+  const outDir = join(__dirname, "example-result", URL);
   const result = await collector({
     inUrl,
     outDir,
     numPages: 2,
-    headless: true,
+    captureLinks: false,
+    headless: false,
     captureHar: true
   });
 

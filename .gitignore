@@ -66,3 +66,5 @@ target/
 *.rdb
 build
 example-dir*
+example-result/*
+!example-result/.gitkeep
