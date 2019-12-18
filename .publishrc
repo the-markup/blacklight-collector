@@ -11,5 +11,8 @@
   "publishCommand": "npm publish",
   "publishTag": "latest",
   "prePublishScript": "npm run prepare",
-  "postPublishScript": false
+  "postPublishScript": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }
