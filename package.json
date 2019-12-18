@@ -15,6 +15,7 @@
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:tslint": "tslint -t verbose --fix --project .",
     "prepare": "run-s build test",
+    "publish": "--access public",
     "publish-please": "publish-please",
     "prepublishOnly": "publish-please guard",
     "version-beta": "git stash && standard-version --prerelease beta",
