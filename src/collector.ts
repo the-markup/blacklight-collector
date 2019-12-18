@@ -225,7 +225,8 @@ export const collector = async ({
       {
         start: 0,
         order: "desc",
-        limit: Infinity
+        limit: Infinity,
+        fields: ["message"]
       },
       (err, results) => {
         if (err) {
