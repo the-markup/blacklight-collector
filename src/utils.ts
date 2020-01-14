@@ -77,7 +77,7 @@ export const getScriptUrl = (item: BlacklightEvent) => {
       return stack[i].fileName;
     } else {
       if (i === stack.length - 1) {
-        return stack[i].source;
+        return !!stack[i].source ? stack[i].source : "";
       }
     }
   }

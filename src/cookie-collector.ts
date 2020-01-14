@@ -7,7 +7,7 @@ import { Cookie } from "tough-cookie";
 import { getScriptUrl } from "./utils";
 const parseCookie = (cookieStr, fpUrl) => {
   const cookie = Cookie.parse(cookieStr);
-  if (!cookie.domain) {
+  if (!!cookie.domain) {
     // what is the domain if not set explicitly?
     // https://stackoverflow.com/a/5258477/1407622
     cookie.domain = getHostname(fpUrl);
@@ -117,9 +117,9 @@ export const matchCookiesToEvents = (cookies, events, url) => {
     } else if (typeof j !== "undefined") {
       type = "js";
     } else {
-      console.log(
-        `${JSON.stringify(b)} not found in http and js instruments    `
-      );
+      // console.log(
+      //   `${JSON.stringify(b)} not found in http and js instruments    `
+      // );
       type = "unknown";
     }
 
