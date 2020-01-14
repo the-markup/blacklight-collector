@@ -8,7 +8,7 @@ import {
   FINGERPRINTABLE_WINDOW_APIS,
   JsInstrumentEvent
 } from "./types";
-import { getScriptUrl, groupBy } from "./utils";
+import { getScriptUrl, groupBy, loadJSONSafely } from "./utils";
 
 export const generateReport = (reportType, messages, dataDir, url) => {
   const eventData = getEventData(reportType, messages);
@@ -75,8 +75,8 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
   eventData.forEach((event: JsInstrumentEvent) => {
     const data = event.data;
     if (data.symbol.indexOf("addEventListener") > -1) {
-      const values = JSON.parse(data.value);
-      if (MONITORED_EVENTS.includes(values[0])) {
+      const values = loadJSONSafely(data.value);
+      if (Array.isArray(values) && MONITORED_EVENTS.includes(values[0])) {
         const eventGroup = Object.keys(BEHAVIOUR_TRACKING_EVENTS).filter(key =>
           BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0])
         );
@@ -207,8 +207,6 @@ const getDomainSafely = (message: DataExfiltrationEvent) => {
       return "";
     }
   } catch (error) {
-    console.log(error);
-    console.log(JSON.stringify(message));
     return "";
   }
 };
