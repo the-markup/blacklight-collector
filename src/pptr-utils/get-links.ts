@@ -12,7 +12,11 @@ export const getLinks = async (page): Promise<LinkObject[]> => {
           };
         })
         .filter(link => {
-          return link.href.startsWith("http");
+          return (
+            link.href.startsWith("http") &&
+            !link.href.endsWith(".pdf") &&
+            !link.href.endsWith(".zip")
+          );
         });
     } catch (error) {
       return [];
