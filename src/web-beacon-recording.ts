@@ -48,6 +48,13 @@ const blockers = {
     blockerOptions
   )
 };
+const safelyDecodeUri = uri => {
+  try {
+    return decodeURIComponent(uri);
+  } catch (e) {
+    return "";
+  }
+};
 // source: https://gist.github.com/pirate/9298155edda679510723#gistcomment-2734349
 const decodeURLParams = search => {
   const hashes = search.slice(search.indexOf("?") + 1).split("&");
@@ -60,8 +67,10 @@ const decodeURLParams = search => {
 
     const key = hash.slice(0, split);
     const val = hash.slice(split + 1);
-
-    return { ...params, [key]: decodeURIComponent(val) };
+    return {
+      ...params,
+      [key]: safelyDecodeUri(val)
+    };
   }, {});
 };
 const parseJSONSafely = str => {
