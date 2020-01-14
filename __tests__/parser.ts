@@ -13,92 +13,42 @@ it("can parse AddEventlistener events", async () => {
   const EVENTS_URL = `${global.__DEV_SERVER__}/session_recorder.html`;
   await setupBlacklightInspector(page, e => rows.push({ message: e }));
   await page.goto(EVENTS_URL, { waitUntil: "networkidle0" });
-  const report = generateReport("behaviour_event_listeners", rows);
+  const report = generateReport("behaviour_event_listeners", rows, null, null);
   await browser.close();
-  expect(report["KEYBOARD"]).toEqual([
-    {
-      name: "keyup",
-      script: "http://localhost:8125/shared/event-listener.js"
-    },
-    {
-      name: "input",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    }
-  ]);
-  expect(report["MOUSE"]).toEqual([
-    {
-      name: "mousedown",
-      script: "http://localhost:8125/shared/event-listener.js"
-    },
-    {
-      name: "click",
-      script: "http://localhost:8125/shared/event-listener.js"
-    },
-    {
-      name: "mousemove",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    },
-    {
-      name: "mouseup",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    },
-    {
-      name: "mousedown",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    },
-    {
-      name: "click",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    },
-    {
-      name: "dblclick",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    },
-    {
-      name: "scroll",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    }
-  ]);
-  expect(report["SENSOR"]).toEqual([
-    {
-      name: "deviceorientation",
-      script: "http://localhost:8125/shared/event-listener.js"
-    }
-  ]);
-  expect(report["TOUCH"]).toEqual([
-    {
-      name: "touchend",
-      script: "http://localhost:8125/shared/event-listener.js"
-    },
-    {
-      name: "touchmove",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    },
-    {
-      name: "touchstart",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    },
-    {
-      name: "touchend",
-      script:
-        "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js"
-    }
-  ]);
+  expect(report["KEYBOARD"]).toEqual({
+    "http://localhost:8125/shared/event-listener.js": ["keyup"],
+    "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
+      "input"
+    ]
+  });
+  expect(report["MOUSE"]).toEqual({
+    "http://localhost:8125/shared/event-listener.js": ["mousedown", "click"],
+    "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
+      "mousemove",
+      "mouseup",
+      "mousedown",
+      "click",
+      "dblclick",
+      "scroll"
+    ]
+  });
+  expect(report["SENSOR"]).toEqual({
+    "http://localhost:8125/shared/event-listener.js": ["deviceorientation"]
+  });
+  expect(report["TOUCH"]).toEqual({
+    "http://localhost:8125/shared/event-listener.js": ["touchend"],
+    "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
+      "touchmove",
+      "touchstart",
+      "touchend"
+    ]
+  });
 });
 
 it("can parse DataExfiltration events", async () => {
   const TEST_DIR = join(__dirname, "test-data", "veteransunited");
   const rawEvents = loadEventData(TEST_DIR);
-  const report = generateReport("data_exfiltration", rawEvents);
+  const report = generateReport("data_exfiltration", rawEvents, null, null);
   expect(Object.keys(report)).toEqual(["leadid.com", "fullstory.com"]);
 });
 
@@ -134,14 +84,19 @@ const MEDIA_DEVICES_SYMBOLS = {
     "window.navigator.mediaDevices.enumerateDevices"
   ]
 };
-it.only("can group fingerprintable window objects", async () => {
+it("can group fingerprintable window objects", async () => {
   const browser = await launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   const PROPERTIES_URL = `${global.__DEV_SERVER__}/property-enumeration.html`;
   await setupBlacklightInspector(page, e => rows.push({ message: e }));
   await page.goto(PROPERTIES_URL, { waitUntil: "networkidle0" });
-  const output = await generateReport("fingerprintable_api_calls", rows);
+  const output = await generateReport(
+    "fingerprintable_api_calls",
+    rows,
+    null,
+    null
+  );
   await browser.close();
   expect(output["NAVIGATOR"]).toEqual(NAVIGATOR_SYMBOLS);
   expect(output["SCREEN"]).toEqual(SCREEN_SYMBOLS);

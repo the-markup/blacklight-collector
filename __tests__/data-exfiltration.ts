@@ -1,10 +1,9 @@
 // import { launchBrowser } from "../../src";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { fillForms } from "../src/pptr-utils/interaction-utils";
-import { Browser, Page, launch } from "puppeteer";
-import { setupBlacklightInspector } from "../src/inspector";
+import { Browser, launch } from "puppeteer";
 import { setupDataExfiltrationInspector } from "../src/data-exfiltration";
-import { Global, BlacklightEvent } from "../src/types";
+import { Global } from "../src/types";
 declare var global: Global;
 const INPUT_VALUES_RESULT = [
   { type: "email", value: "blacklight@themarkup.org", name: "email" },

@@ -103,16 +103,3 @@ it("can get social links", async () => {
   expect(getSocialLinks(links)).toEqual(SOCIAL_LINKS);
   await browser.close();
 });
-// describe("collector", () => {
-//   it("can run", async () => {
-//     const TEST_URL = `${global.__DEV_SERVER__}/session_recorder.html`;
-//     const TEST_DIR = join(__dirname, "test-data", "collector-test");
-//     await collector({
-//       headless: true,
-//       inUrl: TEST_URL,
-//       outDir: TEST_DIR,
-//       captureHar: false
-//     });
-//     clearDir(TEST_DIR);
-//   });
-// });

@@ -1,9 +1,8 @@
 import { Browser, launch } from "puppeteer";
-import { Global, BlacklightEvent, JsInstrumentData } from "../src/types";
+import { Global, BlacklightEvent, JsInstrumentEvent } from "../src/types";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { setupBlacklightInspector } from "../src/inspector";
 import { getScriptUrl } from "../src/utils";
-// jest.setTimeout(10000);
 declare var global: Global;
 let browser = {} as Browser;
 
@@ -186,8 +185,8 @@ describe("Blacklight Fingerprinting Inspector", () => {
     await setupBlacklightInspector(page, eventDataHandler, true);
     await page.goto(PROPERTIES_URL, { waitUntil: "networkidle0" });
     const testData = [];
-    rows.forEach((d: BlacklightEvent) => {
-      const data = <JsInstrumentData>d.data;
+    rows.forEach((d: JsInstrumentEvent) => {
+      const data = d.data;
       testData.push(data.symbol);
       expect(getScriptUrl(d)).toBe(PROPERTIES_URL);
     });
