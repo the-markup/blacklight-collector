@@ -2,17 +2,21 @@ import { LinkObject } from "../types";
 
 export const getLinks = async (page): Promise<LinkObject[]> => {
   return page.evaluate(() => {
-    return [].map
-      .call(document.querySelectorAll("a[href]"), a => {
-        return {
-          href: a.href.split("#")[0], // link without fragment
-          inner_html: a.innerHTML.trim(),
-          inner_text: a.innerText
-        };
-      })
-      .filter(link => {
-        return link.href.startsWith("http");
-      });
+    try {
+      return [].map
+        .call(document.querySelectorAll("a[href]"), a => {
+          return {
+            href: a.href.split("#")[0], // link without fragment
+            inner_html: a.innerHTML.trim(),
+            inner_text: a.innerText
+          };
+        })
+        .filter(link => {
+          return link.href.startsWith("http");
+        });
+    } catch (error) {
+      return [];
+    }
   });
 };
 
