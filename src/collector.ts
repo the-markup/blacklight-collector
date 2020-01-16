@@ -154,7 +154,6 @@ export const collector = async ({
   if (loadError) {
     await browser.close();
     if (outDir.includes("bl-tmp")) {
-      console.log("deleting tmp dir");
       clearDir(outDir, false);
     }
     return { status: "failed", page_response };
@@ -204,7 +203,6 @@ export const collector = async ({
       await page.waitFor(500); // in ms
       await fillForms(page);
       await page.waitFor(100);
-      //TODO: wrap in try/catch
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);
     } catch (error) {
@@ -283,7 +281,6 @@ export const collector = async ({
   const json_dump = JSON.stringify({ ...output, reports }, null, 2);
   writeFileSync(join(outDir, "inspection.json"), json_dump);
   if (outDir.includes("bl-tmp")) {
-    console.log("deleting tmp dir");
     clearDir(outDir, false);
   }
   return { status: "success", ...output, reports };

@@ -19,6 +19,7 @@ export function injectPlugins(
     (window as any).instrumentFunctionViaProxy = instrumentFunctionViaProxy;
     (window as any).instrumentObject = instrumentObject;
     (window as any).instrumentObjectProperty = instrumentObjectProperty;
+    // tslint:disable-next-line:no-console
     console.log(
       "Content-side javascript instrumentation started",
       new Date().toISOString()
@@ -26,6 +27,7 @@ export function injectPlugins(
   }
 
   for (const script of observerScripts) {
+    // tslint:disable-next-line:no-console
     console.log(`Initializing ${script.name ? script.name : "anonymous"}`);
     script({
       instrumentFunctionViaProxy,

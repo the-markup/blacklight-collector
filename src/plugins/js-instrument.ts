@@ -389,7 +389,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
           type: "Error.JsInstrument",
           url: window.location.href
         });
-        console.log(error);
+        console.error(error);
       }
     }
   };

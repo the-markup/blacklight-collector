@@ -3,13 +3,11 @@
   "rules": {
     "no-object-literal-type-assertion": false,
     "interface-name": [true, "never-prefix"],
+    "no-console": [true, "log"],
     "triple-equals": {
       "severity": "warning"
     },
     "only-arrow-functions": {
-      "severity": "warning"
-    },
-    "no-console": {
       "severity": "warning"
     },
     "no-bitwise": {

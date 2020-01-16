@@ -39,7 +39,7 @@ export const loadJSONSafely = str => {
   try {
     return JSON.parse(str);
   } catch (error) {
-    console.log("couldnt load json", str);
+    console.error("couldnt load json", str);
     return {};
   }
 };
@@ -54,11 +54,7 @@ export const serializeCanvasCallMap = inputMap => {
   const obj = {};
 
   inputMap.forEach((value, key) => {
-    if (value instanceof Set) {
-      obj[key] = Array.from(value);
-    } else {
-      obj[key] = value;
-    }
+    obj[key] = value instanceof Set ? Array.from(value) : value;
   });
 
   return obj;

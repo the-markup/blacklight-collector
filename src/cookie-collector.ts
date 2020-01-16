@@ -44,7 +44,7 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
         });
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   });
 };
@@ -110,7 +110,7 @@ export const matchCookiesToEvents = (cookies, events, url) => {
 
     let type = "";
     if (typeof h !== "undefined" && typeof j !== "undefined") {
-      console.log(`${JSON.stringify(b)} found in http and js instruments`);
+      // console.log(`${JSON.stringify(b)} found in http and js instruments`);
       type = "both";
     } else if (typeof h !== "undefined") {
       type = "http";

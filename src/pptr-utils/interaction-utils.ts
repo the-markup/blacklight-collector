@@ -35,7 +35,7 @@ export const fillForms = async (
       }
       await page.waitFor(100);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 };

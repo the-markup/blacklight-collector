@@ -26,7 +26,7 @@ const getCanvasText = (args: string[]) => {
 };
 
 const getTextLength = (text: string) => {
-  //stackoverflow.com/questions/54369513/how-to-count-the-correct-length-of-a-string-with-emojis-in-javascript
+  // stackoverflow.com/questions/54369513/how-to-count-the-correct-length-of-a-string-with-emojis-in-javascript
   return [...text].length;
 };
 
@@ -164,9 +164,9 @@ export const getCanvasFp = (
         cBanned.has(script_url) &&
         cBanned.get(script_url).has(canvasRwVisit)
       ) {
-        console.log(
-          `Ignoring script ${script_url} from url_host ${canvasRwVisit}`
-        );
+        // console.log(
+        //   `Ignoring script ${script_url} from url_host ${canvasRwVisit}`
+        // );
         continue;
       }
       fingerprinters.add(script_url);
@@ -211,7 +211,7 @@ export const getCanvasFontFp = jsCalls => {
     }
   }
 
-  canvasFont.forEach(function(value, key, map) {
+  canvasFont.forEach((value, key, map) => {
     if (value.size < MIN_FONT_LIST_SIZE) {
       map.delete(key);
     }
@@ -223,7 +223,7 @@ export const getCanvasFontFp = jsCalls => {
   //   }
   // });
   return {
-    text_measure: serializeCanvasCallMap(textMeasure),
-    canvas_font: serializeCanvasCallMap(canvasFont)
+    canvas_font: serializeCanvasCallMap(canvasFont),
+    text_measure: serializeCanvasCallMap(textMeasure)
   };
 };
