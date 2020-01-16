@@ -26,11 +26,13 @@ const deleteFolderRecursive = path => {
   }
 };
 
-export const clearDir = outDir => {
+export const clearDir = (outDir, mkNewDir = true) => {
   if (fs.existsSync(outDir)) {
     deleteFolderRecursive(outDir);
   }
-  fs.mkdirSync(outDir);
+  if (mkNewDir) {
+    fs.mkdirSync(outDir);
+  }
 };
 
 export const loadJSONSafely = str => {
@@ -52,7 +54,11 @@ export const serializeCanvasCallMap = inputMap => {
   const obj = {};
 
   inputMap.forEach((value, key) => {
-    obj[key] = Array.from(value);
+    if (value instanceof Set) {
+      obj[key] = Array.from(value);
+    } else {
+      obj[key] = value;
+    }
   });
 
   return obj;

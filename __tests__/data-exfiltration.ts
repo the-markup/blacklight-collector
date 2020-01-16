@@ -166,7 +166,7 @@ describe("DataExfiltration", () => {
     const eventHandler = event => {
       rows.push(event);
     };
-    await setupDataExfiltrationInspector(page, eventHandler, true);
+    await setupDataExfiltrationInspector(page, eventHandler);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
     await page.waitFor(1000);
     await fillForms(page);

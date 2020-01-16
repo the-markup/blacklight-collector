@@ -39,13 +39,6 @@ const blockers = {
       "utf8"
     ),
     blockerOptions
-  ),
-  "fanboy-annoyance.txt": PuppeteerBlocker.parse(
-    fs.readFileSync(
-      path.join(__dirname, "../data/blocklists/fanboy-annoyance.txt"),
-      "utf8"
-    ),
-    blockerOptions
   )
 };
 const safelyDecodeUri = uri => {

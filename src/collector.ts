@@ -25,7 +25,7 @@ import { clearDir } from "./utils";
 import { setupWebBeaconInspector } from "./web-beacon-recording";
 export const collector = async ({
   inUrl,
-  outDir,
+  outDir = join(process.cwd(), "bl-tmp"),
   headless = true,
   title = "Blacklight Inspection",
   emulateDevice = "iPhone X",
@@ -35,6 +35,7 @@ export const collector = async ({
   clearCache = false,
   saveBrowserProfile = false,
   quiet = true,
+  defaultTimeout = 30000,
   numPages = 3
 }) => {
   const FIRST_PARTY = parse(inUrl);
@@ -68,11 +69,10 @@ export const collector = async ({
     },
     script: {
       host: os.hostname(),
-      // TODO:
-      // version: {
-      // npm: testing ? require("./package.json").version :require("./package.json").version,
-      // commit: null
-      // },
+      version: {
+        npm: require("../package.json").version,
+        commit: null
+      },
       node_version: process.version
     },
     browser: {
@@ -139,10 +139,26 @@ export const collector = async ({
     });
   }
 
-  const page_response = await page.goto(inUrl, {
-    timeout: 0,
-    waitUntil: "networkidle2"
-  });
+  let page_response = null;
+  let loadError = false;
+  try {
+    page_response = await page.goto(inUrl, {
+      timeout: defaultTimeout,
+      waitUntil: "networkidle2"
+    });
+  } catch (error) {
+    loadError = true;
+    page_response = error;
+  }
+  // Return if the page doesnt load
+  if (loadError) {
+    await browser.close();
+    if (outDir.includes("bl-tmp")) {
+      console.log("deleting tmp dir");
+      clearDir(outDir, false);
+    }
+    return { status: "failed", page_response };
+  }
 
   let duplicatedLinks = await getLinks(page);
   const outputLinks = {
@@ -156,8 +172,10 @@ export const collector = async ({
       outputLinks.first_party.push(link);
       hosts.links.first_party.add(l.hostname);
     } else {
-      outputLinks.third_party.push(link);
-      hosts.links.third_party.add(l.hostname);
+      if (l.hostname && l.hostname !== "data") {
+        outputLinks.third_party.push(link);
+        hosts.links.third_party.add(l.hostname);
+      }
     }
   }
   await fillForms(page);
@@ -176,14 +194,22 @@ export const collector = async ({
   );
 
   for (const link of output.browsing_history.slice(1)) {
-    logger.log("info", `browsing now to ${link}`, { type: "Browser" });
-    await page.goto(link, { timeout: 0, waitUntil: "networkidle2" });
+    try {
+      logger.log("info", `browsing now to ${link}`, { type: "Browser" });
+      await page.goto(link, {
+        timeout: defaultTimeout,
+        waitUntil: "networkidle2"
+      });
 
-    await page.waitFor(500); // in ms
-    await fillForms(page);
-    await page.waitFor(100);
-    duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
-    await autoScroll(page);
+      await page.waitFor(500); // in ms
+      await fillForms(page);
+      await page.waitFor(100);
+      //TODO: wrap in try/catch
+      duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
+      await autoScroll(page);
+    } catch (error) {
+      logger.log("error", `browsing to ${link} failed`, { type: "Browser" });
+    }
   }
   await captureBrowserCookies(page, outDir);
   if (captureHar) {
@@ -201,8 +227,10 @@ export const collector = async ({
       outputLinks.first_party.push(link);
       hosts.links.first_party.add(l.hostname);
     } else {
-      outputLinks.third_party.push(link);
-      hosts.links.third_party.add(l.hostname);
+      if (l.hostname && l.hostname !== "data") {
+        outputLinks.third_party.push(link);
+        hosts.links.third_party.add(l.hostname);
+      }
     }
   }
   // generate report
@@ -254,5 +282,9 @@ export const collector = async ({
 
   const json_dump = JSON.stringify({ ...output, reports }, null, 2);
   writeFileSync(join(outDir, "inspection.json"), json_dump);
-  return { ...output, reports };
+  if (outDir.includes("bl-tmp")) {
+    console.log("deleting tmp dir");
+    clearDir(outDir, false);
+  }
+  return { status: "success", ...output, reports };
 };
