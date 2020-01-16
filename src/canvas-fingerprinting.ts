@@ -11,7 +11,8 @@ import { getScriptUrl, serializeCanvasCallMap } from "./utils";
 
 const MIN_CANVAS_IMAGE_WIDTH = 16;
 const MIN_CANVAS_IMAGE_HEIGHT = 16;
-
+const MIN_FONT_LIST_SIZE = 50;
+const MIN_TEXT_LENGTH = 10;
 /**
  * Return the string that is written onto canvas from function arguments
  * @param arguments
@@ -22,6 +23,11 @@ const getCanvasText = (args: string[]) => {
   }
   // TODO: Makse sure this value is a string
   return args[0];
+};
+
+const getTextLength = (text: string) => {
+  //stackoverflow.com/questions/54369513/how-to-count-the-correct-length-of-a-string-with-emojis-in-javascript
+  return [...text].length;
 };
 
 /**
@@ -91,9 +97,10 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
         : cReads.set(script_url, new Set([url_host]));
     } else if (CANVAS_WRITE_FUNCS.includes(symbol)) {
       const text = getCanvasText(data.arguments);
-      // TODO
-      // if (text.length < 10) {
-      // }
+
+      if (getTextLength(text) < MIN_TEXT_LENGTH || text.includes("🏴​")) {
+        continue;
+      }
       cWrites.has(script_url)
         ? cWrites.get(script_url).add(url_host)
         : cWrites.set(script_url, new Set([url_host]));
@@ -102,9 +109,8 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
         : cTexts.set(script_url, new Set([text]));
     } else if (
       symbol === "CanvasRenderingContext2D.fillStyle" &&
-      operation === "call"
+      operation === "set"
     ) {
-      // NOTE: Not actually using the style condition currently, but might need it later
       cStyles.has(script_url)
         ? cStyles.get(script_url).add(value)
         : cStyles.set(script_url, new Set([value]));
@@ -179,17 +185,20 @@ export const getCanvasFontFp = jsCalls => {
     "CanvasRenderingContext2D.font"
   ];
   const font_shorthand = /^\s*(?=(?:(?:[-a-z]+\s*){0,2}(italic|oblique))?)(?=(?:(?:[-a-z]+\s*){0,2}(small-caps))?)(?=(?:(?:[-a-z]+\s*){0,2}(bold(?:er)?|lighter|[1-9]00))?)(?:(?:normal|\1|\2|\3)\s*){0,3}((?:xx?-)?(?:small|large)|medium|smaller|larger|[.\d]+(?:\%|in|[cem]m|ex|p[ctx]))(?:\s*\/\s*(normal|[.\d]+(?:\%|in|[cem]m|ex|p[ctx])))?\s*([-_\{\}\(\)\&!\',\*\.\"\sa-zA-Z0-9]+?)\s*$/g;
-  const textMeasure = new Map() as CanvasCallMap;
+  const textMeasure = new Map() as Map<string, any>;
   const canvasFont = new Map() as CanvasCallMap;
   for (const item of jsCalls) {
     const script_url = getScriptUrl(item);
     const { symbol, value } = item.data;
     if (CANVAS_FONT.includes(symbol)) {
       if (symbol.indexOf("measureText") > -1) {
-        const textToMeasure = item.data.arguments[0];
-        textMeasure.has(script_url)
-          ? textMeasure.get(script_url).add(textToMeasure)
-          : textMeasure.set(script_url, new Set([textToMeasure]));
+        const textToMeasure: string = item.data.arguments[0];
+        if (textMeasure.has(script_url)) {
+          textMeasure.get(script_url)[textToMeasure] += 1;
+        } else {
+          const val = { [textToMeasure]: 1 };
+          textMeasure.set(script_url, val);
+        }
       }
 
       if (symbol.indexOf("font") > -1) {
@@ -202,5 +211,19 @@ export const getCanvasFontFp = jsCalls => {
     }
   }
 
-  return { textMeasure, canvasFont };
+  canvasFont.forEach(function(value, key, map) {
+    if (value.size < MIN_FONT_LIST_SIZE) {
+      map.delete(key);
+    }
+  });
+  // TODO: Test this, not adding yet to avoid false positives
+  // textMeasure.forEach(function(value, key, map) {
+  //   if (value.size < MIN_FONT_LIST_SIZE) {
+  //     map.delete(key);
+  //   }
+  // });
+  return {
+    text_measure: serializeCanvasCallMap(textMeasure),
+    canvas_font: serializeCanvasCallMap(canvasFont)
+  };
 };
