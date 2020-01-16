@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.1-beta.11](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.10...@themarkup/blacklight@0.0.1-beta.11) (2020-01-16)
+
+
+### Bug Fixes
+
+* Add try catch on getLinks ([e417454](https://gitlab.com/the_markup/blacklight/commit/e417454a7fe654734d9c9818664cea58672e08ef)), closes [#6](https://gitlab.com/the_markup/blacklight/issues/6) [#8](https://gitlab.com/the_markup/blacklight/issues/8) [#15](https://gitlab.com/the_markup/blacklight/issues/15)
+* Ignore pdfs and zipfiles in urls ([3f87ec1](https://gitlab.com/the_markup/blacklight/commit/3f87ec16ec5ccdae8a729cf181f4919e958da798)), closes [#1](https://gitlab.com/the_markup/blacklight/issues/1)
+* reportEventListeners json parse fix ([8f753da](https://gitlab.com/the_markup/blacklight/commit/8f753da7f0c3237ee2bc88612db11c0859b253e2)), closes [#9](https://gitlab.com/the_markup/blacklight/issues/9)
+* Undefined prop fixes ([9dea03b](https://gitlab.com/the_markup/blacklight/commit/9dea03bea810627beef94fbab1467f8ee4dee6aa)), closes [#12](https://gitlab.com/the_markup/blacklight/issues/12) [#13](https://gitlab.com/the_markup/blacklight/issues/13)
+* URIError: URI malformed fix ([e99f8d8](https://gitlab.com/the_markup/blacklight/commit/e99f8d83f9dbfd9402b3e1047950219a7c0dcdb5)), closes [#7](https://gitlab.com/the_markup/blacklight/issues/7)
+* **canvas-fp:** Fixes to canvas + canvas font fp. ([d65d838](https://gitlab.com/the_markup/blacklight/commit/d65d8387d6b71c9ba82028aefedd3810c1048503)), closes [#20](https://gitlab.com/the_markup/blacklight/issues/20)
+
 ### [0.0.1-beta.10](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.9...@themarkup/blacklight@0.0.1-beta.10) (2019-12-18)
 
 ### [0.0.1-beta.9](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.8...@themarkup/blacklight@0.0.1-beta.9) (2019-12-18)
