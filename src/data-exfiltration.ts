@@ -1,8 +1,14 @@
 import { Page, Request } from "puppeteer";
-import { DEFAULT_INPUT_VALUES } from "./pptr-utils/interaction-utils";
+import {
+  DEFAULT_INPUT_VALUES,
+  DEFAULT_AUTOCOMPLETE_VALUES
+} from "./pptr-utils/interaction-utils";
 import { BlacklightEvent } from "./types";
 import { isBase64 } from "./utils";
-const ts = Object.values(DEFAULT_INPUT_VALUES);
+const ts = [
+  ...Object.values(DEFAULT_AUTOCOMPLETE_VALUES),
+  ...Object.values(DEFAULT_INPUT_VALUES)
+];
 
 export const setupDataExfiltrationInspector = async (
   page: Page,

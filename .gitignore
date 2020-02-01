@@ -65,8 +65,11 @@ target/
 .vscode/
 *.rdb
 build
-example-dir*
-example-result/*
-!example-result/.gitkeep
-__tests__/test-data/propublica.org/inspection-log.ndjson
-__tests__/test-data/propublica.org/browser-cookies.json
+**/*/inspection.json
+**/*/inspection-log.ndjson
+**/*/inspection.json
+**/*/requests.har
+**/*/browser-cookies.json
+**/*/*.html
+**/*/*.jpeg
+**/*/*.zip

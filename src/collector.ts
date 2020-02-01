@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { sampleSize } from "lodash";
 import os from "os";
 import { join } from "path";
-import puppeteer, { Browser, Page, LoadEvent } from "puppeteer";
+import puppeteer, { Browser, LoadEvent, Page } from "puppeteer";
 import PuppeteerHar from "puppeteer-har";
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 import devices from "puppeteer/DeviceDescriptors";
@@ -40,7 +40,8 @@ export const collector = async ({
   quiet = true,
   defaultTimeout = 30000,
   numPages = 3,
-  defaultWaitUntil = "networkidle2"
+  defaultWaitUntil = "networkidle2",
+  saveScreenshots = true
 }) => {
   const FIRST_PARTY = parse(inUrl);
   clearDir(outDir);
@@ -54,7 +55,7 @@ export const collector = async ({
     userDataDir
   };
   let browser: Browser;
-  let page: Page; //await puppeteer.launch(options);
+  let page: Page; // await puppeteer.launch(options);
 
   const setup = async () => {
     browser = await puppeteer.launch(options);
@@ -158,9 +159,9 @@ export const collector = async ({
   try {
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
-      waitUntil: <LoadEvent>defaultWaitUntil
+      waitUntil: defaultWaitUntil as LoadEvent
     });
-    savePageContent(pageIndex, outDir, page);
+    savePageContent(pageIndex, outDir, page, saveScreenshots);
     pageIndex++;
   } catch (error) {
     loadError = true;
@@ -219,7 +220,7 @@ export const collector = async ({
       await page.waitFor(500); // in ms
       await fillForms(page);
       await page.waitFor(100);
-      savePageContent(pageIndex, outDir, page);
+      savePageContent(pageIndex, outDir, page, saveScreenshots);
       pageIndex++;
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);

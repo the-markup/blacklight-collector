@@ -107,6 +107,7 @@ export const setupWebBeaconInspector = async (
             if (query.hasOwnProperty(param)) {
               query[param] = parseJSONSafely(query[param]);
             }
+            // TODO: Add sha-256 check npm ->"js-sha256";
           }
         }
         eventDataHandler({

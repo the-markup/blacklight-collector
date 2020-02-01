@@ -1,7 +1,7 @@
 import fs from "fs";
-import { promisify } from "util";
 import path from "path";
 import { Page } from "puppeteer";
+import { promisify } from "util";
 const writeFile = promisify(fs.writeFile);
 
 export const savePageContent = async (

@@ -1,5 +1,6 @@
 import { Page } from "puppeteer";
 
+// tslint:disable:object-literal-sort-keys
 export const DEFAULT_AUTOCOMPLETE_VALUES = {
   organization: "The Markup",
   "organization-title": "Investigative Data Journalist",
@@ -24,7 +25,7 @@ export const DEFAULT_AUTOCOMPLETE_VALUES = {
   "cc-family-name": "TARBELL",
   "cc-number": "1234123412341234",
   "cc-csc": "123",
-  "cc-exp": "01/2022", //"MM/YY" or "MM/YYYY".
+  "cc-exp": "01/2022", // "MM/YY" or "MM/YYYY".
   "cc-exp-month": "01",
   "cc-exp-year": "2019",
   "cc-type": "Visa",

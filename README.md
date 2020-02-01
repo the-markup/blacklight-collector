@@ -15,8 +15,8 @@ Results are stored in `example-result` by default
 - `inUrl` **required**
   - The URL you want to scrapes
 - `outDir`
-  -  default: saves to tmp directory and deletes after completion
-  -  To save the full report provide a directory path
+  - default: saves to tmp directory and deletes after completion
+  - To save the full report provide a directory path
 - `numPages`
   - default: 3
   - crawl depth
@@ -45,6 +45,15 @@ Results are stored in `example-result` by default
   - default: true
   - dont pipe raw event data to stdout
 - `title`
+  - default: 'Blacklight Inspection'
+- `saveScreenshots`
+  - default: true
+- `defaultTimeout`
+  - default: 30000
+  - amount of time the page will wait to load
+- `defaultWaitUntil`
+  - default: 'networkidle2'
+  - [Other options](https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options)
 
 ```
 const { collector } = require("@themarkup/rowdypenguin");
