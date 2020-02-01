@@ -61,14 +61,16 @@ export const getHTTPCookies = events => {
     events
       .filter(m => m.type && m.type.includes("Cookie.HTTP"))
       .map(m =>
-        m.data.map(d => ({
-          domain: d.domain,
-          name: d.key,
-          path: d.path,
-          script: getScriptUrl(m),
-          type: "Cookie.HTTP",
-          value: d.value
-        }))
+        m.data
+          .filter(c => c)
+          .map(d => ({
+            domain: d.domain,
+            name: d.key,
+            path: d.path,
+            script: getScriptUrl(m),
+            type: "Cookie.HTTP",
+            value: d.value
+          }))
       )
   );
 };
@@ -85,7 +87,7 @@ export const getJsCookies = (events, url) => {
       const data = parseCookie(d.data.value, url);
       const script = getScriptUrl(d);
       return {
-        domain: data.domain,
+        domain: Object.keys(d).includes("domain") ? d.domain : "",
         name: data.key,
         path: data.path,
         script,
