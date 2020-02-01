@@ -7,7 +7,7 @@ import { Cookie } from "tough-cookie";
 import { getScriptUrl } from "./utils";
 const parseCookie = (cookieStr, fpUrl) => {
   const cookie = Cookie.parse(cookieStr);
-  if (!!cookie.domain) {
+  if (cookie && !!cookie.domain) {
     // what is the domain if not set explicitly?
     // https://stackoverflow.com/a/5258477/1407622
     cookie.domain = getHostname(fpUrl);

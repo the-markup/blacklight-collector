@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import { sampleSize } from "lodash";
 import os from "os";
 import { join } from "path";
-import puppeteer from "puppeteer";
+import puppeteer, { Browser, Page, LoadEvent } from "puppeteer";
 import PuppeteerHar from "puppeteer-har";
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 import devices from "puppeteer/DeviceDescriptors";
@@ -18,7 +18,10 @@ import { setupDataExfiltrationInspector } from "./data-exfiltration";
 import { setupBlacklightInspector } from "./inspector";
 import { getLogger } from "./logger";
 import { generateReport } from "./parser";
-import { defaultPuppeteerBrowserOptions } from "./pptr-utils/default";
+import {
+  defaultPuppeteerBrowserOptions,
+  savePageContent
+} from "./pptr-utils/default";
 import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
 import { clearDir } from "./utils";
@@ -36,7 +39,8 @@ export const collector = async ({
   saveBrowserProfile = false,
   quiet = true,
   defaultTimeout = 30000,
-  numPages = 3
+  numPages = 3,
+  defaultWaitUntil = "networkidle2"
 }) => {
   const FIRST_PARTY = parse(inUrl);
   clearDir(outDir);
@@ -49,8 +53,47 @@ export const collector = async ({
     headless,
     userDataDir
   };
-  const browser = await puppeteer.launch(options);
+  let browser: Browser;
+  let page: Page; //await puppeteer.launch(options);
 
+  const setup = async () => {
+    browser = await puppeteer.launch(options);
+    // TODO: Determine how to handle disconnect events to kill the instance gracefully
+    // browser.on("disconnected", setup);
+    logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
+    page = (await browser.pages())[0];
+
+    if (emulateDevice) {
+      const deviceOptions = devices[emulateDevice];
+      page.emulate(deviceOptions);
+    }
+
+    // record all requested hosts
+    await page.on("request", request => {
+      const l = parse(request.url());
+      // note that hosts may appear as first and third party depending on the path
+      if (FIRST_PARTY.domain === l.domain) {
+        hosts.requests.first_party.add(l.hostname);
+      } else {
+        if (request.url().indexOf("data://") < 0) {
+          hosts.requests.third_party.add(l.hostname);
+        }
+      }
+    });
+    if (clearCache) {
+      await clearCookiesCache(page);
+    }
+    await setupBlacklightInspector(page, event => logger.warn(event));
+    await setupDataExfiltrationInspector(page, event => logger.warn(event));
+    await setupHttpCookieCapture(page, event => logger.warn(event));
+    await setupWebBeaconInspector(
+      page,
+      event => logger.warn(event),
+      enableAdBlock
+    );
+  };
+
+  await setup();
   const output: any = {
     title,
     uri_ins: inUrl,
@@ -87,7 +130,10 @@ export const collector = async ({
     start_time: new Date(),
     end_time: null
   };
-
+  if (emulateDevice) {
+    output.deviceEmulated = devices[emulateDevice];
+  }
+  let pageIndex = 1;
   const hosts = {
     requests: {
       first_party: new Set(),
@@ -98,38 +144,6 @@ export const collector = async ({
       third_party: new Set()
     }
   };
-
-  const page = (await browser.pages())[0];
-
-  if (emulateDevice) {
-    const deviceOptions = devices[emulateDevice];
-    page.emulate(deviceOptions);
-    output.deviceEmulated = deviceOptions;
-  }
-
-  // record all requested hosts
-  await page.on("request", request => {
-    const l = parse(request.url());
-    // note that hosts may appear as first and third party depending on the path
-    if (FIRST_PARTY.domain === l.domain) {
-      hosts.requests.first_party.add(l.hostname);
-    } else {
-      if (request.url().indexOf("data://") < 0) {
-        hosts.requests.third_party.add(l.hostname);
-      }
-    }
-  });
-  if (clearCache) {
-    await clearCookiesCache(page);
-  }
-  await setupBlacklightInspector(page, event => logger.warn(event));
-  await setupDataExfiltrationInspector(page, event => logger.warn(event));
-  await setupHttpCookieCapture(page, event => logger.warn(event));
-  await setupWebBeaconInspector(
-    page,
-    event => logger.warn(event),
-    enableAdBlock
-  );
 
   let har = {} as any;
   if (captureHar) {
@@ -144,8 +158,10 @@ export const collector = async ({
   try {
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
-      waitUntil: "networkidle2"
+      waitUntil: <LoadEvent>defaultWaitUntil
     });
+    savePageContent(pageIndex, outDir, page);
+    pageIndex++;
   } catch (error) {
     loadError = true;
     page_response = error;
@@ -203,18 +219,30 @@ export const collector = async ({
       await page.waitFor(500); // in ms
       await fillForms(page);
       await page.waitFor(100);
+      savePageContent(pageIndex, outDir, page);
+      pageIndex++;
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);
     } catch (error) {
       logger.log("error", `browsing to ${link} failed`, { type: "Browser" });
     }
   }
-  await captureBrowserCookies(page, outDir);
-  if (captureHar) {
-    await har.stop();
+  try {
+    await captureBrowserCookies(page, outDir);
+    if (captureHar) {
+      await har.stop();
+    }
+  } catch (error) {
+    logger.log(
+      "error",
+      `couldnt capture browser cookies ${JSON.stringify(error)} `,
+      {
+        type: "Browser"
+      }
+    );
+  } finally {
+    await browser.close();
   }
-
-  await browser.close();
 
   const links = dedupLinks(duplicatedLinks);
   output.end_time = new Date();

@@ -1,7 +1,53 @@
 import { Page } from "puppeteer";
+
+export const DEFAULT_AUTOCOMPLETE_VALUES = {
+  organization: "The Markup",
+  "organization-title": "Investigative Data Journalist",
+  "current-password": "S3CR3T_CURRENT_PASSWORD",
+  "new-password": "S3CR3T_NEW_PASSWORD",
+  username: "ida_tarbell",
+  "family-name": "Tarbell",
+  "given-name": "Ida",
+  name: "IdaTarbell",
+  email: "blacklight-headless@themarkup.org",
+  "street-address": "1337 Broadway",
+  "address-line1": "#69",
+  "address-level1": "NY",
+  "address-level2": "New York City",
+  "address-level3": "New York City",
+  "address-level4": "New York City",
+  "postal-code": "10011",
+  country: "USA",
+  "country-name": "United States",
+  "cc-name": "IDATARBELL",
+  "cc-given-name": "IDA",
+  "cc-family-name": "TARBELL",
+  "cc-number": "1234123412341234",
+  "cc-csc": "123",
+  "cc-exp": "01/2022", //"MM/YY" or "MM/YYYY".
+  "cc-exp-month": "01",
+  "cc-exp-year": "2019",
+  "cc-type": "Visa",
+  "transaction-currency": "USD",
+  "transaction-amount": "1337",
+  bday: "01-01-1970",
+  "bday-day": "01",
+  "bday-month": "01",
+  "bday-year": "1970",
+  sex: "Female",
+  tel: "+19172506774",
+  "tel-country-code": "1",
+  "tel-national": "917-250-6774",
+  "tel-area-code": "917",
+  "tel-local": "250-6774",
+  "tel-local-prefix": "250",
+  "tel-local-suffix": "250",
+  url: "https://themarkup.org",
+  impp: "xmpp:blacklight-headless@themarkup.org"
+};
 export const DEFAULT_INPUT_VALUES = {
-  date: "11/01/2019",
-  email: "blacklight@themarkup.org",
+  date: "01/01/2020",
+  email: "blacklight-headless@themarkup.org",
   password: "SUPERSECRETP@SSW0RD",
   search: "TheMarkup",
   tel: "2121112222",
@@ -9,10 +55,7 @@ export const DEFAULT_INPUT_VALUES = {
   url: "https://themarkup.org"
 };
 
-export const fillForms = async (
-  page: Page,
-  inputText = DEFAULT_INPUT_VALUES
-) => {
+export const fillForms = async (page: Page) => {
   const elements = await page.$$("input");
   const count = 0;
   for (const el of elements) {
@@ -23,15 +66,38 @@ export const fillForms = async (
       const pHandle = await el.getProperty("type");
       const pValue = await pHandle.jsonValue();
 
+      const autoCompleteHandle = await el.getProperty("autocomplete");
+      const autoCompleteValue = (await autoCompleteHandle.jsonValue()) as string;
+      let autoCompleteKeys = [];
+
+      if (autoCompleteValue) {
+        if (autoCompleteValue.includes("cc-name")) {
+          autoCompleteKeys = ["cc-name"];
+        } else {
+          autoCompleteKeys = Object.keys(
+            DEFAULT_AUTOCOMPLETE_VALUES
+          ).filter(k => (autoCompleteValue as string).includes(k));
+        }
+      }
+
       if (pValue === "submit" || pValue === "hidden") {
         continue;
-      } else if (Object.keys(inputText).includes(pValue as string)) {
+      } else if (autoCompleteKeys.length > 0) {
         await el.focus();
         await page.keyboard.press("Tab", {
           delay: 100
         });
         await el.press("Backspace");
-        await page.keyboard.type(inputText[pValue as string]);
+        await page.keyboard.type(
+          DEFAULT_AUTOCOMPLETE_VALUES[autoCompleteKeys[0] as string]
+        );
+      } else if (Object.keys(DEFAULT_INPUT_VALUES).includes(pValue as string)) {
+        await el.focus();
+        await page.keyboard.press("Tab", {
+          delay: 100
+        });
+        await el.press("Backspace");
+        await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
       }
       await page.waitFor(100);
     } catch (error) {
