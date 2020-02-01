@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.1](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.13...@themarkup/blacklight@0.0.1) (2020-02-01)
+
+
+### Features
+
+* **1m-prep:** config screenshot + waitUntil , autocomplete-text ([6c272a2](https://gitlab.com/the_markup/blacklight/commit/6c272a285b980bb63341b28e87b0f751af305ca6)), closes [#22](https://gitlab.com/the_markup/blacklight/issues/22) [#25](https://gitlab.com/the_markup/blacklight/issues/25) [#26](https://gitlab.com/the_markup/blacklight/issues/26)
+* **autocomplete-input-fields:** added field for html autocomplete input attributes ([179dfe4](https://gitlab.com/the_markup/blacklight/commit/179dfe47d48840655ebd681be36401cf012ea9db))
+
 ### [0.0.1-beta.13](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.12...@themarkup/blacklight@0.0.1-beta.13) (2020-01-16)
 
 ### [0.0.1-beta.12](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.11...@themarkup/blacklight@0.0.1-beta.12) (2020-01-16)
