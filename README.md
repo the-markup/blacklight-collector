@@ -81,3 +81,6 @@ const { join } = require("path");
 })();
 
 ```
+
+Blacklight wouldnt be possible without the work of [OpenWPM](https://github.com/mozilla/OpenWPM)
+and the EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/website-evidence-collector)
