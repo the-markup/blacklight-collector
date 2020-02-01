@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.2](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1...@themarkup/blacklight@0.0.2) (2020-02-01)
+
+
+### Bug Fixes
+
+* **domain null fix:** cookie parse fix ([3e21786](https://gitlab.com/the_markup/blacklight/commit/3e21786e1068345718c1aa2cc888880353ba0759))
+
 ### [0.0.1](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1-beta.13...@themarkup/blacklight@0.0.1) (2020-02-01)
 
 
