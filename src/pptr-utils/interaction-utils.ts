@@ -57,10 +57,10 @@ export const DEFAULT_INPUT_VALUES = {
 };
 
 export const fillForms = async (page: Page) => {
-  const elements = await page.$$("input");
-  const count = 0;
-  for (const el of elements) {
-    try {
+  try {
+    const elements = await page.$$("input");
+    const count = 0;
+    for (const el of elements) {
       if (count > 100) {
         break;
       }
@@ -101,9 +101,9 @@ export const fillForms = async (page: Page) => {
         await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
       }
       await page.waitFor(100);
-    } catch (error) {
-      console.error(error);
     }
+  } catch (error) {
+    console.error(error);
   }
 };
 export const autoScroll = async page => {
