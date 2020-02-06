@@ -22,7 +22,7 @@ const getCanvasText = (args: string[]) => {
     return "";
   }
   // TODO: Makse sure this value is a string
-  return args[0];
+  return args[0].toString();
 };
 
 const getTextLength = (text: string) => {
@@ -81,7 +81,11 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     const url_host = parse(url).hostname;
     const script_url = getScriptUrl(item);
     const { symbol, operation, value } = data;
-    if (script_url.indexOf("http:") < -1 || script_url.indexOf("https:") < -1) {
+    if (
+      typeof script_url === "undefined" ||
+      script_url.indexOf("http:") < -1 ||
+      script_url.indexOf("https:") < -1
+    ) {
       continue;
     }
 
