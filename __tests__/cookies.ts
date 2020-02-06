@@ -7,8 +7,8 @@ import { loadEventData } from "../src/utils";
 import { join } from "path";
 import {
   captureBrowserCookies,
-  matchCookiesToEvents,
-  setupHttpCookieCapture
+  setupHttpCookieCapture,
+  getJsCookies
 } from "../src/cookie-collector";
 import { existsSync } from "fs";
 import { getLogger } from "../src/logger";
@@ -199,37 +199,37 @@ const PP_TEST_RESULT = [
     type: "unknown",
     third_party: true
   },
-  {
-    name: "_fbp",
-    value: "fb.1.1576609356483.938438702",
-    domain: "propublica.org",
-    path: "/",
-    expires: 1584385357,
-    size: 32,
-    httpOnly: false,
-    secure: false,
-    session: false,
-    expiresUTC: "2020-03-16T19:02:37.000Z",
-    expiresDays: 90,
-    type: "js",
-    third_party: false
-  },
-  {
-    name: "fr",
-    value: "0ibcmICEiBkaYy6hW..Bd-SZM...1.0.Bd-SZM.",
-    domain: "facebook.com",
-    path: "/",
-    expires: 1584385356.496285,
-    size: 41,
-    httpOnly: true,
-    secure: true,
-    session: false,
-    sameSite: "None",
-    expiresUTC: "2020-03-16T19:02:36.496Z",
-    expiresDays: 90,
-    type: "unknown",
-    third_party: true
-  },
+  // {
+  //   name: "_fbp",
+  //   value: "fb.1.1576609356483.938438702",
+  //   domain: "propublica.org",
+  //   path: "/",
+  //   expires: 1584385357,
+  //   size: 32,
+  //   httpOnly: false,
+  //   secure: false,
+  //   session: false,
+  //   expiresUTC: "2020-03-16T19:02:37.000Z",
+  //   expiresDays: 90,
+  //   type: "js",
+  //   third_party: false
+  // },
+  // {
+  //   name: "fr",
+  //   value: "0ibcmICEiBkaYy6hW..Bd-SZM...1.0.Bd-SZM.",
+  //   domain: "facebook.com",
+  //   path: "/",
+  //   expires: 1584385356.496285,
+  //   size: 41,
+  //   httpOnly: true,
+  //   secure: true,
+  //   session: false,
+  //   sameSite: "None",
+  //   expiresUTC: "2020-03-16T19:02:36.496Z",
+  //   expiresDays: 90,
+  //   type: "unknown",
+  //   third_party: true
+  // },
   {
     name: "__cfduid",
     value: "d12cccf1d0c5f877fb4ce3ba5e974d9131576609355",
@@ -349,7 +349,8 @@ const PP_TEST_RESULT = [
   }
 ];
 
-it("can capture cookies from the browser and JS and Network requets", async () => {
+// FIXME: Make a more robust test page for testing cookies. Relying on a real website that can change is silly.
+it("can capture cookies from the browser, javascript and network requests", async () => {
   const CAPTURE_TEST_URL = "propublica.org";
   const CAPTURE_TEST_DIR = join(__dirname, "test-data", CAPTURE_TEST_URL);
   const browser = await launch(defaultPuppeteerBrowserOptions);
@@ -364,13 +365,59 @@ it("can capture cookies from the browser and JS and Network requets", async () =
   await browser.close();
 });
 // This test doesnt work because the number of cookies might change
-// it("can match blacklight cookie events to those stored by the browser", async () => {
-//   const TEST_URL = "propublica.org";
-//   const TEST_DIR = join(__dirname, "test-data", TEST_URL);
-//   const rawEvents = loadEventData(TEST_DIR).map(m => m.message);
-//   const cookies = reportCookieEvents(rawEvents, TEST_DIR, TEST_URL);
-//   expect(cookies.map(n => n.name)).toEqual(PP_TEST_RESULT.map(n => n.name));
-// });
+it("can match blacklight cookie events to those stored by the browser", async () => {
+  const TEST_URL = "propublica.org";
+  const TEST_DIR = join(__dirname, "test-data", TEST_URL);
+  const rawEvents = loadEventData(TEST_DIR).map(m => m.message);
+  const cookies = reportCookieEvents(rawEvents, TEST_DIR, TEST_URL);
+  expect(cookies.map(n => n.name).sort()).toEqual(PP_TEST_RESULT.map(n => n.name).sort();
+});
+
+it("wont mess up if the there are no cookies on the page", async () => {
+  const TEST_URL = "propublica.org";
+  const TEST_DIR = join(__dirname, "test-data", TEST_URL);
+  const cookies = reportCookieEvents([], TEST_DIR, TEST_URL);
+  expect(cookies.map(n => n.name).sort()).toEqual(PP_TEST_RESULT.map(n => n.name).sort();
+});
+
+it("can handle badly formed events", async () => {
+     const event ={ data:
+       { operation: 'set',
+         symbol: 'window.document.cookie',
+         value:
+          'visitor_id1=25411;expires=Sat, 02 Feb 2030 23:37:23 GMT;path=/' },
+      stack:
+       [ { columnNumber: 42,
+           lineNumber: 252,
+           functionName: 'HTMLDocument.set',
+           source: '    at HTMLDocument.set (<anonymous>:252:42)' },
+         { columnNumber: 3662,
+           lineNumber: 2,
+           fileName: 'https://pi.pardot.com/pd.js',
+           functionName: 'piSetCookie',
+           source: '    at piSetCookie (https://pi.pardot.com/pd.js:2:3662)' },
+         { columnNumber: 4,
+           lineNumber: 4,
+           fileName:
+            'https://pi.pardot.com/analytics?ver=3&visitor_id=&pi_opt_in=&campaign_id=1035&account_id=126411&title=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&url=https%3A%2F%2Fwww.propublica.org%2F&referrer=',
+           functionName: 'piResponse',
+           source:
+            '    at piResponse (https://pi.pardot.com/analytics?ver=3&visitor_id=&pi_opt_in=&campaign_id=1035&account_id=126411&title=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&url=https%3A%2F%2Fwww.propublica.org%2F&referrer=:4:4)' },
+         { columnNumber: 1,
+           lineNumber: 24,
+           fileName:
+            'https://pi.pardot.com/analytics?ver=3&visitor_id=&pi_opt_in=&campaign_id=1035&account_id=126411&title=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&url=https%3A%2F%2Fwww.propublica.org%2F&referrer=',
+           source:
+            '    at https://pi.pardot.com/analytics?ver=3&visitor_id=&pi_opt_in=&campaign_id=1035&account_id=126411&title=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&url=https%3A%2F%2Fwww.propublica.org%2F&referrer=:24:1' } ],
+      type: 'JsInstrument.ObjectProperty',
+      url: 'https://www.propublica.org/' }
+        const rawEvents = getJsCookies([event], 'whatever')//.map(m => m.message);
+        
+        expect(getJsCookies([event], 'whatever')).toHaveLength(1)
+        event.data.value = 'totesfuckedcookie;expires=Sat, 02 Feb 2030 23:37:23 GMT;path=/'
+        expect(getJsCookies([event], 'whatever')).toHaveLength(0)
+  
+})
 
 // TODO: See what to do about this
 // it.skip("can report cookies used by a website", async () => {

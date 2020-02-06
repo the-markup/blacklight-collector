@@ -7,12 +7,20 @@ import { Cookie } from "tough-cookie";
 import { getScriptUrl } from "./utils";
 const parseCookie = (cookieStr, fpUrl) => {
   const cookie = Cookie.parse(cookieStr);
-  if (cookie && !!cookie.domain) {
-    // what is the domain if not set explicitly?
-    // https://stackoverflow.com/a/5258477/1407622
-    cookie.domain = getHostname(fpUrl);
+  try {
+    if (typeof cookie !== "undefined") {
+      if (!!cookie.domain) {
+        // what is the domain if not set explicitly?
+        // https://stackoverflow.com/a/5258477/1407622
+        cookie.domain = getHostname(fpUrl);
+      }
+      return cookie;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    return false;
   }
-  return cookie;
 };
 
 export const setupHttpCookieCapture = async (page, eventHandler) => {
@@ -81,18 +89,19 @@ export const getJsCookies = (events, url) => {
         m.type &&
         m.type.includes("JsInstrument.ObjectProperty") &&
         m.data.symbol.includes("cookie") &&
-        m.data.operation.startsWith("set")
+        m.data.operation.startsWith("set") &&
+        typeof Cookie.parse(m.data.value) !== "undefined"
     )
     .map(d => {
       const data = parseCookie(d.data.value, url);
       const script = getScriptUrl(d);
       return {
-        domain: Object.keys(d).includes("domain") ? d.domain : "",
-        name: data.key,
-        path: data.path,
+        domain: d.hasOwnProperty("domain") ? d.domain : "",
+        name: data ? data.key : "",
+        path: data ? data.path : "",
         script,
         type: d.type,
-        value: data.value
+        value: data ? data.value : ""
       };
     });
 };
@@ -180,6 +189,7 @@ export const loadBrowserCookies = (
   } catch (error) {
     console.error("Couldnt load browser cookies");
     console.error(error);
+    return [];
   }
 };
 
