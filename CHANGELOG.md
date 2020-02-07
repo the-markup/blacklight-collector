@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.2...@themarkup/blacklight@0.0.3) (2020-02-07)
+
+
+### Bug Fixes
+
+* **canvas-fp:** added toString to getCanvasText ([bf5f4ed](https://gitlab.com/the_markup/blacklight/commit/bf5f4ed51a2768f95763b69adeaa20baa056399b)), closes [#35](https://gitlab.com/the_markup/blacklight/issues/35) [#39](https://gitlab.com/the_markup/blacklight/issues/39)
+* **cookies-report:** error handling for parseCookie and getJsCookies ([368de1c](https://gitlab.com/the_markup/blacklight/commit/368de1c8a77865f68e1e0583f743e011484aea21)), closes [#29](https://gitlab.com/the_markup/blacklight/issues/29) [#30](https://gitlab.com/the_markup/blacklight/issues/30) [#32](https://gitlab.com/the_markup/blacklight/issues/32)
+* **fillForms:** wrap page evaluate in try/catch ([1f0071b](https://gitlab.com/the_markup/blacklight/commit/1f0071bf843f291ee82a4a4c781c4b4daac0a3d6)), closes [#34](https://gitlab.com/the_markup/blacklight/issues/34)
+* **pptr+data-exfil:** handle pptr launch errors better ([10b3a61](https://gitlab.com/the_markup/blacklight/commit/10b3a613d427ad3f6dab7a4cf149da12ef56c4a5)), closes [#14](https://gitlab.com/the_markup/blacklight/issues/14) [#33](https://gitlab.com/the_markup/blacklight/issues/33) [#36](https://gitlab.com/the_markup/blacklight/issues/36) [#37](https://gitlab.com/the_markup/blacklight/issues/37) [#40](https://gitlab.com/the_markup/blacklight/issues/40)
+
 ### [0.0.2](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.1...@themarkup/blacklight@0.0.2) (2020-02-01)
 
 
