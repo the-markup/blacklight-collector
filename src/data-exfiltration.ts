@@ -1,7 +1,7 @@
 import { Page, Request } from "puppeteer";
 import {
-  DEFAULT_INPUT_VALUES,
-  DEFAULT_AUTOCOMPLETE_VALUES
+  DEFAULT_AUTOCOMPLETE_VALUES,
+  DEFAULT_INPUT_VALUES
 } from "./pptr-utils/interaction-utils";
 import { BlacklightEvent } from "./types";
 import { isBase64 } from "./utils";

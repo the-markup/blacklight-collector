@@ -8,6 +8,7 @@ import PuppeteerHar from "puppeteer-har";
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 import devices from "puppeteer/DeviceDescriptors";
 import { parse } from "tldts";
+import treekill from "tree-kill";
 import url from "url";
 import {
   captureBrowserCookies,
@@ -26,7 +27,6 @@ import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
 import { clearDir } from "./utils";
 import { setupWebBeaconInspector } from "./web-beacon-recording";
-import treekill from "tree-kill";
 
 export const collector = async ({
   inUrl,
@@ -169,7 +169,7 @@ export const collector = async ({
   }
 
   let duplicatedLinks = [];
-  let outputLinks = {
+  const outputLinks = {
     first_party: [],
     third_party: []
   };
@@ -285,6 +285,7 @@ export const collector = async ({
       },
       (err, results) => {
         if (err) {
+          // tslint:disable-next-line:no-console
           console.log(`Couldnt load event data ${JSON.stringify(err)}`);
           return done([]);
         }
