@@ -26,6 +26,8 @@ import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
 import { clearDir } from "./utils";
 import { setupWebBeaconInspector } from "./web-beacon-recording";
+import treekill from "tree-kill";
+
 export const collector = async ({
   inUrl,
   outDir = join(process.cwd(), "bl-tmp"),
@@ -35,66 +37,17 @@ export const collector = async ({
   captureHar = true,
   captureLinks = false,
   enableAdBlock = false,
-  clearCache = false,
-  saveBrowserProfile = false,
+  clearCache = true,
   quiet = true,
   defaultTimeout = 30000,
   numPages = 3,
   defaultWaitUntil = "networkidle2",
   saveScreenshots = true
 }) => {
-  const FIRST_PARTY = parse(inUrl);
   clearDir(outDir);
+  const FIRST_PARTY = parse(inUrl);
   const logger = getLogger({ outDir, quiet });
-  const userDataDir = saveBrowserProfile
-    ? join(outDir, "browser-profile")
-    : undefined;
-  const options = {
-    ...defaultPuppeteerBrowserOptions,
-    headless,
-    userDataDir
-  };
-  let browser: Browser;
-  let page: Page; // await puppeteer.launch(options);
 
-  const setup = async () => {
-    browser = await puppeteer.launch(options);
-    // TODO: Determine how to handle disconnect events to kill the instance gracefully
-    // browser.on("disconnected", setup);
-    logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
-    page = (await browser.pages())[0];
-
-    if (emulateDevice) {
-      const deviceOptions = devices[emulateDevice];
-      page.emulate(deviceOptions);
-    }
-
-    // record all requested hosts
-    await page.on("request", request => {
-      const l = parse(request.url());
-      // note that hosts may appear as first and third party depending on the path
-      if (FIRST_PARTY.domain === l.domain) {
-        hosts.requests.first_party.add(l.hostname);
-      } else {
-        if (request.url().indexOf("data://") < 0) {
-          hosts.requests.third_party.add(l.hostname);
-        }
-      }
-    });
-    if (clearCache) {
-      await clearCookiesCache(page);
-    }
-    await setupBlacklightInspector(page, event => logger.warn(event));
-    await setupDataExfiltrationInspector(page, event => logger.warn(event));
-    await setupHttpCookieCapture(page, event => logger.warn(event));
-    await setupWebBeaconInspector(
-      page,
-      event => logger.warn(event),
-      enableAdBlock
-    );
-  };
-
-  await setup();
   const output: any = {
     title,
     uri_ins: inUrl,
@@ -108,9 +61,9 @@ export const collector = async ({
       captureLinks,
       enableAdBlock,
       emulateDevice,
-      numPages,
-      saveBrowserProfile
+      numPages
     },
+    browser: null,
     script: {
       host: os.hostname(),
       version: {
@@ -119,22 +72,14 @@ export const collector = async ({
       },
       node_version: process.version
     },
-    browser: {
-      name: "Chromium",
-      version: await browser.version(),
-      user_agent: await browser.userAgent(),
-      platform: {
-        name: os.type(),
-        version: os.release()
-      }
-    },
     start_time: new Date(),
     end_time: null
   };
   if (emulateDevice) {
     output.deviceEmulated = devices[emulateDevice];
   }
-  let pageIndex = 1;
+
+  // Log network requests and page links
   const hosts = {
     requests: {
       first_party: new Set(),
@@ -146,17 +91,72 @@ export const collector = async ({
     }
   };
 
+  let browser: Browser;
+  let page: Page;
+  let pageIndex = 1;
   let har = {} as any;
-  if (captureHar) {
-    har = new PuppeteerHar(page);
-    await har.start({
-      path: outDir ? join(outDir, "requests.har") : undefined
-    });
-  }
 
   let page_response = null;
   let loadError = false;
+  const userDataDir = join(outDir, "browser-profile");
   try {
+    const options = {
+      ...defaultPuppeteerBrowserOptions,
+      headless,
+      userDataDir
+    };
+    browser = await puppeteer.launch(options);
+    // TODO: Determine how to handle disconnect events to kill the instance gracefully
+    // browser.on("disconnected", setup);
+    logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
+    page = (await browser.pages())[0];
+    output.browser = {
+      name: "Chromium",
+      version: await browser.version(),
+      user_agent: await browser.userAgent(),
+      platform: {
+        name: os.type(),
+        version: os.release()
+      }
+    };
+    if (emulateDevice) {
+      const deviceOptions = devices[emulateDevice];
+      page.emulate(deviceOptions);
+    }
+    // record all requested hosts
+    await page.on("request", request => {
+      const l = parse(request.url());
+      // note that hosts may appear as first and third party depending on the path
+      if (FIRST_PARTY.domain === l.domain) {
+        hosts.requests.first_party.add(l.hostname);
+      } else {
+        if (request.url().indexOf("data://") < 1 && !!l.hostname) {
+          hosts.requests.third_party.add(l.hostname);
+        }
+      }
+    });
+
+    if (clearCache) {
+      await clearCookiesCache(page);
+    }
+
+    // Init blacklight instruments on page
+    await setupBlacklightInspector(page, event => logger.warn(event));
+    await setupDataExfiltrationInspector(page, event => logger.warn(event));
+    await setupHttpCookieCapture(page, event => logger.warn(event));
+    await setupWebBeaconInspector(
+      page,
+      event => logger.warn(event),
+      enableAdBlock
+    );
+    if (captureHar) {
+      har = new PuppeteerHar(page);
+      await har.start({
+        path: outDir ? join(outDir, "requests.har") : undefined
+      });
+    }
+
+    // Go to the url
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
       waitUntil: defaultWaitUntil as LoadEvent
@@ -167,68 +167,69 @@ export const collector = async ({
     loadError = true;
     page_response = error;
   }
-  // Return if the page doesnt load
-  if (loadError) {
-    await browser.close();
-    if (outDir.includes("bl-tmp")) {
-      clearDir(outDir, false);
-    }
-    return { status: "failed", page_response };
-  }
 
-  let duplicatedLinks = await getLinks(page);
-  const outputLinks = {
+  let duplicatedLinks = [];
+  let outputLinks = {
     first_party: [],
     third_party: []
   };
-  for (const link of dedupLinks(duplicatedLinks)) {
-    const l = parse(link.href);
 
-    if (FIRST_PARTY.domain === l.domain) {
-      outputLinks.first_party.push(link);
-      hosts.links.first_party.add(l.hostname);
-    } else {
-      if (l.hostname && l.hostname !== "data") {
-        outputLinks.third_party.push(link);
-        hosts.links.third_party.add(l.hostname);
+  try {
+    // Return if the page doesnt load
+    if (loadError) {
+      clearDir(userDataDir, false);
+      treekill(browser.process().pid, "SIGKILL");
+
+      if (outDir.includes("bl-tmp")) {
+        clearDir(outDir, false);
+      }
+      return { status: "failed", page_response };
+    }
+
+    duplicatedLinks = await getLinks(page);
+
+    for (const link of dedupLinks(duplicatedLinks)) {
+      const l = parse(link.href);
+
+      if (FIRST_PARTY.domain === l.domain) {
+        outputLinks.first_party.push(link);
+        hosts.links.first_party.add(l.hostname);
+      } else {
+        if (l.hostname && l.hostname !== "data") {
+          outputLinks.third_party.push(link);
+          hosts.links.third_party.add(l.hostname);
+        }
       }
     }
-  }
-  await fillForms(page);
-  output.uri_redirects = page_response
-    .request()
-    .redirectChain()
-    .map(req => {
-      return req.url();
-    });
+    await fillForms(page);
+    output.uri_redirects = page_response
+      .request()
+      .redirectChain()
+      .map(req => {
+        return req.url();
+      });
 
-  output.uri_dest = page.url();
+    output.uri_dest = page.url();
 
-  const browse_links = sampleSize(outputLinks.first_party, numPages);
-  output.browsing_history = [output.uri_dest].concat(
-    browse_links.map(l => l.href)
-  );
+    const browse_links = sampleSize(outputLinks.first_party, numPages);
+    output.browsing_history = [output.uri_dest].concat(
+      browse_links.map(l => l.href)
+    );
 
-  for (const link of output.browsing_history.slice(1)) {
-    try {
+    for (const link of output.browsing_history.slice(1)) {
       logger.log("info", `browsing now to ${link}`, { type: "Browser" });
       await page.goto(link, {
         timeout: defaultTimeout,
         waitUntil: "networkidle2"
       });
 
-      await page.waitFor(500); // in ms
       await fillForms(page);
-      await page.waitFor(100);
+      await page.waitFor(800);
       savePageContent(pageIndex, outDir, page, saveScreenshots);
       pageIndex++;
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);
-    } catch (error) {
-      logger.log("error", `browsing to ${link} failed`, { type: "Browser" });
     }
-  }
-  try {
     await captureBrowserCookies(page, outDir);
     if (captureHar) {
       await har.stop();
@@ -242,7 +243,8 @@ export const collector = async ({
       }
     );
   } finally {
-    await browser.close();
+    clearDir(userDataDir, false);
+    treekill(browser.process().pid, "SIGKILL");
   }
 
   const links = dedupLinks(duplicatedLinks);
@@ -273,7 +275,7 @@ export const collector = async ({
     output.social = getSocialLinks(links);
   }
 
-  const event_data_all: any = await new Promise((resolve, reject) => {
+  const event_data_all: any = await new Promise(done => {
     logger.query(
       {
         start: 0,
@@ -283,13 +285,18 @@ export const collector = async ({
       },
       (err, results) => {
         if (err) {
-          return reject(err);
+          console.log(`Couldnt load event data ${JSON.stringify(err)}`);
+          return done([]);
         }
-        return resolve(results.file);
+
+        return done(results.file);
       }
     );
   });
 
+  if (event_data_all.length < 1) {
+    return { status: "failed", page_response: "Couldnt load event data" };
+  }
   // filter only events with type set
   const event_data = event_data_all.filter(event => {
     return !!event.message.type;

@@ -10,12 +10,16 @@ export const savePageContent = async (
   page: Page,
   screenshot = true
 ) => {
-  const html = await page.content();
-  const outPath = path.join(outDir, `${index}.html`);
-  await writeFile(outPath, html);
-  if (screenshot) {
-    const outPathImg = path.join(outDir, `${index}.jpeg`);
-    await page.screenshot({ path: outPathImg, type: "jpeg", quality: 50 });
+  try {
+    const html = await page.content();
+    const outPath = path.join(outDir, `${index}.html`);
+    await writeFile(outPath, html);
+    if (screenshot) {
+      const outPathImg = path.join(outDir, `${index}.jpeg`);
+      await page.screenshot({ path: outPathImg, type: "jpeg", quality: 50 });
+    }
+  } catch (error) {
+    console.log(`couldnt save page content: ${JSON.stringify(error)}`);
   }
 };
 /**
