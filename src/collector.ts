@@ -8,7 +8,6 @@ import PuppeteerHar from "puppeteer-har";
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 import devices from "puppeteer/DeviceDescriptors";
 import { parse } from "tldts";
-import treekill from "tree-kill";
 import url from "url";
 import {
   captureBrowserCookies,
@@ -177,9 +176,8 @@ export const collector = async ({
   try {
     // Return if the page doesnt load
     if (loadError) {
+      await browser.close();
       clearDir(userDataDir, false);
-      treekill(browser.process().pid, "SIGKILL");
-
       if (outDir.includes("bl-tmp")) {
         clearDir(outDir, false);
       }
@@ -242,9 +240,13 @@ export const collector = async ({
         type: "Browser"
       }
     );
-  } finally {
+  }
+
+  try {
+    await browser.close();
     clearDir(userDataDir, false);
-    treekill(browser.process().pid, "SIGKILL");
+  } catch (err) {
+    logger.log("error", `couldnt cleanup browser ${JSON.stringify(err)} `);
   }
 
   const links = dedupLinks(duplicatedLinks);
