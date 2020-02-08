@@ -41,6 +41,7 @@ export const collector = async ({
   defaultTimeout = 30000,
   numPages = 3,
   defaultWaitUntil = "networkidle2",
+  saveBrowserProfile = false,
   saveScreenshots = true
 }) => {
   clearDir(outDir);
@@ -97,7 +98,9 @@ export const collector = async ({
 
   let page_response = null;
   let loadError = false;
-  const userDataDir = join(outDir, "browser-profile");
+  const userDataDir = saveBrowserProfile
+    ? join(outDir, "browser-profile")
+    : undefined;
   try {
     const options = {
       ...defaultPuppeteerBrowserOptions,
@@ -177,7 +180,7 @@ export const collector = async ({
     // Return if the page doesnt load
     if (loadError) {
       await browser.close();
-      clearDir(userDataDir, false);
+      typeof userDataDir !== "undefined" ? clearDir(userDataDir, false) : "";
       if (outDir.includes("bl-tmp")) {
         clearDir(outDir, false);
       }
@@ -244,7 +247,7 @@ export const collector = async ({
 
   try {
     await browser.close();
-    clearDir(userDataDir, false);
+    typeof userDataDir !== "undefined" ? clearDir(userDataDir, false) : "";
   } catch (err) {
     logger.log("error", `couldnt cleanup browser ${JSON.stringify(err)} `);
   }
@@ -298,7 +301,10 @@ export const collector = async ({
   });
 
   if (event_data_all.length < 1) {
-    return { status: "failed", page_response: "Couldnt load event data" };
+    return {
+      status: "failed",
+      page_response: "Couldnt load event data"
+    };
   }
   // filter only events with type set
   const event_data = event_data_all.filter(event => {
