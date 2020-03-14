@@ -219,6 +219,6 @@ describe("JS Instrument", () => {
     expect(observedGetsAndSets.sort()).toEqual(
       SET_PREVENT_GETS_AND_SETS.sort()
     );
-    // await page.close();
+    await page.close();
   });
 });

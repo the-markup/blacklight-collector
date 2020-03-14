@@ -12,6 +12,7 @@ import { getScriptUrl, serializeCanvasCallMap } from "./utils";
 const MIN_CANVAS_IMAGE_WIDTH = 16;
 const MIN_CANVAS_IMAGE_HEIGHT = 16;
 const MIN_FONT_LIST_SIZE = 50;
+const MIN_TEXT_MEASURE_COUNT = 50;
 const MIN_TEXT_LENGTH = 10;
 /**
  * Return the string that is written onto canvas from function arguments
@@ -72,6 +73,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
   ];
 
   const cReads = new Map() as CanvasCallMap;
+  const cDataUrls = new Map() as CanvasCallMap;
   const cWrites = new Map() as CanvasCallMap;
   const cTexts = new Map() as CanvasCallMap;
   const cBanned = new Map() as CanvasCallMap;
@@ -95,6 +97,11 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
         isGetImageDataDimsTooSmall(data.arguments)
       ) {
         continue;
+      }
+      if (symbol === "HTMLCanvasElement.toDataURL") {
+        cDataUrls.has(script_url)
+          ? cDataUrls.get(script_url).add(value)
+          : cDataUrls.set(script_url, new Set([value]));
       }
       cReads.has(script_url)
         ? cReads.get(script_url).add(url_host)
@@ -129,6 +136,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
   }
   return {
     cBanned,
+    cDataUrls,
     cReads,
     cStyles,
     cTexts,
@@ -143,10 +151,20 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
  */
 export const getCanvasFp = (
   canvasCalls
-): { fingerprinters: string[]; texts: any; styles: any } => {
-  const { cReads, cWrites, cBanned, cTexts, cStyles } = sortCanvasCalls(
-    canvasCalls
-  );
+): {
+  fingerprinters: string[];
+  texts: any;
+  styles: any;
+  data_url: any;
+} => {
+  const {
+    cDataUrls,
+    cReads,
+    cWrites,
+    cBanned,
+    cTexts,
+    cStyles
+  } = sortCanvasCalls(canvasCalls);
 
   const fingerprinters: Set<string> = new Set();
   for (const [script_url, url_hosts] of cReads.entries()) {
@@ -179,7 +197,8 @@ export const getCanvasFp = (
   return {
     fingerprinters: Array.from(fingerprinters),
     styles: serializeCanvasCallMap(cStyles),
-    texts: serializeCanvasCallMap(cTexts)
+    texts: serializeCanvasCallMap(cTexts),
+    data_url: serializeCanvasCallMap(cDataUrls)
   };
 };
 
@@ -221,11 +240,11 @@ export const getCanvasFontFp = jsCalls => {
     }
   });
   // TODO: Test this, not adding yet to avoid false positives
-  // textMeasure.forEach(function(value, key, map) {
-  //   if (value.size < MIN_FONT_LIST_SIZE) {
-  //     map.delete(key);
-  //   }
-  // });
+  textMeasure.forEach(function(value, key, map) {
+    if (value.size < MIN_TEXT_MEASURE_COUNT) {
+      map.delete(key);
+    }
+  });
   return {
     canvas_font: serializeCanvasCallMap(canvasFont),
     text_measure: serializeCanvasCallMap(textMeasure)

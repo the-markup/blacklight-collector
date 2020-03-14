@@ -190,18 +190,19 @@ export function jsInstruments(loggerHandler, StackTrace) {
       const stack = StackTrace.getSync({ offline: true });
       const args = Array.prototype.slice.call(arguments, 0);
       const serialArgs = args.map(arg => serializeObject(arg, serialize));
+      const returnValue = func.apply(this, arguments);
       sendMessagesToLogger({
         data: {
           arguments: serialArgs,
           operation: "call",
           symbol: `${objectName}.${methodName}`,
-          value: ""
+          value: serializeObject(returnValue, true)
         },
         stack,
         type: "JsInstrument.Function",
         url: window.location.href
       });
-      return func.apply(this, arguments);
+      return returnValue;
     };
   };
 
