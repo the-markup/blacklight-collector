@@ -4,18 +4,18 @@ export interface Global {
 
 export type BlacklightEvent =
   | JsInstrumentEvent
-  | DataExfiltrationEvent
+  | KeyLoggingEvent
   | BlacklightErrorEvent
   | TrackingRequestEvent;
 
-export interface DataExfiltrationEvent {
-  type: "DataExfiltration";
+export interface KeyLoggingEvent {
+  type: "KeyLogging";
   url: string;
   stack: any[];
   data: {
     post_request_url: string;
     post_data: string;
-    base_64: boolean;
+    match_type: string[];
     filter: string[];
   };
 }
@@ -49,7 +49,7 @@ export interface BlacklightErrorEvent {
   type:
     | "Error"
     | "Error.BlacklightInspector"
-    | "Error.DataExfiltration"
+    | "Error.KeyLogging"
     | "Error.JsInstrument";
   url: string;
   stack: any[];

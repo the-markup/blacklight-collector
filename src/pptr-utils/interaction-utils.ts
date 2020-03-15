@@ -1,59 +1,39 @@
 import { Page } from "puppeteer";
 
 // tslint:disable:object-literal-sort-keys
-export const DEFAULT_AUTOCOMPLETE_VALUES = {
+export const DEFAULT_INPUT_VALUES = {
+  date: "01/01/2026",
+  email: "blacklight-headless@themarkup.org",
+  password: "SUPERS3CR3T_PASSWORD",
+  search: "TheMarkup",
+  text: "IdaaaaTarbell",
+  url: "https://themarkup.org",
   organization: "The Markup",
-  "organization-title": "Investigative Data Journalist",
+  "organization-title": "Non-profit newsroom",
   "current-password": "S3CR3T_CURRENT_PASSWORD",
   "new-password": "S3CR3T_NEW_PASSWORD",
-  username: "ida_tarbell",
+  username: "idaaaa_tarbell",
   "family-name": "Tarbell",
-  "given-name": "Ida",
-  name: "IdaTarbell",
-  email: "blacklight-headless@themarkup.org",
-  "street-address": "1337 Broadway",
-  "address-line1": "Apt 33",
-  // "address-level1": "NY",
-  // "address-level2": "New York City",
-  // "address-level3": "New York City",
-  // "address-level4": "New York City",
-  "postal-code": "10011",
-  // country: "USA",
-  // "country-name": "United States",
-  "cc-name": "IDATARBELL",
-  "cc-given-name": "IDA",
+  "given-name": "Idaaaa",
+  name: "IdaaaaTarbell",
+  "street-address": "PO Box #1103",
+  "address-line1": "PO Box #1103",
+  "postal-code": "10159",
+  "cc-name": "IDAAAATARBELL",
+  "cc-given-name": "IDAAAA",
   "cc-family-name": "TARBELL",
-  "cc-number": "4242424242424242",
+  "cc-number": "4479846060020724",
   // "cc-csc": "123",
-  "cc-exp": "01/2022", // "MM/YY" or "MM/YYYY".
+  "cc-exp": "01/2026", // "MM/YY" or "MM/YYYY".
   // "cc-exp-month": "01",
   // "cc-exp-year": "2019",
   "cc-type": "Visa",
-  "transaction-currency": "USD",
   "transaction-amount": "13371337",
   bday: "01-01-1970",
-  // "bday-day": "01",
-  // "bday-month": "01",
-  // "bday-year": "1970",
   sex: "Female",
   tel: "+1971112233",
-  // "tel-country-code": "1",
   "tel-national": "917-111-2233",
-  // "tel-area-code": "123",
-  // "tel-local": "111-2222",
-  // "tel-local-prefix": "111",
-  // "tel-local-suffix": "111",
-  url: "https://themarkup.org",
   impp: "xmpp:blacklight-headless@themarkup.org"
-};
-export const DEFAULT_INPUT_VALUES = {
-  date: "01/01/2020",
-  email: "blacklight-headless@themarkup.org",
-  password: "SUPERSECRETP@SSW0RD",
-  search: "TheMarkup",
-  tel: "9171112233",
-  text: "IdaTarbell",
-  url: "https://themarkup.org"
 };
 
 export const fillForms = async (page: Page) => {
@@ -75,9 +55,9 @@ export const fillForms = async (page: Page) => {
         if (autoCompleteValue.includes("cc-name")) {
           autoCompleteKeys = ["cc-name"];
         } else {
-          autoCompleteKeys = Object.keys(
-            DEFAULT_AUTOCOMPLETE_VALUES
-          ).filter(k => (autoCompleteValue as string).includes(k));
+          autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter(k =>
+            (autoCompleteValue as string).includes(k)
+          );
         }
       }
 
@@ -90,7 +70,7 @@ export const fillForms = async (page: Page) => {
         });
         await el.press("Backspace");
         await page.keyboard.type(
-          DEFAULT_AUTOCOMPLETE_VALUES[autoCompleteKeys[0] as string]
+          DEFAULT_INPUT_VALUES[autoCompleteKeys[0] as string]
         );
       } else if (Object.keys(DEFAULT_INPUT_VALUES).includes(pValue as string)) {
         await el.focus();

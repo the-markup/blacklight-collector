@@ -11,7 +11,8 @@ function start_test(params) {
   });
   // this function will send events to the backend and reset the events array
   async function saveFetch(event) {
-    const body = window.btoa(JSON.stringify(event));
+    event.data.text = window.btoa(event.data.text);
+    const body = JSON.stringify(event);
     await fetch("http://localhost:8125/bogus_submit.html", {
       method: "POST",
       headers: {

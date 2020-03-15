@@ -4,7 +4,7 @@ import { loadBrowserCookies, matchCookiesToEvents } from "./cookie-collector";
 import {
   BEHAVIOUR_TRACKING_EVENTS,
   BlacklightEvent,
-  DataExfiltrationEvent,
+  KeyLoggingEvent,
   FINGERPRINTABLE_WINDOW_APIS,
   JsInstrumentEvent
 } from "./types";
@@ -15,8 +15,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
   switch (reportType) {
     case "cookies":
       return reportCookieEvents(eventData, dataDir, url);
-    case "data_exfiltration":
-      return reportDataExiltration(eventData);
+    case "key_logging":
+      return reportKeyLogging(eventData);
     case "behaviour_event_listeners":
       return reportEventListeners(eventData);
     case "canvas_fingerprinters":
@@ -45,8 +45,8 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
       filtered = filterByEvent(messages, "JsInstrument");
       filtered = filtered.concat(filterByEvent(messages, "Cookie.HTTP"));
       break;
-    case "data_exfiltration":
-      filtered = filterByEvent(messages, "DataExfiltration");
+    case "key_logging":
+      filtered = filterByEvent(messages, "KeyLogging");
       break;
     case "behaviour_event_listeners":
       filtered = filterByEvent(messages, "JsInstrument");
@@ -140,10 +140,10 @@ export const reportCookieEvents = (
   return matchCookiesToEvents(browser_cookies, eventData, url);
 };
 
-const reportDataExiltration = (eventData: BlacklightEvent[]) => {
+const reportKeyLogging = (eventData: BlacklightEvent[]) => {
   const groupByRequestPs = groupBy("post_request_ps");
   return groupByRequestPs(
-    eventData.map((m: DataExfiltrationEvent) => ({
+    eventData.map((m: KeyLoggingEvent) => ({
       ...m.data,
       post_request_ps: getDomainSafely(m)
     }))
@@ -195,7 +195,7 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
   return serializable;
 };
 
-const getDomainSafely = (message: DataExfiltrationEvent) => {
+const getDomainSafely = (message: KeyLoggingEvent) => {
   try {
     if (message.data.post_request_url) {
       return getDomain(message.data.post_request_url);

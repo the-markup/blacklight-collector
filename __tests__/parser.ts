@@ -48,7 +48,7 @@ it("can parse AddEventlistener events", async () => {
 it("can parse DataExfiltration events", async () => {
   const TEST_DIR = join(__dirname, "test-data", "veteransunited");
   const rawEvents = loadEventData(TEST_DIR);
-  const report = generateReport("data_exfiltration", rawEvents, null, null);
+  const report = generateReport("key_logging", rawEvents, null, null);
   expect(Object.keys(report)).toEqual(["leadid.com", "fullstory.com"]);
 });
 

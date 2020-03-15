@@ -14,7 +14,7 @@ import {
   clearCookiesCache,
   setupHttpCookieCapture
 } from "./cookie-collector";
-import { setupDataExfiltrationInspector } from "./data-exfiltration";
+import { setupKeyLoggingInspector } from "./key-logging";
 import { setupBlacklightInspector } from "./inspector";
 import { getLogger } from "./logger";
 import { generateReport } from "./parser";
@@ -144,7 +144,7 @@ export const collector = async ({
 
     // Init blacklight instruments on page
     await setupBlacklightInspector(page, event => logger.warn(event));
-    await setupDataExfiltrationInspector(page, event => logger.warn(event));
+    await setupKeyLoggingInspector(page, event => logger.warn(event));
     await setupHttpCookieCapture(page, event => logger.warn(event));
     await setupWebBeaconInspector(
       page,
@@ -313,7 +313,7 @@ export const collector = async ({
   const reports = [
     "cookies",
     "behaviour_event_listeners",
-    "data_exfiltration",
+    "key_logging",
     "canvas_fingerprinters",
     "canvas_font_fingerprinters",
     "fingerprintable_api_calls",
