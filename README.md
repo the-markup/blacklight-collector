@@ -64,28 +64,28 @@ const { join } = require("path");
   // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
   const EMULATE_DEVICE = false;
 
-  // Save the results to a folder
-  let OUT_DIR = false;
+ // Save the results to a folder
+  let OUT_DIR = true;
 
   // The URL to test
-  const URL = "example.com";
+  const URL = "jetblue.com";
 
   const defaultConfig = {
-    inUrl: `https://${URL}`,
+    inUrl: `http://${URL}`,
     numPages: 2,
-    headless: true,
+    headless: false,
     emulateDevice: EMULATE_DEVICE
   };
 
   const result = await collector(
     OUT_DIR
-      ? defaultConfig
-      : { ...defaultConfig, ...{ outDir: join(__dirname, URL) } }
+      ? { ...defaultConfig, ...{ outDir: join(__dirname, "demo-dir") } }
+      : defaultConfig
   );
-
-  console.log(result);
   if (OUT_DIR) {
-    console.log(`For captured data please look in ${outDir}`);
+    console.log(
+      `For captured data please look in ${join(__dirname, "demo-dir")}`
+    );
   }
 })();
 

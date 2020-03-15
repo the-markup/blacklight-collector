@@ -54,20 +54,20 @@ Runs the inspection
       - `name`<string> Name of the OS running the inspection.
       - `version`<string>
 
-  - `script` Information about the current script
+  - `script` Information about the current script.
 
     - `host`<string> name of the host running the script
 
     - `version`<Object> 
 
-      - `npm` <string> package.json version
+      - `npm` <string> package.json version.
       - `commit`<?string>
 
     - `node_version`<string>
 
-    - `start_time`<string> Inspection start time
+    - `start_time`<string> Inspection start time.
 
-    - `end_time`<string> Inspection end
+    - `end_time`<string> Inspection end.
 
     - `deviceEmulated`<Object>
 
@@ -75,9 +75,9 @@ Runs the inspection
       - `userAgent`<string>
       - `viewport`<Object>
 
-    - `browsing_history`<Array<String>> Pages visited in inspection
+    - `browsing_history`<Array<String>> Pages visited in inspection.
 
-    - `hosts`<Object> Hostnames of the URLs the page interacted with during the inspection
+    - `hosts`<Object> Hostnames of the URLs the page interacted with during the inspection.
 
       - `requests`
         - `first_party`<Array<string>>
@@ -87,9 +87,9 @@ Runs the inspection
 
       - `cookies`<Array<Object>> Object properties -
 
-        - `name` Cookie name
-        - `value`<string> Cookie value
-        - `domain` <string> Domain cookie is set for
+        - `name` Cookie name.
+        - `value`<string> Cookie value.
+        - `domain` <string> The domain for this cookie.
         - `path`<string>
         - `expires` <number>
         - `size` <number>
@@ -97,41 +97,42 @@ Runs the inspection
         - `secure` <boolean>
         - `session`<boolean>
         - `expiresUTC`<string> 
-        - `expiresDays`<number> Number of days till it expires
+        - `expiresDays`<number> Number of days till it expires.
         - `type` <string> Js|HTTP|unknown
         - `third_party`<boolean>
 
-      - `behaviour_event_listeners`<Object>  Scripts that are monitoring 
+      - `behaviour_event_listeners`<Object>  Scripts that are monitoring.
 
         - KEYBOARD<Object>
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of keyboard events the script is monitoring
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of keyboard events the script is monitoring.
         - MOUSE
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of mouse events the script is monitoring
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of mouse events the script is monitoring.
         - TOUCH
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of touch events the script is monitoring
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of touch events the script is monitoring.
         - SENSOR
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of mouse events the script is monitoring
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of mouse events the script is monitoring.
 
-      - `data_exfiltration` <Object>
-        - Key<string> Name of script carrying out keylogging
+      - `key_logging` <Object>
+        - Key<string> Name of script carrying out keylogging.
         - Value<Array<Object>>
-          - `base_64` <boolean> True if the value if base64 encoded
-          - `filter`<Array<string>> String that Black Light types into input field that was detected in the post request body
-          - `post_data`<string> Stringified JSON post body of the network request where the text string match was found
+          - `match_type` <Array<string>> Which encoding matched. Options: `plaintext`,`md5`, `sha256`, `sha512`
+          - `filter`<Array<string>> String that Black Light types into input field that was detected in the post request body. Note: if the value was hashed, the hashed string will be adde to this array.
+          - `post_data`<string> Stringified JSON post body of the network request where the text string match was found.
           - `post_request_url`<string>
           - `post_request_ps`<string>
 
       - `canvas_fingerprinters` 
 
         - `fingerprinters`<Array<string>> List of scripts that are carrying out canvas fingerprinting based on Princeton study methodlogy.
-        - `styles`<Object> Styles that were set in the canvas by the fingerprinting scripts
-        - `texts`<Object> Texts that were written to the canvas  by the fingerprinting scrips
+        - `styles`<Object> Styles that were set in the canvas by the fingerprinting scripts.
+        - `texts`<Object> Texts that were written to the canvas  by the fingerprinting scripts.
+        - `data_url` <Object> Data url for the canvas object that was drawn on the page.
 
-      - `canvas_font_fingerprinting` Record of scripts that are carrying out font fingerprinting
+      - `canvas_font_fingerprinting` Record of scripts that are carrying out font fingerprinting.
 
         - `canvas_font`<Object>
         - `text_meanse`<Object>
@@ -139,18 +140,18 @@ Runs the inspection
       - `fingerprintable_api_calls`<Object> 
 
         - NAVIGATOR<Object>
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of navigator window properties the script called
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of navigator window properties the script called.
 
         - SCREEN<Object>
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of navigator window properties the script called
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of navigator window properties the script called.
         - MEDIA_DEVICES<Object>
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of navigator window properties the script called
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of navigator window properties the script called.
         - CANVAS<Object>
-          - Key<string> Name of scripts
-          - Value: <Array<string>> List of navigator window properties the script
+          - Key<string> Name of scripts.
+          - Value: <Array<string>> List of navigator window properties the script.
 
       - `web_beacons` <Array<Objects>>
 
