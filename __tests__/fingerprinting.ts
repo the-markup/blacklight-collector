@@ -200,7 +200,7 @@ describe("Blacklight Fingerprinting Inspector", () => {
     expect(testData.sort()).toEqual(PROPERTIES.sort());
   });
 
-  it("can instrument the canvas object", async () => {
+  it.skip("can instrument the canvas object", async () => {
     const rows = [];
     const eventDataHandler = event => rows.push(event);
     const page = await browser.newPage();

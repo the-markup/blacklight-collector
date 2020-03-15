@@ -74,3 +74,4 @@ build
 **/*/*.jpeg
 **/*/*.zip
 !__tests__/test-data/propublica.org/*
+!__tests__/test-pages/*
