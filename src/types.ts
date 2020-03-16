@@ -6,7 +6,8 @@ export type BlacklightEvent =
   | JsInstrumentEvent
   | KeyLoggingEvent
   | BlacklightErrorEvent
-  | TrackingRequestEvent;
+  | TrackingRequestEvent
+  | SessionRecordingEvent;
 
 export interface KeyLoggingEvent {
   type: "KeyLogging";
@@ -39,6 +40,12 @@ export interface JsInstrumentEvent {
   };
 }
 
+export interface SessionRecordingEvent {
+  type: "SessionRecording";
+  url: string;
+  matches: string[];
+  stack: any[];
+}
 export interface TrackingRequestEvent {
   type: "TrackingRequest";
   url: string;
@@ -66,7 +73,30 @@ export interface LinkObject {
   innerHtml: string;
   innerText: string;
 }
-
+export const SESSION_RECORDERS_LIST = [
+  "mc.yandex.ru/metrika/watch.js",
+  "mc.yandex.ru/metrika/tag.js",
+  "mc.yandex.ru/webvisor/",
+  "fullstory.com/s/fs.js",
+  "d2oh4tlt9mrke9.cloudfront.net/Record/js/sessioncam.recorder.js",
+  "ws.sessioncam.com/Record/record.asmx",
+  "userreplay.net",
+  "static.hotjar.com",
+  "script.hotjar.com",
+  "insights.hotjar.com/api",
+  "clicktale.net",
+  "smartlook.com",
+  "decibelinsight.net",
+  "quantummetric.com",
+  "inspectlet.com",
+  "mouseflow.com",
+  "logrocket.com",
+  "salemove.com",
+  "d10lpsik1i8c69.cloudfront.net",
+  "luckyorange.com",
+  "vwo.com",
+  "leadid.com"
+];
 export const BEHAVIOUR_TRACKING_EVENTS = {
   KEYBOARD: ["keydown", "keypress", "keyup", "input"],
   MOUSE: [

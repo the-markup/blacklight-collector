@@ -6,7 +6,8 @@ import {
   BlacklightEvent,
   KeyLoggingEvent,
   FINGERPRINTABLE_WINDOW_APIS,
-  JsInstrumentEvent
+  JsInstrumentEvent,
+  SessionRecordingEvent
 } from "./types";
 import { getScriptUrl, groupBy, loadJSONSafely } from "./utils";
 
@@ -25,6 +26,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
       return reportCanvasFontFingerprinters(eventData);
     case "fingerprintable_api_calls":
       return reportFingerprintableAPIs(eventData);
+    case "session_recorders":
+      return reportSessionRecorders(eventData);
     case "web_beacons":
       return eventData;
     default:
@@ -60,6 +63,10 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
     case "fingerprintable_api_calls":
       filtered = filterByEvent(messages, "JsInstrument");
       break;
+    case "session_recorders":
+      filtered = filterByEvent(messages, "SessionRecording");
+
+      break;
     case "web_beacons":
       filtered = filterByEvent(messages, "TrackingRequest");
       break;
@@ -67,6 +74,18 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
       return [];
   }
   return filtered.map(m => m.message);
+};
+const reportSessionRecorders = (eventData: BlacklightEvent[]) => {
+  let report = {};
+  eventData.forEach((event: SessionRecordingEvent) => {
+    const match = event.matches[0];
+    if (Object.keys(report).includes(match)) {
+      report[match].includes(event.url) ? "" : report[match].push(event.url);
+    } else {
+      report[match] = [event.url];
+    }
+  });
+  return report;
 };
 
 const MONITORED_EVENTS = [].concat(...Object.values(BEHAVIOUR_TRACKING_EVENTS));

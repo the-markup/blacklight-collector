@@ -91,7 +91,8 @@ export const loadEventData = (dir, filename = "inspection-log.ndjson") => {
     .readFileSync(join(dir, filename), "utf-8")
     .split("\n")
     .filter(m => m)
-    .map(m => loadJSONSafely(m));
+    .map(m => loadJSONSafely(m))
+    .filter(m => m.level === "warn");
 };
 // Not using this atm but leaving it in because it might be useful in the future
 export const getStackType = (stack, firstPartyDomain) => {

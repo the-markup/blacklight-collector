@@ -26,7 +26,7 @@ import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
 import { clearDir } from "./utils";
 import { setupWebBeaconInspector } from "./web-beacon-recording";
-
+import { setupSessionRecordingInspector } from "./session-recording";
 export const collector = async ({
   inUrl,
   outDir = join(process.cwd(), "bl-tmp"),
@@ -146,6 +146,7 @@ export const collector = async ({
     await setupBlacklightInspector(page, event => logger.warn(event));
     await setupKeyLoggingInspector(page, event => logger.warn(event));
     await setupHttpCookieCapture(page, event => logger.warn(event));
+    await setupSessionRecordingInspector(page, event => logger.warn(event));
     await setupWebBeaconInspector(
       page,
       event => logger.warn(event),
@@ -317,6 +318,7 @@ export const collector = async ({
     "canvas_fingerprinters",
     "canvas_font_fingerprinters",
     "fingerprintable_api_calls",
+    "session_recorders",
     "web_beacons"
   ].reduce((acc, cur) => {
     acc[cur] = generateReport(cur, event_data, outDir, inUrl);

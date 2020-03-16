@@ -44,8 +44,13 @@ it("can parse AddEventlistener events", async () => {
     ]
   });
 });
-
-it("can parse DataExfiltration events", async () => {
+it("can parse session recording events", async () => {
+  const TEST_DIR = join(__dirname, "test-data", "veteransunitedsession");
+  const rawEvents = loadEventData(TEST_DIR);
+  const report = generateReport("session_recorders", rawEvents, null, null);
+  expect(Object.keys(report)).toEqual(["leadid.com", "fullstory.com/s/fs.js"]);
+});
+it("can parse key logging events", async () => {
   const TEST_DIR = join(__dirname, "test-data", "veteransunited");
   const rawEvents = loadEventData(TEST_DIR);
   const report = generateReport("key_logging", rawEvents, null, null);
