@@ -1,6 +1,6 @@
-import { BlacklightEvent, SESSION_RECORDERS_LIST } from "./types";
 import { Page } from "puppeteer";
 import url from "url";
+import { BlacklightEvent, SESSION_RECORDERS_LIST } from "./types";
 
 export const setupSessionRecordingInspector = async (
   page: Page,
@@ -17,10 +17,10 @@ export const setupSessionRecordingInspector = async (
     const matches = SESSION_RECORDERS_LIST.filter(s => cleanUrl.includes(s));
     if (matches.length > 0) {
       eventDataHandler({
+        matches,
         stack,
         type: "SessionRecording",
-        url: cleanUrl,
-        matches
+        url: cleanUrl
       });
     }
   });

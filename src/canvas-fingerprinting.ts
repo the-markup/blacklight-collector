@@ -195,10 +195,10 @@ export const getCanvasFp = (
     }
   }
   return {
+    data_url: serializeCanvasCallMap(cDataUrls),
     fingerprinters: Array.from(fingerprinters),
     styles: serializeCanvasCallMap(cStyles),
-    texts: serializeCanvasCallMap(cTexts),
-    data_url: serializeCanvasCallMap(cDataUrls)
+    texts: serializeCanvasCallMap(cTexts)
   };
 };
 
@@ -240,7 +240,7 @@ export const getCanvasFontFp = jsCalls => {
     }
   });
   // TODO: Test this, not adding yet to avoid false positives
-  textMeasure.forEach(function(value, key, map) {
+  textMeasure.forEach((value, key, map) => {
     if (value.size < MIN_TEXT_MEASURE_COUNT) {
       map.delete(key);
     }

@@ -14,8 +14,8 @@ import {
   clearCookiesCache,
   setupHttpCookieCapture
 } from "./cookie-collector";
-import { setupKeyLoggingInspector } from "./key-logging";
 import { setupBlacklightInspector } from "./inspector";
+import { setupKeyLoggingInspector } from "./key-logging";
 import { getLogger } from "./logger";
 import { generateReport } from "./parser";
 import {
@@ -24,9 +24,9 @@ import {
 } from "./pptr-utils/default";
 import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
+import { setupSessionRecordingInspector } from "./session-recording";
 import { clearDir } from "./utils";
 import { setupWebBeaconInspector } from "./web-beacon-recording";
-import { setupSessionRecordingInspector } from "./session-recording";
 export const collector = async ({
   inUrl,
   outDir = join(process.cwd(), "bl-tmp"),
@@ -181,7 +181,9 @@ export const collector = async ({
     // Return if the page doesnt load
     if (loadError) {
       await browser.close();
-      typeof userDataDir !== "undefined" ? clearDir(userDataDir, false) : "";
+      if (typeof userDataDir !== "undefined") {
+        clearDir(userDataDir, false);
+      }
       if (outDir.includes("bl-tmp")) {
         clearDir(outDir, false);
       }
@@ -248,7 +250,9 @@ export const collector = async ({
 
   try {
     await browser.close();
-    typeof userDataDir !== "undefined" ? clearDir(userDataDir, false) : "";
+    if (typeof userDataDir !== "undefined") {
+      clearDir(userDataDir, false);
+    }
   } catch (err) {
     logger.log("error", `couldnt cleanup browser ${JSON.stringify(err)} `);
   }

@@ -11,9 +11,9 @@ const ts = [
 ];
 
 const hashesMap = {
-  plaintext: Object.values(DEFAULT_INPUT_VALUES),
   base64: Object.values(getHashedValues("base64", DEFAULT_INPUT_VALUES)),
   md5: Object.values(getHashedValues("md5", DEFAULT_INPUT_VALUES)),
+  plaintext: Object.values(DEFAULT_INPUT_VALUES),
   sha256: Object.values(getHashedValues("sha256", DEFAULT_INPUT_VALUES)),
   sha512: Object.values(getHashedValues("sha512", DEFAULT_INPUT_VALUES))
 };
@@ -35,7 +35,7 @@ export const setupKeyLoggingInspector = async (
         if (filter.length > 0) {
           let match_type = [];
           filter.forEach(val => {
-            let m = Object.entries(hashesMap).filter(([, hashes]) => {
+            const m = Object.entries(hashesMap).filter(([, hashes]) => {
               return hashes.indexOf(val) > -1;
             });
             match_type = match_type.concat(m.map(e => e[0]));

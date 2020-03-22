@@ -1,8 +1,8 @@
+import crypto from "crypto";
 import fs from "fs";
 import { join } from "path";
 import { getDomain, getPublicSuffix } from "tldts";
 import { BlacklightEvent } from "./types";
-import crypto from "crypto";
 export const getFirstPartyPs = firstPartyUri => {
   return getPublicSuffix(firstPartyUri);
 };
@@ -127,7 +127,7 @@ export const isBase64 = str => {
   }
 };
 
-export const getStringHash = function(algorithm, str) {
+export const getStringHash = (algorithm, str) => {
   return crypto
     .createHash(algorithm)
     .update(str)
@@ -135,11 +135,10 @@ export const getStringHash = function(algorithm, str) {
 };
 export const getHashedValues = (algorithm, object) => {
   return Object.entries(object).reduce((acc, cur: any) => {
-    if (algorithm === "base64") {
-      acc[cur[0]] = Buffer.from(cur[1]).toString("base64");
-    } else {
-      acc[cur[0]] = getStringHash(algorithm, cur[1]);
-    }
+    acc[cur[0]] =
+      algorithm === "base64"
+        ? Buffer.from(cur[1]).toString("base64")
+        : getStringHash(algorithm, cur[1]);
     return acc;
   }, {});
 };

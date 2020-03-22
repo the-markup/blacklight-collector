@@ -4,9 +4,9 @@ import { loadBrowserCookies, matchCookiesToEvents } from "./cookie-collector";
 import {
   BEHAVIOUR_TRACKING_EVENTS,
   BlacklightEvent,
-  KeyLoggingEvent,
   FINGERPRINTABLE_WINDOW_APIS,
   JsInstrumentEvent,
+  KeyLoggingEvent,
   SessionRecordingEvent
 } from "./types";
 import { getScriptUrl, groupBy, loadJSONSafely } from "./utils";
@@ -76,11 +76,14 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
   return filtered.map(m => m.message);
 };
 const reportSessionRecorders = (eventData: BlacklightEvent[]) => {
-  let report = {};
+  const report = {};
   eventData.forEach((event: SessionRecordingEvent) => {
     const match = event.matches[0];
-    if (Object.keys(report).includes(match)) {
-      report[match].includes(event.url) ? "" : report[match].push(event.url);
+    if (
+      Object.keys(report).includes(match) &&
+      !report[match].includes(event.url)
+    ) {
+      report[match].push(event.url);
     } else {
       report[match] = [event.url];
     }
