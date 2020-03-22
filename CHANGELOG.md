@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.6...@themarkup/blacklight@0.0.7) (2020-03-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **key-logging:** Data exfiltration tests doesnt exist anymore. Need to update reporting software and rename it to key-logging
+
+### Features
+
+* **js-instrument+canvas-fp:** Returning  values from functions in js instrument ([317f116](https://gitlab.com/the_markup/blacklight/commit/317f116c58b3ded8f6c433333a77e85cba4a8d54)), closes [#45](https://gitlab.com/the_markup/blacklight/issues/45)
+* **key-logging:** Renamed data_exfiltration test to key_logging ([80d0d0b](https://gitlab.com/the_markup/blacklight/commit/80d0d0bd41f67642e5758dd0ba964cde96a1d2fe)), closes [#44](https://gitlab.com/the_markup/blacklight/issues/44) [#43](https://gitlab.com/the_markup/blacklight/issues/43) [#42](https://gitlab.com/the_markup/blacklight/issues/42)
+* **session-recording:** Added session recording detection test ([fcdd60d](https://gitlab.com/the_markup/blacklight/commit/fcdd60da4c7f2dad2e738fd2d0776638a1b767f7)), closes [#50](https://gitlab.com/the_markup/blacklight/issues/50)
+
 ### [0.0.6](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.5...@themarkup/blacklight@0.0.6) (2020-02-08)
 
 ### [0.0.5](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.4...@themarkup/blacklight@0.0.5) (2020-02-08)
