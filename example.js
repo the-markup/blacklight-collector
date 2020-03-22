@@ -10,23 +10,23 @@ const { join } = require("path");
   let OUT_DIR = true;
 
   // The URL to test
-  const URL = "jetblue.com";
+  const URL = "www.jetblue.com";
 
   const defaultConfig = {
     inUrl: `http://${URL}`,
-    numPages: 4,
-    headless: false,
+    numPages: 3,
+    headless: true,
     emulateDevice: EMULATE_DEVICE
   };
 
   const result = await collector(
     OUT_DIR
-      ? { ...defaultConfig, ...{ outDir: join(__dirname, "example") } }
+      ? { ...defaultConfig, ...{ outDir: join(__dirname, "demo-dir") } }
       : defaultConfig
   );
   if (OUT_DIR) {
     console.log(
-      `For captured data please look in ${join(__dirname, "example")}`
+      `For captured data please look in ${join(__dirname, "demo-dir")}`
     );
   }
 })();
