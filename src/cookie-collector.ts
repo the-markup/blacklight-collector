@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync, existsSync } from "fs";
 import { flatten } from "lodash";
 import { join } from "path";
 import { Page } from "puppeteer";
@@ -24,7 +24,7 @@ const parseCookie = (cookieStr, fpUrl) => {
 };
 
 export const setupHttpCookieCapture = async (page, eventHandler) => {
-  await page.on("response", response => {
+  await page.on("response", (response) => {
     try {
       const req = response.request();
       const cookieHTTP = response._headers["set-cookie"];
@@ -32,11 +32,11 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
         const stack = [
           {
             fileName: req.url(),
-            source: `set in Set-Cookie HTTP response header for ${req.url()}`
-          }
+            source: `set in Set-Cookie HTTP response header for ${req.url()}`,
+          },
         ];
         const splitCookieHeaders = cookieHTTP.split("\n");
-        const data = splitCookieHeaders.map(parseCookie);
+        const data = splitCookieHeaders.map((c) => parseCookie(c, req.url()));
         // find mainframe
         let frame = response.frame();
         while (frame.parentFrame()) {
@@ -48,7 +48,7 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
           raw: cookieHTTP,
           stack,
           type: "Cookie.HTTP",
-          url: frame.url() // or page.url(), // (can be about:blank if the request is issued by browser.goto)
+          url: frame.url(), // or page.url(), // (can be about:blank if the request is issued by browser.goto)
         });
       }
     } catch (error) {
@@ -64,20 +64,20 @@ export const clearCookiesCache = async (page: Page) => {
   await client.detach();
 };
 
-export const getHTTPCookies = events => {
+export const getHTTPCookies = (events, url): any[] => {
   return flatten(
     events
-      .filter(m => m.type && m.type.includes("Cookie.HTTP"))
-      .map(m =>
+      .filter((m) => m.type && m.type.includes("Cookie.HTTP"))
+      .map((m) =>
         m.data
-          .filter(c => c)
-          .map(d => ({
-            domain: d.domain,
+          .filter((c) => c)
+          .map((d) => ({
+            domain: d.hasOwnProperty("domain") ? d.domain : getHostname(url),
             name: d.key,
             path: d.path,
             script: getScriptUrl(m),
             type: "Cookie.HTTP",
-            value: d.value
+            value: d.value,
           }))
       )
   );
@@ -85,30 +85,67 @@ export const getHTTPCookies = events => {
 export const getJsCookies = (events, url) => {
   return events
     .filter(
-      m =>
+      (m) =>
         m.type &&
         m.type.includes("JsInstrument.ObjectProperty") &&
         m.data.symbol.includes("cookie") &&
         m.data.operation.startsWith("set") &&
         typeof Cookie.parse(m.data.value) !== "undefined"
     )
-    .map(d => {
+    .map((d) => {
       const data = parseCookie(d.data.value, url);
       const script = getScriptUrl(d);
       return {
-        domain: d.hasOwnProperty("domain") ? d.domain : "",
+        domain: d.hasOwnProperty("domain") ? d.domain : getHostname(url),
         name: data ? data.key : "",
         path: data ? data.path : "",
         script,
         type: d.type,
-        value: data ? data.value : ""
+        value: data ? data.value : "",
       };
     });
 };
 export const matchCookiesToEvents = (cookies, events, url) => {
   const jsCookies = getJsCookies(events, url);
-  const httpCookie = getHTTPCookies(events);
-  const final = cookies.map(b => {
+  const httpCookie = getHTTPCookies(events, url);
+
+  if (cookies.length < 1) {
+    const js = jsCookies
+      .map((j) => ({
+        ...j,
+        type: "js",
+        third_party:
+          getDomain(url) !== getDomain(`cookie://${j.domain}${j.path}`),
+      }))
+      .filter(
+        (thing, index, self) =>
+          index ===
+          self.findIndex(
+            (t) => t.name === thing.name && t.domain === thing.domain
+            // t.value === thing.value
+          )
+      );
+    const http = httpCookie
+      .map((j) => ({
+        ...j,
+        type: "http",
+        third_party:
+          getDomain(url) !== getDomain(`cookie://${j.domain}${j.path}`),
+      }))
+      .filter(
+        (thing, index, self) =>
+          index ===
+          self.findIndex(
+            (t) =>
+              t.name === thing.name &&
+              t.domain === thing.domain &&
+              t.value === thing.value
+          )
+      );
+
+    return [...js, ...http];
+  }
+  const final = cookies.map((b) => {
     const h = httpCookie.find(
       (c: any) =>
         b.name === c.name && b.domain === c.domain && b.value === c.value
@@ -154,13 +191,13 @@ export const captureBrowserCookies = async (
   const client = await page.target().createCDPSession();
   const browser_cookies = (
     await client.send("Network.getAllCookies")
-  ).cookies.map(cookie => {
+  ).cookies.map((cookie) => {
     if (cookie.expires > -1) {
       // add derived attributes for convenience
-      cookie.expiresUTC = new Date(cookie.expires * 1000);
-      cookie.expiresDays =
-        Math.round((cookie.expiresUTC - Date.now()) / (10 * 60 * 60 * 24)) /
-        100;
+      cookie.expires = new Date(cookie.expires * 1000);
+      // cookie.expiresDays =
+      //   Math.round((cookie.expiresUTC - Date.now()) / (10 * 60 * 60 * 24)) /
+      //   100;
     }
     cookie.domain = cookie.domain.replace(/^\./, ""); // normalise domain value
     return cookie;
@@ -183,9 +220,14 @@ export const loadBrowserCookies = (
   filename = "browser-cookies.json"
 ) => {
   try {
-    const cookies = JSON.parse(readFileSync(join(dataDir, filename), "utf-8"))
-      .browser_cookies;
-    return cookies;
+    if (existsSync(join(dataDir, filename))) {
+      const cookies = JSON.parse(
+        readFileSync(join(dataDir, filename), "utf-8")
+      );
+      return cookies.browser_cookies || [];
+    } else {
+      return [];
+    }
   } catch (error) {
     console.error("Couldnt load browser cookies");
     console.error(error);
