@@ -33,7 +33,7 @@ export const DEFAULT_INPUT_VALUES = {
   sex: "Female",
   tel: "+1971112233",
   "tel-national": "917-111-2233",
-  impp: "xmpp:blacklight-headless@themarkup.org"
+  impp: "xmpp:blacklight-headless@themarkup.org",
 };
 
 export const fillForms = async (page: Page) => {
@@ -55,7 +55,7 @@ export const fillForms = async (page: Page) => {
         if (autoCompleteValue.includes("cc-name")) {
           autoCompleteKeys = ["cc-name"];
         } else {
-          autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter(k =>
+          autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter((k) =>
             (autoCompleteValue as string).includes(k)
           );
         }
@@ -66,7 +66,7 @@ export const fillForms = async (page: Page) => {
       } else if (autoCompleteKeys.length > 0) {
         await el.focus();
         await page.keyboard.press("Tab", {
-          delay: 100
+          delay: 100,
         });
         await el.press("Backspace");
         await page.keyboard.type(
@@ -75,7 +75,7 @@ export const fillForms = async (page: Page) => {
       } else if (Object.keys(DEFAULT_INPUT_VALUES).includes(pValue as string)) {
         await el.focus();
         await page.keyboard.press("Tab", {
-          delay: 100
+          delay: 100,
         });
         await el.press("Backspace");
         await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
@@ -83,10 +83,10 @@ export const fillForms = async (page: Page) => {
       await page.waitFor(100);
     }
   } catch (error) {
-    console.error(error);
+    console.log(error);
   }
 };
-export const autoScroll = async page => {
+export const autoScroll = async (page) => {
   await page.evaluate(async () => {
     return new Promise((resolve, reject) => {
       try {

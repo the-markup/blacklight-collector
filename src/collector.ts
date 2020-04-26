@@ -95,12 +95,12 @@ export const collector = async ({
   let page: Page;
   let pageIndex = 1;
   let har = {} as any;
-
   let page_response = null;
   let loadError = false;
   const userDataDir = saveBrowserProfile
     ? join(outDir, "browser-profile")
     : undefined;
+  let didBrowserDisconnect = false;
   try {
     const options = {
       ...defaultPuppeteerBrowserOptions,
@@ -108,6 +108,16 @@ export const collector = async ({
       userDataDir,
     };
     browser = await puppeteer.launch(options);
+    browser.on("disconnected", () => {
+      didBrowserDisconnect = true;
+    });
+
+    if (didBrowserDisconnect) {
+      return {
+        status: "failed",
+        page_response: "Chrome crashed",
+      };
+    }
     // TODO: Determine how to handle disconnect events to kill the instance gracefully
     // browser.on("disconnected", setup);
     logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
@@ -158,7 +168,12 @@ export const collector = async ({
         path: outDir ? join(outDir, "requests.har") : undefined,
       });
     }
-
+    if (didBrowserDisconnect) {
+      return {
+        status: "failed",
+        page_response: "Chrome crashed",
+      };
+    }
     // Go to the url
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
@@ -222,6 +237,12 @@ export const collector = async ({
 
     for (const link of output.browsing_history.slice(1)) {
       logger.log("info", `browsing now to ${link}`, { type: "Browser" });
+      if (didBrowserDisconnect) {
+        return {
+          status: "failed",
+          page_response: "Chrome crashed",
+        };
+      }
       await page.goto(link, {
         timeout: defaultTimeout,
         waitUntil: "networkidle2",

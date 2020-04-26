@@ -3,7 +3,7 @@ import fs from "fs";
 import { join } from "path";
 import { getDomain, getPublicSuffix } from "tldts";
 import { BlacklightEvent } from "./types";
-export const getFirstPartyPs = firstPartyUri => {
+export const getFirstPartyPs = (firstPartyUri) => {
   return getPublicSuffix(firstPartyUri);
 };
 
@@ -11,9 +11,9 @@ export const isFirstParty = (firstPartyPs, testUri) => {
   return firstPartyPs === testUri;
 };
 
-const deleteFolderRecursive = path => {
+const deleteFolderRecursive = (path) => {
   if (fs.existsSync(path)) {
-    fs.readdirSync(path).forEach(file => {
+    fs.readdirSync(path).forEach((file) => {
       const curPath = path + "/" + file;
       if (fs.lstatSync(curPath).isDirectory()) {
         // recurse
@@ -36,22 +36,22 @@ export const clearDir = (outDir, mkNewDir = true) => {
   }
 };
 
-export const loadJSONSafely = str => {
+export const loadJSONSafely = (str) => {
   try {
     return JSON.parse(str);
   } catch (error) {
-    console.error("couldnt load json", str);
+    console.log("couldnt load json safely", str);
     return {};
   }
 };
-export const groupBy = key => array =>
+export const groupBy = (key) => (array) =>
   array.reduce((objectsByKeyValue, obj) => {
     const value = obj[key];
     objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
     return objectsByKeyValue;
   }, {});
 
-export const serializeCanvasCallMap = inputMap => {
+export const serializeCanvasCallMap = (inputMap) => {
   const obj = {};
 
   inputMap.forEach((value, key) => {
@@ -60,7 +60,7 @@ export const serializeCanvasCallMap = inputMap => {
 
   return obj;
 };
-export const mapToObj = inputMap => {
+export const mapToObj = (inputMap) => {
   const obj = {};
 
   inputMap.forEach((value, key) => {
@@ -90,15 +90,15 @@ export const loadEventData = (dir, filename = "inspection-log.ndjson") => {
   return fs
     .readFileSync(join(dir, filename), "utf-8")
     .split("\n")
-    .filter(m => m)
-    .map(m => loadJSONSafely(m))
-    .filter(m => m.level === "warn");
+    .filter((m) => m)
+    .map((m) => loadJSONSafely(m))
+    .filter((m) => m.level === "warn");
 };
 // Not using this atm but leaving it in because it might be useful in the future
 export const getStackType = (stack, firstPartyDomain) => {
   let hasFirstParty = false;
   let hasThirdParty = false;
-  stack.forEach(s => {
+  stack.forEach((s) => {
     if (s.hasOwnProperty("fileName")) {
       const scriptDomain = getDomain(s.fileName);
       if (scriptDomain === firstPartyDomain) {
@@ -116,7 +116,7 @@ export const getStackType = (stack, firstPartyDomain) => {
     return "mixed";
   }
 };
-export const isBase64 = str => {
+export const isBase64 = (str) => {
   if (str === "" || str.trim() === "") {
     return false;
   }

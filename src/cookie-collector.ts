@@ -24,7 +24,7 @@ const parseCookie = (cookieStr, fpUrl) => {
 };
 
 export const setupHttpCookieCapture = async (page, eventHandler) => {
-  await page.on("response", response => {
+  await page.on("response", (response) => {
     try {
       const req = response.request();
       const cookieHTTP = response._headers["set-cookie"];
@@ -32,11 +32,11 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
         const stack = [
           {
             fileName: req.url(),
-            source: `set in Set-Cookie HTTP response header for ${req.url()}`
-          }
+            source: `set in Set-Cookie HTTP response header for ${req.url()}`,
+          },
         ];
         const splitCookieHeaders = cookieHTTP.split("\n");
-        const data = splitCookieHeaders.map(c => parseCookie(c, req.url()));
+        const data = splitCookieHeaders.map((c) => parseCookie(c, req.url()));
         // find mainframe
         let frame = response.frame();
         while (frame.parentFrame()) {
@@ -48,11 +48,11 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
           raw: cookieHTTP,
           stack,
           type: "Cookie.HTTP",
-          url: frame.url() // or page.url(), // (can be about:blank if the request is issued by browser.goto)
+          url: frame.url(), // or page.url(), // (can be about:blank if the request is issued by browser.goto)
         });
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   });
 };
@@ -67,17 +67,17 @@ export const clearCookiesCache = async (page: Page) => {
 export const getHTTPCookies = (events, url): any[] => {
   return flatten(
     events
-      .filter(m => m.type && m.type.includes("Cookie.HTTP"))
-      .map(m =>
+      .filter((m) => m.type && m.type.includes("Cookie.HTTP"))
+      .map((m) =>
         m.data
-          .filter(c => c)
-          .map(d => ({
+          .filter((c) => c)
+          .map((d) => ({
             domain: d.hasOwnProperty("domain") ? d.domain : getHostname(url),
             name: d.key,
             path: d.path,
             script: getScriptUrl(m),
             type: "Cookie.HTTP",
-            value: d.value
+            value: d.value,
           }))
       )
   );
@@ -85,14 +85,14 @@ export const getHTTPCookies = (events, url): any[] => {
 export const getJsCookies = (events, url) => {
   return events
     .filter(
-      m =>
+      (m) =>
         m.type &&
         m.type.includes("JsInstrument.ObjectProperty") &&
         m.data.symbol.includes("cookie") &&
         m.data.operation.startsWith("set") &&
         typeof Cookie.parse(m.data.value) !== "undefined"
     )
-    .map(d => {
+    .map((d) => {
       const data = parseCookie(d.data.value, url);
       const script = getScriptUrl(d);
       return {
@@ -101,7 +101,7 @@ export const getJsCookies = (events, url) => {
         path: data ? data.path : "",
         script,
         type: d.type,
-        value: data ? data.value : ""
+        value: data ? data.value : "",
       };
     });
 };
@@ -111,32 +111,32 @@ export const matchCookiesToEvents = (cookies, events, url) => {
 
   if (cookies.length < 1) {
     const js = jsCookies
-      .map(j => ({
+      .map((j) => ({
         ...j,
         third_party:
           getDomain(url) !== getDomain(`cookie://${j.domain}${j.path}`),
-        type: "js"
+        type: "js",
       }))
       .filter(
         (thing, index, self) =>
           index ===
           self.findIndex(
-            t => t.name === thing.name && t.domain === thing.domain
+            (t) => t.name === thing.name && t.domain === thing.domain
             // t.value === thing.value
           )
       );
     const http = httpCookie
-      .map(j => ({
+      .map((j) => ({
         ...j,
         third_party:
           getDomain(url) !== getDomain(`cookie://${j.domain}${j.path}`),
-        type: "http"
+        type: "http",
       }))
       .filter(
         (thing, index, self) =>
           index ===
           self.findIndex(
-            t =>
+            (t) =>
               t.name === thing.name &&
               t.domain === thing.domain &&
               t.value === thing.value
@@ -145,7 +145,7 @@ export const matchCookiesToEvents = (cookies, events, url) => {
 
     return [...js, ...http];
   }
-  const final = cookies.map(b => {
+  const final = cookies.map((b) => {
     const h = httpCookie.find(
       (c: any) =>
         b.name === c.name && b.domain === c.domain && b.value === c.value
@@ -191,7 +191,7 @@ export const captureBrowserCookies = async (
   const client = await page.target().createCDPSession();
   const browser_cookies = (
     await client.send("Network.getAllCookies")
-  ).cookies.map(cookie => {
+  ).cookies.map((cookie) => {
     if (cookie.expires > -1) {
       // add derived attributes for convenience
       cookie.expires = new Date(cookie.expires * 1000);
@@ -209,8 +209,8 @@ export const captureBrowserCookies = async (
       JSON.stringify({ browser_cookies }, null, 2)
     );
   } catch (error) {
-    console.error(error);
-    console.error("Couldnt save browser cookies to file");
+    console.log(error);
+    console.log("Couldnt save browser cookies to file");
   }
   return browser_cookies;
 };
@@ -229,8 +229,8 @@ export const loadBrowserCookies = (
       return [];
     }
   } catch (error) {
-    console.error("Couldnt load browser cookies");
-    console.error(error);
+    console.log("Couldnt load browser cookies");
+    console.log(error);
     return [];
   }
 };

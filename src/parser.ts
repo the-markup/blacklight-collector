@@ -7,7 +7,7 @@ import {
   FINGERPRINTABLE_WINDOW_APIS,
   JsInstrumentEvent,
   KeyLoggingEvent,
-  SessionRecordingEvent
+  SessionRecordingEvent,
 } from "./types";
 import { getScriptUrl, groupBy, loadJSONSafely } from "./utils";
 
@@ -37,7 +37,7 @@ export const generateReport = (reportType, messages, dataDir, url) => {
 
 const filterByEvent = (messages, typePattern) => {
   return messages.filter(
-    m =>
+    (m) =>
       m.message.type.includes(typePattern) && !m.message.type.includes("Error")
   );
 };
@@ -73,7 +73,7 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
     default:
       return [];
   }
-  return filtered.map(m => m.message);
+  return filtered.map((m) => m.message);
 };
 const reportSessionRecorders = (eventData: BlacklightEvent[]) => {
   const report = {};
@@ -99,16 +99,16 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
     if (data.symbol.indexOf("addEventListener") > -1) {
       const values = loadJSONSafely(data.value);
       if (Array.isArray(values) && MONITORED_EVENTS.includes(values[0])) {
-        const eventGroup = Object.keys(BEHAVIOUR_TRACKING_EVENTS).filter(key =>
-          BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0])
-        );
+        const eventGroup = Object.keys(
+          BEHAVIOUR_TRACKING_EVENTS
+        ).filter((key) => BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0]));
         parsedEvents.push({
           data: {
             event_group: eventGroup.length ? eventGroup[0] : "",
-            name: values[0]
+            name: values[0],
           },
           stack: event.stack,
-          url: event.url
+          url: event.url,
         });
       }
     }
@@ -167,7 +167,7 @@ const reportKeyLogging = (eventData: BlacklightEvent[]) => {
   return groupByRequestPs(
     eventData.map((m: KeyLoggingEvent) => ({
       ...m.data,
-      post_request_ps: getDomainSafely(m)
+      post_request_ps: getDomainSafely(m),
     }))
   );
 };
@@ -180,11 +180,11 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
     if (WINDOW_FP_LIST.includes(data.symbol)) {
       const windowApiGroup = Object.keys(
         FINGERPRINTABLE_WINDOW_APIS
-      ).filter(key => FINGERPRINTABLE_WINDOW_APIS[key].includes(data.symbol));
+      ).filter((key) => FINGERPRINTABLE_WINDOW_APIS[key].includes(data.symbol));
       parsedEvents.push({
         api_group: windowApiGroup[0],
         stack: event.stack,
-        symbol: data.symbol
+        symbol: data.symbol,
       });
     }
   });
@@ -222,7 +222,7 @@ const getDomainSafely = (message: KeyLoggingEvent) => {
     if (message.data.post_request_url) {
       return getDomain(message.data.post_request_url);
     } else {
-      console.error(
+      console.log(
         "message.data missing post_request_url",
         JSON.stringify(message)
       );
