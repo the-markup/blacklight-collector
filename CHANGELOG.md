@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.3](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@1.0.2...@themarkup/blacklight@1.0.3) (2020-04-26)
+
+
+### Bug Fixes
+
+* **collector:** Added a check for browser disconnect ([e8e1e54](https://gitlab.com/the_markup/blacklight/commit/e8e1e54538e022450f54343b3f69c4abb2d4fcb4)), closes [#51](https://gitlab.com/the_markup/blacklight/issues/51)
+
 ### [1.0.2](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@1.0.1...@themarkup/blacklight@1.0.2) (2020-04-26)
 
 
