@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@1.0.1...@themarkup/blacklight@1.0.2) (2020-04-26)
+
+
+### Bug Fixes
+
+* **collector:** event_data_all check ([cc24062](https://gitlab.com/the_markup/blacklight/commit/cc2406274fd9b4e6390add44c199cf37c2b7b1c4)), closes [#52](https://gitlab.com/the_markup/blacklight/issues/52)
+
 ### [1.0.1](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@1.0.0...@themarkup/blacklight@1.0.1) (2020-04-24)
 
 ## [1.0.0](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@0.0.8...@themarkup/blacklight@1.0.0) (2020-04-24)
