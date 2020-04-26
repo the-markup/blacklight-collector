@@ -118,8 +118,6 @@ export const collector = async ({
         page_response: "Chrome crashed",
       };
     }
-    // TODO: Determine how to handle disconnect events to kill the instance gracefully
-    // browser.on("disconnected", setup);
     logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
     page = (await browser.pages())[0];
     output.browser = {
