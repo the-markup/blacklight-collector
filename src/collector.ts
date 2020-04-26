@@ -12,7 +12,7 @@ import url from "url";
 import {
   captureBrowserCookies,
   clearCookiesCache,
-  setupHttpCookieCapture
+  setupHttpCookieCapture,
 } from "./cookie-collector";
 import { setupBlacklightInspector } from "./inspector";
 import { setupKeyLoggingInspector } from "./key-logging";
@@ -20,7 +20,7 @@ import { getLogger } from "./logger";
 import { generateReport } from "./parser";
 import {
   defaultPuppeteerBrowserOptions,
-  savePageContent
+  savePageContent,
 } from "./pptr-utils/default";
 import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
@@ -42,7 +42,7 @@ export const collector = async ({
   numPages = 3,
   defaultWaitUntil = "networkidle2",
   saveBrowserProfile = false,
-  saveScreenshots = true
+  saveScreenshots = true,
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
@@ -61,19 +61,19 @@ export const collector = async ({
       captureLinks,
       enableAdBlock,
       emulateDevice,
-      numPages
+      numPages,
     },
     browser: null,
     script: {
       host: os.hostname(),
       version: {
         npm: require("../package.json").version,
-        commit: null
+        commit: null,
       },
-      node_version: process.version
+      node_version: process.version,
     },
     start_time: new Date(),
-    end_time: null
+    end_time: null,
   };
   if (emulateDevice) {
     output.deviceEmulated = devices[emulateDevice];
@@ -83,12 +83,12 @@ export const collector = async ({
   const hosts = {
     requests: {
       first_party: new Set(),
-      third_party: new Set()
+      third_party: new Set(),
     },
     links: {
       first_party: new Set(),
-      third_party: new Set()
-    }
+      third_party: new Set(),
+    },
   };
 
   let browser: Browser;
@@ -105,7 +105,7 @@ export const collector = async ({
     const options = {
       ...defaultPuppeteerBrowserOptions,
       headless,
-      userDataDir
+      userDataDir,
     };
     browser = await puppeteer.launch(options);
     // TODO: Determine how to handle disconnect events to kill the instance gracefully
@@ -118,15 +118,15 @@ export const collector = async ({
       user_agent: await browser.userAgent(),
       platform: {
         name: os.type(),
-        version: os.release()
-      }
+        version: os.release(),
+      },
     };
     if (emulateDevice) {
       const deviceOptions = devices[emulateDevice];
       page.emulate(deviceOptions);
     }
     // record all requested hosts
-    await page.on("request", request => {
+    await page.on("request", (request) => {
       const l = parse(request.url());
       // note that hosts may appear as first and third party depending on the path
       if (FIRST_PARTY.domain === l.domain) {
@@ -143,26 +143,26 @@ export const collector = async ({
     }
 
     // Init blacklight instruments on page
-    await setupBlacklightInspector(page, event => logger.warn(event));
-    await setupKeyLoggingInspector(page, event => logger.warn(event));
-    await setupHttpCookieCapture(page, event => logger.warn(event));
-    await setupSessionRecordingInspector(page, event => logger.warn(event));
+    await setupBlacklightInspector(page, (event) => logger.warn(event));
+    await setupKeyLoggingInspector(page, (event) => logger.warn(event));
+    await setupHttpCookieCapture(page, (event) => logger.warn(event));
+    await setupSessionRecordingInspector(page, (event) => logger.warn(event));
     await setupWebBeaconInspector(
       page,
-      event => logger.warn(event),
+      (event) => logger.warn(event),
       enableAdBlock
     );
     if (captureHar) {
       har = new PuppeteerHar(page);
       await har.start({
-        path: outDir ? join(outDir, "requests.har") : undefined
+        path: outDir ? join(outDir, "requests.har") : undefined,
       });
     }
 
     // Go to the url
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
-      waitUntil: defaultWaitUntil as LoadEvent
+      waitUntil: defaultWaitUntil as LoadEvent,
     });
     savePageContent(pageIndex, outDir, page, saveScreenshots);
     pageIndex++;
@@ -174,7 +174,7 @@ export const collector = async ({
   let duplicatedLinks = [];
   const outputLinks = {
     first_party: [],
-    third_party: []
+    third_party: [],
   };
 
   try {
@@ -209,7 +209,7 @@ export const collector = async ({
     output.uri_redirects = page_response
       .request()
       .redirectChain()
-      .map(req => {
+      .map((req) => {
         return req.url();
       });
 
@@ -217,14 +217,14 @@ export const collector = async ({
 
     const browse_links = sampleSize(outputLinks.first_party, numPages);
     output.browsing_history = [output.uri_dest].concat(
-      browse_links.map(l => l.href)
+      browse_links.map((l) => l.href)
     );
 
     for (const link of output.browsing_history.slice(1)) {
       logger.log("info", `browsing now to ${link}`, { type: "Browser" });
       await page.goto(link, {
         timeout: defaultTimeout,
-        waitUntil: "networkidle2"
+        waitUntil: "networkidle2",
       });
 
       await fillForms(page);
@@ -243,7 +243,7 @@ export const collector = async ({
       "error",
       `couldnt capture browser cookies ${JSON.stringify(error)} `,
       {
-        type: "Browser"
+        type: "Browser",
       }
     );
   }
@@ -276,8 +276,8 @@ export const collector = async ({
   output.hosts = {
     requests: {
       first_party: Array.from(hosts.requests.first_party),
-      third_party: Array.from(hosts.requests.third_party)
-    }
+      third_party: Array.from(hosts.requests.third_party),
+    },
   };
 
   if (captureLinks) {
@@ -285,13 +285,13 @@ export const collector = async ({
     output.social = getSocialLinks(links);
   }
 
-  const event_data_all: any = await new Promise(done => {
+  const event_data_all = await new Promise((done) => {
     logger.query(
       {
         start: 0,
         order: "desc",
         limit: Infinity,
-        fields: ["message"]
+        fields: ["message"],
       },
       (err, results) => {
         if (err) {
@@ -305,14 +305,21 @@ export const collector = async ({
     );
   });
 
+  if (!Array.isArray(event_data_all)) {
+    return {
+      status: "failed",
+      page_response: "Couldnt load event data",
+    };
+  }
   if (event_data_all.length < 1) {
     return {
       status: "failed",
-      page_response: "Couldnt load event data"
+      page_response: "Couldnt load event data",
     };
   }
+
   // filter only events with type set
-  const event_data = event_data_all.filter(event => {
+  const event_data = event_data_all.filter((event) => {
     return !!event.message.type;
   });
   const reports = [
@@ -323,7 +330,7 @@ export const collector = async ({
     "canvas_font_fingerprinters",
     "fingerprintable_api_calls",
     "session_recorders",
-    "web_beacons"
+    "web_beacons",
   ].reduce((acc, cur) => {
     acc[cur] = generateReport(cur, event_data, outDir, inUrl);
     return acc;
