@@ -11,15 +11,15 @@ it("can parse AddEventlistener events", async () => {
   const page = (await browser.pages())[0];
   const rows = [];
   const EVENTS_URL = `${global.__DEV_SERVER__}/session_recorder.html`;
-  await setupBlacklightInspector(page, e => rows.push({ message: e }));
+  await setupBlacklightInspector(page, (e) => rows.push({ message: e }));
   await page.goto(EVENTS_URL, { waitUntil: "networkidle0" });
   const report = generateReport("behaviour_event_listeners", rows, null, null);
   await browser.close();
   expect(report["KEYBOARD"]).toEqual({
     "http://localhost:8125/shared/event-listener.js": ["keyup"],
     "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
-      "input"
-    ]
+      "input",
+    ],
   });
   expect(report["MOUSE"]).toEqual({
     "http://localhost:8125/shared/event-listener.js": ["mousedown", "click"],
@@ -29,19 +29,19 @@ it("can parse AddEventlistener events", async () => {
       "mousedown",
       "click",
       "dblclick",
-      "scroll"
-    ]
+      "scroll",
+    ],
   });
   expect(report["SENSOR"]).toEqual({
-    "http://localhost:8125/shared/event-listener.js": ["deviceorientation"]
+    "http://localhost:8125/shared/event-listener.js": ["deviceorientation"],
   });
   expect(report["TOUCH"]).toEqual({
     "http://localhost:8125/shared/event-listener.js": ["touchend"],
     "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
       "touchmove",
       "touchstart",
-      "touchend"
-    ]
+      "touchend",
+    ],
   });
 });
 it("can parse session recording events", async () => {
@@ -73,28 +73,28 @@ const NAVIGATOR_SYMBOLS = {
     "window.navigator.productSub",
     "window.navigator.userAgent",
     "window.navigator.vendorSub",
-    "window.navigator.vendor"
-  ]
+    "window.navigator.vendor",
+  ],
 };
 
 const SCREEN_SYMBOLS = {
   "http://localhost:8125/property-enumeration.html": [
     "window.screen.pixelDepth",
-    "window.screen.colorDepth"
-  ]
+    "window.screen.colorDepth",
+  ],
 };
 
 const MEDIA_DEVICES_SYMBOLS = {
   "http://localhost:8125/property-enumeration.html": [
-    "window.navigator.mediaDevices.enumerateDevices"
-  ]
+    "window.navigator.mediaDevices.enumerateDevices",
+  ],
 };
 it("can group fingerprintable window objects", async () => {
   const browser = await launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   const PROPERTIES_URL = `${global.__DEV_SERVER__}/property-enumeration.html`;
-  await setupBlacklightInspector(page, e => rows.push({ message: e }));
+  await setupBlacklightInspector(page, (e) => rows.push({ message: e }));
   await page.goto(PROPERTIES_URL, { waitUntil: "networkidle0" });
   const output = await generateReport(
     "fingerprintable_api_calls",

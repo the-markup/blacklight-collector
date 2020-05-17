@@ -28,8 +28,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
       return reportFingerprintableAPIs(eventData);
     case "session_recorders":
       return reportSessionRecorders(eventData);
-    case "web_beacons":
-      return eventData;
+    case "third_party_trackers":
+      return reportThirdPartyTrackers(eventData, url);
     default:
       return {};
   }
@@ -67,7 +67,7 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
       filtered = filterByEvent(messages, "SessionRecording");
 
       break;
-    case "web_beacons":
+    case "third_party_trackers":
       filtered = filterByEvent(messages, "TrackingRequest");
       break;
     default:
@@ -217,6 +217,13 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
   return serializable;
 };
 
+const reportThirdPartyTrackers = (eventData: BlacklightEvent[], fpDomain) => {
+  return eventData.filter((e) => {
+    const requestDomain = getDomain(e.url);
+    const isThirdPartyDomain = requestDomain && requestDomain !== fpDomain;
+    return isThirdPartyDomain;
+  });
+};
 const getDomainSafely = (message: KeyLoggingEvent) => {
   try {
     if (message.data.post_request_url) {
