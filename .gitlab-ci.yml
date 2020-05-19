@@ -1,4 +1,4 @@
-image: node:10.1.0
+image: node:12.15.0
 
 variables:
   APP_NAME: blacklight
