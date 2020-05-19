@@ -8,8 +8,13 @@ import {
   JsInstrumentEvent,
   KeyLoggingEvent,
   SessionRecordingEvent,
+  TrackingRequestEvent,
 } from "./types";
 import { getScriptUrl, groupBy, loadJSONSafely } from "./utils";
+import {
+  FB_ADVANCED_MATCHING_PARAMETERS,
+  FB_STANDARD_EVENTS,
+} from "./fb-pixel-lookup";
 
 export const generateReport = (reportType, messages, dataDir, url) => {
   const eventData = getEventData(reportType, messages);
@@ -24,6 +29,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
       return reportCanvasFingerprinters(eventData);
     case "canvas_font_fingerprinters":
       return reportCanvasFontFingerprinters(eventData);
+    case "fb_pixel_events":
+      return reportFbPixelEvents(eventData);
     case "fingerprintable_api_calls":
       return reportFingerprintableAPIs(eventData);
     case "session_recorders":
@@ -65,9 +72,11 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
       break;
     case "session_recorders":
       filtered = filterByEvent(messages, "SessionRecording");
-
       break;
     case "third_party_trackers":
+      filtered = filterByEvent(messages, "TrackingRequest");
+      break;
+    case "fb_pixel_events":
       filtered = filterByEvent(messages, "TrackingRequest");
       break;
     default:
@@ -222,6 +231,66 @@ const reportThirdPartyTrackers = (eventData: BlacklightEvent[], fpDomain) => {
     const requestDomain = getDomain(e.url);
     const isThirdPartyDomain = requestDomain && requestDomain !== fpDomain;
     return isThirdPartyDomain;
+  });
+};
+
+const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
+  const events = eventData.filter(
+    (e: TrackingRequestEvent) =>
+      e.url.includes("facebook") &&
+      e.data.query &&
+      Object.keys(e.data.query).includes("ev") &&
+      e.data.query.ev !== "Microdata"
+  );
+  let advancedMatchingParams = [];
+  let dataParams = [];
+  return events.map((e: TrackingRequestEvent) => {
+    let eventName = "";
+    let eventDescription = "";
+    let pageUrl = "";
+    let isStandardEvent = false;
+    for (let [key, value] of Object.entries(e.data.query)) {
+      if (key === "dl") {
+        pageUrl = value as string;
+      }
+      if (key === "ev") {
+        const standardEvent = FB_STANDARD_EVENTS.filter(
+          (f) => f.eventName === value
+        );
+        if (standardEvent.length > 0) {
+          isStandardEvent = true;
+          eventName = standardEvent[0].eventName;
+          eventDescription = standardEvent[0].eventDescription;
+        } else {
+          eventName = value as string;
+        }
+      }
+
+      if (/cd\[.*\]/.test(key)) {
+        const cdLabel = /cd\[(.*)\]/.exec(key);
+        dataParams.push({ key, value, cleanKey: cdLabel[1] });
+      }
+      if (/ud\[.*\]/.test(key)) {
+        const description = FB_ADVANCED_MATCHING_PARAMETERS[key];
+        if (
+          !advancedMatchingParams.some(
+            (s) => s.key === key && s.value === value
+          )
+        ) {
+          advancedMatchingParams.push({ key, value, description });
+        }
+      }
+    }
+
+    return {
+      eventName,
+      eventDescription,
+      pageUrl,
+      isStandardEvent,
+      dataParams,
+      advancedMatchingParams,
+      raw: e.url,
+    };
   });
 };
 const getDomainSafely = (message: KeyLoggingEvent) => {
