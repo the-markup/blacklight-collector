@@ -1,10 +1,5 @@
 image: node:10.1.0
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - node_modules/
-
 variables:
   APP_NAME: blacklight
 
