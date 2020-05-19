@@ -109,7 +109,7 @@ it("can group fingerprintable window objects", async () => {
   expect(output["MEDIA_DEVICES"]).toEqual(MEDIA_DEVICES_SYMBOLS);
 });
 
-it.only("can parse FB Pixel tracking events", async () => {
+it("can parse FB Pixel tracking events", async () => {
   const TEST_DIR = join(__dirname, "test-data", "veteransunited-1.0.3");
   const rawEvents = loadEventData(TEST_DIR);
   const report = generateReport("fb_pixel_events", rawEvents, null, null);
