@@ -1,5 +1,4 @@
-image: node:10.1.0
-
+image: node:12.15.0
 cache:
   key: ${CI_COMMIT_REF_SLUG}
   paths:

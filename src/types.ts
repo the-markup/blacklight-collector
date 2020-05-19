@@ -50,7 +50,7 @@ export interface TrackingRequestEvent {
   type: "TrackingRequest";
   url: string;
   stack: any[];
-  data: { query?: string | object; filter: string; listName: string };
+  data: { query?: any; filter: string; listName: string };
 }
 export interface BlacklightErrorEvent {
   type:
@@ -95,7 +95,7 @@ export const SESSION_RECORDERS_LIST = [
   "d10lpsik1i8c69.cloudfront.net",
   "luckyorange.com",
   "vwo.com",
-  "leadid.com"
+  "leadid.com",
 ];
 export const BEHAVIOUR_TRACKING_EVENTS = {
   KEYBOARD: ["keydown", "keypress", "keyup", "input"],
@@ -106,10 +106,10 @@ export const BEHAVIOUR_TRACKING_EVENTS = {
     "mousemove",
     "select",
     "dblclick",
-    "scroll"
+    "scroll",
   ],
   SENSOR: ["devicemotion", "deviceorientation", "orientationchange"],
-  TOUCH: ["touchmove", "touchstart", "touchend", "touchcancel"]
+  TOUCH: ["touchmove", "touchstart", "touchend", "touchcancel"],
 };
 
 export const FINGERPRINTABLE_WINDOW_APIS = {
@@ -134,7 +134,7 @@ export const FINGERPRINTABLE_WINDOW_APIS = {
     "OscillatorNode.start",
     "ScriptProcessorNode.connect",
     "ScriptProcessorNode.onaudioprocess",
-    "ScriptProcessorNode.disconnect"
+    "ScriptProcessorNode.disconnect",
   ],
   BATTERY: ["window.BatteryManager", "window.navigator.getBattery"],
   CANVAS: [
@@ -143,7 +143,7 @@ export const FINGERPRINTABLE_WINDOW_APIS = {
     "CanvasRenderingContext2D.strokeText",
     "CanvasRenderingContext2D.save",
     "HTMLCanvasElement.toDataURL",
-    "HTMLCanvasElement.addEventListener"
+    "HTMLCanvasElement.addEventListener",
   ],
   MEDIA_DEVICES: ["window.navigator.mediaDevices.enumerateDevices"],
   MIME: ["window.navigator.mimeTypes"],
@@ -163,9 +163,9 @@ export const FINGERPRINTABLE_WINDOW_APIS = {
     "window.navigator.productSub",
     "window.navigator.userAgent",
     "window.navigator.vendorSub",
-    "window.navigator.vendor"
+    "window.navigator.vendor",
   ],
   PLUGIN: ["window.navigator.plugins"],
   SCREEN: ["window.screen.pixelDepth", "window.screen.colorDepth"],
-  WEBRTC: ["RTCPeerConnection"]
+  WEBRTC: ["RTCPeerConnection"],
 };

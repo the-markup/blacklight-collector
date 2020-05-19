@@ -7,7 +7,7 @@ import puppeteer, { Browser, LoadEvent, Page } from "puppeteer";
 import PuppeteerHar from "puppeteer-har";
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 import devices from "puppeteer/DeviceDescriptors";
-import { parse } from "tldts";
+import { parse, getSubdomain, getDomain } from "tldts";
 import url from "url";
 import {
   captureBrowserCookies,
@@ -26,7 +26,7 @@ import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
 import { setupSessionRecordingInspector } from "./session-recording";
 import { clearDir } from "./utils";
-import { setupWebBeaconInspector } from "./web-beacon-recording";
+import { setupThirdpartyTrackersInspector } from "./third-party-trackers";
 export const collector = async ({
   inUrl,
   outDir = join(process.cwd(), "bl-tmp"),
@@ -43,9 +43,20 @@ export const collector = async ({
   defaultWaitUntil = "networkidle2",
   saveBrowserProfile = false,
   saveScreenshots = true,
+  blTests = [
+    "behaviour_event_listeners",
+    "canvas_fingerprinters",
+    "canvas_font_fingerprinters",
+    "cookies",
+    "fb_pixel_events",
+    "key_logging",
+    "session_recorders",
+    "third_party_trackers",
+  ],
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
+  let REDIRECTED_FIRST_PARTY = parse(inUrl);
   const logger = getLogger({ outDir, quiet });
 
   const output: any = {
@@ -155,7 +166,7 @@ export const collector = async ({
     await setupKeyLoggingInspector(page, (event) => logger.warn(event));
     await setupHttpCookieCapture(page, (event) => logger.warn(event));
     await setupSessionRecordingInspector(page, (event) => logger.warn(event));
-    await setupWebBeaconInspector(
+    await setupThirdpartyTrackersInspector(
       page,
       (event) => logger.warn(event),
       enableAdBlock
@@ -202,13 +213,20 @@ export const collector = async ({
       }
       return { status: "failed", page_response };
     }
+    output.uri_redirects = page_response
+      .request()
+      .redirectChain()
+      .map((req) => {
+        return req.url();
+      });
 
+    output.uri_dest = page.url();
     duplicatedLinks = await getLinks(page);
-
+    REDIRECTED_FIRST_PARTY = parse(output.uri_dest);
     for (const link of dedupLinks(duplicatedLinks)) {
       const l = parse(link.href);
 
-      if (FIRST_PARTY.domain === l.domain) {
+      if (REDIRECTED_FIRST_PARTY.domain === l.domain) {
         outputLinks.first_party.push(link);
         hosts.links.first_party.add(l.hostname);
       } else {
@@ -219,16 +237,17 @@ export const collector = async ({
       }
     }
     await fillForms(page);
-    output.uri_redirects = page_response
-      .request()
-      .redirectChain()
-      .map((req) => {
-        return req.url();
+
+    // TODO: Only browse links from the same sub domain. Exception: wwww
+    let subDomainLinks = [];
+    if (getSubdomain(output.uri_dest) !== "www") {
+      subDomainLinks = outputLinks.first_party.filter((f) => {
+        return getSubdomain(f.href) === getSubdomain(output.uri_dest);
       });
-
-    output.uri_dest = page.url();
-
-    const browse_links = sampleSize(outputLinks.first_party, numPages);
+    } else {
+      subDomainLinks = outputLinks.first_party;
+    }
+    const browse_links = sampleSize(subDomainLinks, numPages);
     output.browsing_history = [output.uri_dest].concat(
       browse_links.map((l) => l.href)
     );
@@ -281,7 +300,7 @@ export const collector = async ({
   for (const link of links) {
     const l = parse(link.href);
 
-    if (FIRST_PARTY.domain === l.domain) {
+    if (REDIRECTED_FIRST_PARTY.domain === l.domain) {
       outputLinks.first_party.push(link);
       hosts.links.first_party.add(l.hostname);
     } else {
@@ -292,10 +311,15 @@ export const collector = async ({
     }
   }
   // generate report
+  let fpRequests = Array.from(hosts.requests.first_party);
+  const tpRequests = Array.from(hosts.requests.third_party);
+  const incorrectTpAssignment = tpRequests.filter(
+    (f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain
+  );
   output.hosts = {
     requests: {
-      first_party: Array.from(hosts.requests.first_party),
-      third_party: Array.from(hosts.requests.third_party),
+      first_party: fpRequests.concat(incorrectTpAssignment),
+      third_party: tpRequests.filter((t) => !incorrectTpAssignment.includes(t)),
     },
   };
 
@@ -341,17 +365,15 @@ export const collector = async ({
   const event_data = event_data_all.filter((event) => {
     return !!event.message.type;
   });
-  const reports = [
-    "cookies",
-    "behaviour_event_listeners",
-    "key_logging",
-    "canvas_fingerprinters",
-    "canvas_font_fingerprinters",
-    "fingerprintable_api_calls",
-    "session_recorders",
-    "web_beacons",
-  ].reduce((acc, cur) => {
-    acc[cur] = generateReport(cur, event_data, outDir, inUrl);
+  // We only consider something to be a third party tracker if:
+  // The domain is different to that of the final url (after any redirection) of the page the user requested to load.
+  const reports = blTests.reduce((acc, cur) => {
+    acc[cur] = generateReport(
+      cur,
+      event_data,
+      outDir,
+      REDIRECTED_FIRST_PARTY.domain
+    );
     return acc;
   }, {});
 

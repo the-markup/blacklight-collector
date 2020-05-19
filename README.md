@@ -8,7 +8,7 @@
 
 `node example.js`.
 
-Results are stored in `example-result` by default
+Results are stored in `demo-dir` by default
 
 `collector` takes the following argumnents:
 
@@ -17,6 +17,17 @@ Results are stored in `example-result` by default
 - `outDir`
   - default: saves to tmp directory and deletes after completion
   - To save the full report provide a directory path
+- `blTests`
+  - Array of Blacklight tests to run
+  - default: All Blacklight tests
+    - "behaviour_event_listeners"
+    - "canvas_fingerprinters"
+    - "canvas_font_fingerprinters"
+    - "cookies"
+    - "fb_pixel_events"
+    - "key_logging"
+    - "session_recorders"
+    - "third_party_trackers"
 - `numPages`
   - default: 3
   - crawl depth

@@ -1,11 +1,13 @@
 import {
   fromPuppeteerDetails,
-  PuppeteerBlocker
+  PuppeteerBlocker,
 } from "@cliqz/adblocker-puppeteer";
 import fs from "fs";
 import path from "path";
 import url from "url";
 import { BlacklightEvent } from "./types";
+
+// TODO: New Test for Facebook Trackers
 
 // This code is a slightly modified version of  https://github.com/EU-EDPS/website-evidence-collector/blob/master/lib/setup-beacon-recording.js
 // The following options make sure that blocker will behave optimally for the
@@ -27,7 +29,7 @@ const blockerOptions = {
 
   // We are only interested in "network rules" to identify requests which would
   // be blocked. Disabling "cosmetic rules" allows to resources.
-  loadCosmeticFilters: false
+  loadCosmeticFilters: false,
 };
 
 // setup easyprivacy matching
@@ -39,9 +41,10 @@ const blockers = {
       "utf8"
     ),
     blockerOptions
-  )
+  ),
 };
-const safelyDecodeUri = uri => {
+
+const safelyDecodeUri = (uri) => {
   try {
     return decodeURIComponent(uri);
   } catch (e) {
@@ -49,7 +52,7 @@ const safelyDecodeUri = uri => {
   }
 };
 // source: https://gist.github.com/pirate/9298155edda679510723#gistcomment-2734349
-const decodeURLParams = search => {
+const decodeURLParams = (search) => {
   const hashes = search.slice(search.indexOf("?") + 1).split("&");
   return hashes.reduce((params, hash) => {
     const split = hash.indexOf("=");
@@ -62,11 +65,11 @@ const decodeURLParams = search => {
     const val = hash.slice(split + 1);
     return {
       ...params,
-      [key]: safelyDecodeUri(val)
+      [key]: safelyDecodeUri(val),
     };
   }, {});
 };
-const parseJSONSafely = str => {
+const parseJSONSafely = (str) => {
   try {
     const data = JSON.parse(str);
     return data;
@@ -74,7 +77,7 @@ const parseJSONSafely = str => {
     return str;
   }
 };
-export const setupWebBeaconInspector = async (
+export const setupThirdpartyTrackersInspector = async (
   page,
   eventDataHandler: (event: BlacklightEvent) => void,
   blockRequests = false
@@ -82,22 +85,21 @@ export const setupWebBeaconInspector = async (
   if (blockRequests) {
     await page.setRequestInterception(true);
   }
-  page.on("request", async request => {
+  page.on("request", async (request) => {
     let blocked = false;
     Object.entries(blockers).forEach(([listName, blocker]) => {
       const {
         match, // `true` if there is a match
-        filter // instance of NetworkFilter which matched
+        filter, // instance of NetworkFilter which matched
       } = blocker.match(fromPuppeteerDetails(request));
-
       if (match) {
         const stack = [
           {
             fileName: request.frame().url(),
             source: `requested from ${request
               .frame()
-              .url()} and matched with ${listName} filter ${filter}`
-          }
+              .url()} and matched with ${listName} filter ${filter}`,
+          },
         ];
         const parsedUrl = url.parse(request.url());
         let query = null;
@@ -114,11 +116,11 @@ export const setupWebBeaconInspector = async (
           data: {
             filter: filter.toString(),
             listName,
-            query
+            query,
           },
           stack,
           type: "TrackingRequest",
-          url: request.url()
+          url: request.url(),
         });
         if (blockRequests) {
           request.abort();
