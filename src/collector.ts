@@ -43,6 +43,16 @@ export const collector = async ({
   defaultWaitUntil = "networkidle2",
   saveBrowserProfile = false,
   saveScreenshots = true,
+  blTests = [
+    "behaviour_event_listeners",
+    "canvas_fingerprinters",
+    "canvas_font_fingerprinters",
+    "cookies",
+    "fb_pixel_events",
+    "key_logging",
+    "session_recorders",
+    "third_party_trackers",
+  ],
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
@@ -357,16 +367,7 @@ export const collector = async ({
   });
   // We only consider something to be a third party tracker if:
   // The domain is different to that of the final url (after any redirection) of the page the user requested to load.
-  const reports = [
-    "cookies",
-    "behaviour_event_listeners",
-    "key_logging",
-    "canvas_fingerprinters",
-    "canvas_font_fingerprinters",
-    "fingerprintable_api_calls",
-    "session_recorders",
-    "third_party_trackers",
-  ].reduce((acc, cur) => {
+  const reports = blTests.reduce((acc, cur) => {
     acc[cur] = generateReport(
       cur,
       event_data,
