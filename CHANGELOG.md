@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@1.0.3...@themarkup/blacklight@2.0.0) (2020-05-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* **third-party-tracker + redirection handling:** Renamed web beacons test to third party trackers
+
+### Features
+
+* **fb_pixel_events:** Added a test to track Facebook pixel events ([a472a77](https://gitlab.com/the_markup/blacklight/commit/a472a7725d90179dfe3e38343b60ef34eb41d2d0))
+* **third-party-tracker + redirection handling:** improved  redirect, link selection and  TPT  func. ([67da2c3](https://gitlab.com/the_markup/blacklight/commit/67da2c368479b9bb975c8b2c13c7b55939bc5a27))
+
+
+### Bug Fixes
+
+* **test-data:** added missing fb pixel test data ([2d03788](https://gitlab.com/the_markup/blacklight/commit/2d03788214795cb18fc8a18f0e26dd1e3c907dc1))
+
 ### [1.0.3](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@1.0.2...@themarkup/blacklight@1.0.3) (2020-04-26)
 
 
