@@ -55,8 +55,8 @@ export const fillForms = async (page: Page) => {
         if (autoCompleteValue.includes("cc-name")) {
           autoCompleteKeys = ["cc-name"];
         } else {
-          autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter((k) =>
-            (autoCompleteValue as string).includes(k)
+          autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter(k =>
+            (autoCompleteValue as string).includes(k),
           );
         }
       }
@@ -70,7 +70,7 @@ export const fillForms = async (page: Page) => {
         });
         await el.press("Backspace");
         await page.keyboard.type(
-          DEFAULT_INPUT_VALUES[autoCompleteKeys[0] as string]
+          DEFAULT_INPUT_VALUES[autoCompleteKeys[0] as string],
         );
       } else if (Object.keys(DEFAULT_INPUT_VALUES).includes(pValue as string)) {
         await el.focus();
@@ -82,11 +82,11 @@ export const fillForms = async (page: Page) => {
       }
       await page.waitFor(100);
     }
-  } catch (error) {
-    console.log(error);
+  } catch {
+    // console.log(error);
   }
 };
-export const autoScroll = async (page) => {
+export const autoScroll = async page => {
   await page.evaluate(async () => {
     return new Promise((resolve, reject) => {
       try {

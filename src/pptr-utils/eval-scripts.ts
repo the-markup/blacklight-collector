@@ -3,7 +3,7 @@ export function injectPlugins(
   jsInstruments: any,
   observerScripts: any,
   StackTraceJS: any,
-  testing: boolean
+  testing: boolean,
 ) {
   // tslint:disable-next-line:only-arrow-functions
   function sendMessagesToLogger(messages: any) {
@@ -13,7 +13,7 @@ export function injectPlugins(
   const {
     instrumentFunctionViaProxy,
     instrumentObject,
-    instrumentObjectProperty
+    instrumentObjectProperty,
   } = jsInstruments(sendMessagesToLogger, StackTraceJS);
   if (testing) {
     (window as any).instrumentFunctionViaProxy = instrumentFunctionViaProxy;
@@ -22,7 +22,7 @@ export function injectPlugins(
     // tslint:disable-next-line:no-console
     console.log(
       "Content-side javascript instrumentation started",
-      new Date().toISOString()
+      new Date().toISOString(),
     );
   }
 
@@ -32,7 +32,7 @@ export function injectPlugins(
     script({
       instrumentFunctionViaProxy,
       instrumentObject,
-      instrumentObjectProperty
+      instrumentObjectProperty,
     });
   }
 }

@@ -30,7 +30,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
   const instrumentFunctionViaProxy = function(
     object: any,
     objectName: string,
-    property: string
+    property: string,
   ) {
     return new Proxy(object[property], {
       apply(target, thisValue, args) {
@@ -39,14 +39,14 @@ export function jsInstruments(loggerHandler, StackTrace) {
           data: {
             operation: "call",
             symbol: `${objectName}.${property}`,
-            value: serializeObject(args, true)
+            value: serializeObject(args, true),
           },
           stack,
           type: "JsInstrument.FunctionProxy",
-          url: window.location.href
+          url: window.location.href,
         });
         return target.call(thisValue, ...args);
-      }
+      },
     });
   };
   // Recursively generates a path for an element
@@ -135,11 +135,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
     } catch (error) {
       sendMessagesToLogger({
         data: {
-          message: `Serialization error: ${error}`
+          message: `Serialization error: ${error}`,
         },
         stack: [],
         type: "Error.JsInstrument",
-        url: window.location.href
+        url: window.location.href,
       });
 
       return "Serialization error: " + error;
@@ -184,7 +184,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
     objectName,
     methodName,
     func,
-    serialize = false
+    serialize = false,
   ) {
     return function() {
       const stack = StackTrace.getSync({ offline: true });
@@ -196,11 +196,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
           arguments: serialArgs,
           operation: "call",
           symbol: `${objectName}.${methodName}`,
-          value: serializeObject(returnValue, true)
+          value: serializeObject(returnValue, true),
         },
         stack,
         type: "JsInstrument.Function",
-        url: window.location.href
+        url: window.location.href,
       });
       return returnValue;
     };
@@ -210,7 +210,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
     object,
     objectName,
     propertyName,
-    logSettings: LogSettings = {}
+    logSettings: LogSettings = {},
   ) {
     const origDescriptor = Object.getPropertyDescriptor(object, propertyName);
     if (!origDescriptor) {
@@ -219,11 +219,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
           message: "Property descriptor not found for",
           object,
           objectName,
-          propertyName
+          propertyName,
         },
         stack: [],
         type: "Error.JsInstrument",
-        url: window.location.href
+        url: window.location.href,
       });
       return;
     }
@@ -243,7 +243,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
           origProperty = originalValue;
         } else {
           console.error(
-            `Property descriptor for ${objectName}.${propertyName} doesn't have getter or value?`
+            `Property descriptor for ${objectName}.${propertyName} doesn't have getter or value?`,
           );
 
           sendMessagesToLogger({
@@ -251,11 +251,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
               logSettings,
               operation: "get(failed)",
               symbol: objectName + "." + propertyName,
-              value: ""
+              value: "",
             },
             stack,
             type: "JsInstrument.ObjectProperty",
-            url: window.location.href
+            url: window.location.href,
           });
           return;
         }
@@ -276,11 +276,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
             data: {
               operation: "get",
               symbol: `${objectName}.${propertyName}`,
-              value: serializeObject(origProperty)
+              value: serializeObject(origProperty),
             },
             stack,
             type: "JsInstrument.ObjectProperty",
-            url: window.location.href
+            url: window.location.href,
           });
           return origProperty;
         }
@@ -298,11 +298,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
             data: {
               operation: "set(prevented)",
               symbol: `${objectName}.${propertyName}`,
-              value: serializeObject(value)
+              value: serializeObject(value),
             },
             stack,
             type: "JsInstrument.ObjectProperty",
-            url: window.location.href
+            url: window.location.href,
           });
           return value;
         }
@@ -313,7 +313,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
           inLog = true;
           if (object.isPrototypeOf(this)) {
             Object.defineProperty(this, propertyName, {
-              value
+              value,
             });
           } else {
             originalValue = value;
@@ -323,11 +323,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
         } else {
           sendMessagesToLogger({
             data: {
-              message: `Property descriptor for, ${objectName}.${propertyName}, doesn't have setter or value?`
+              message: `Property descriptor for, ${objectName}.${propertyName}, doesn't have setter or value?`,
             },
             stack,
             type: "Error.JsInstrument",
-            url: window.location.href
+            url: window.location.href,
           });
 
           return value;
@@ -336,20 +336,20 @@ export function jsInstruments(loggerHandler, StackTrace) {
           data: {
             operation: "set",
             symbol: `${objectName}.${propertyName}`,
-            value: serializeObject(value)
+            value: serializeObject(value),
           },
           stack,
           type: "JsInstrument.ObjectProperty",
-          url: window.location.href
+          url: window.location.href,
         });
         return returnValue;
-      }
+      },
     });
   };
   const instrumentObject = function(
     object,
     objectName,
-    logSettings: LogSettings = {}
+    logSettings: LogSettings = {},
   ) {
     // sendMessagesToLogger({ type: "JsInstrument.Debug", message: !!logSettings.recursive });
     const properties = Object.getPropertyNames(object);
@@ -376,7 +376,7 @@ export function jsInstruments(loggerHandler, StackTrace) {
         instrumentObject(object[property], `${objectName}.${property}`, {
           depth: logSettings.depth - 1,
           preventSets: logSettings.preventSets,
-          recursive: logSettings.recursive
+          recursive: logSettings.recursive,
         });
       }
       try {
@@ -384,11 +384,11 @@ export function jsInstruments(loggerHandler, StackTrace) {
       } catch (error) {
         sendMessagesToLogger({
           data: {
-            message: error
+            message: error,
           },
           stack: [],
           type: "Error.JsInstrument",
-          url: window.location.href
+          url: window.location.href,
         });
         console.error(error);
       }
@@ -397,6 +397,6 @@ export function jsInstruments(loggerHandler, StackTrace) {
   return {
     instrumentFunctionViaProxy,
     instrumentObject,
-    instrumentObjectProperty
+    instrumentObjectProperty,
   };
 }

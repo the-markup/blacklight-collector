@@ -59,17 +59,17 @@ type CanvasCallMap = Map<ScriptUrl, Set<CanvasCallValue>>;
 export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
   const CANVAS_READ_FUNCS = [
     "HTMLCanvasElement.toDataURL",
-    "CanvasRenderingContext2D.getImageData"
+    "CanvasRenderingContext2D.getImageData",
   ];
 
   const CANVAS_WRITE_FUNCS = [
     "CanvasRenderingContext2D.fillText",
-    "CanvasRenderingContext2D.strokeText"
+    "CanvasRenderingContext2D.strokeText",
   ];
   const CANVAS_FP_DO_NOT_CALL_LIST = [
     "CanvasRenderingContext2D.save",
     "CanvasRenderingContext2D.restore",
-    "HTMLCanvasElement.addEventListener"
+    "HTMLCanvasElement.addEventListener",
   ];
 
   const cReads = new Map() as CanvasCallMap;
@@ -140,7 +140,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     cReads,
     cStyles,
     cTexts,
-    cWrites
+    cWrites,
   };
 };
 
@@ -150,7 +150,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
  * @param canvasCalls
  */
 export const getCanvasFp = (
-  canvasCalls
+  canvasCalls,
 ): {
   fingerprinters: string[];
   texts: any;
@@ -163,7 +163,7 @@ export const getCanvasFp = (
     cWrites,
     cBanned,
     cTexts,
-    cStyles
+    cStyles,
   } = sortCanvasCalls(canvasCalls);
 
   const fingerprinters: Set<string> = new Set();
@@ -174,8 +174,8 @@ export const getCanvasFp = (
 
     const rwIntersection = new Set(
       [...url_hosts].filter(
-        x => cWrites.has(script_url) && cWrites.get(script_url).has(x)
-      )
+        x => cWrites.has(script_url) && cWrites.get(script_url).has(x),
+      ),
     );
 
     if (rwIntersection.size < 1) {
@@ -198,14 +198,14 @@ export const getCanvasFp = (
     data_url: serializeCanvasCallMap(cDataUrls),
     fingerprinters: Array.from(fingerprinters),
     styles: serializeCanvasCallMap(cStyles),
-    texts: serializeCanvasCallMap(cTexts)
+    texts: serializeCanvasCallMap(cTexts),
   };
 };
 
 export const getCanvasFontFp = jsCalls => {
   const CANVAS_FONT = [
     "CanvasRenderingContext2D.measureText",
-    "CanvasRenderingContext2D.font"
+    "CanvasRenderingContext2D.font",
   ];
   const font_shorthand = /^\s*(?=(?:(?:[-a-z]+\s*){0,2}(italic|oblique))?)(?=(?:(?:[-a-z]+\s*){0,2}(small-caps))?)(?=(?:(?:[-a-z]+\s*){0,2}(bold(?:er)?|lighter|[1-9]00))?)(?:(?:normal|\1|\2|\3)\s*){0,3}((?:xx?-)?(?:small|large)|medium|smaller|larger|[.\d]+(?:\%|in|[cem]m|ex|p[ctx]))(?:\s*\/\s*(normal|[.\d]+(?:\%|in|[cem]m|ex|p[ctx])))?\s*([-_\{\}\(\)\&!\',\*\.\"\sa-zA-Z0-9]+?)\s*$/g;
   const textMeasure = new Map() as Map<string, any>;
@@ -247,6 +247,6 @@ export const getCanvasFontFp = jsCalls => {
   });
   return {
     canvas_font: serializeCanvasCallMap(canvasFont),
-    text_measure: serializeCanvasCallMap(textMeasure)
+    text_measure: serializeCanvasCallMap(textMeasure),
   };
 };

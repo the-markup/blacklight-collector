@@ -2,12 +2,12 @@
 export function instrumentFingerprintingApis({
   instrumentObjectProperty,
   instrumentObject,
-  instrumentFunctionViaProxy
+  instrumentFunctionViaProxy,
 }) {
   navigator.mediaDevices.enumerateDevices = instrumentFunctionViaProxy(
     window.navigator.mediaDevices,
     "window.navigator.mediaDevices",
-    "enumerateDevices"
+    "enumerateDevices",
   );
   // Access to navigator properties
   const navigatorProperties = [
@@ -26,7 +26,7 @@ export function instrumentFingerprintingApis({
     "productSub",
     "userAgent",
     "vendorSub",
-    "vendor"
+    "vendor",
   ];
   navigatorProperties.forEach(function(property) {
     instrumentObjectProperty(window.navigator, "window.navigator", property);
@@ -46,7 +46,7 @@ export function instrumentFingerprintingApis({
     "filename",
     "description",
     "version",
-    "length"
+    "length",
   ];
   for (let i = 0; i < window.navigator.plugins.length; i++) {
     const pluginName = window.navigator.plugins[i].name;
@@ -54,7 +54,7 @@ export function instrumentFingerprintingApis({
       instrumentObjectProperty(
         window.navigator.plugins[pluginName],
         "window.navigator.plugins[" + pluginName + "]",
-        property
+        property,
       );
     });
   }
@@ -69,7 +69,7 @@ export function instrumentFingerprintingApis({
       instrumentObjectProperty(
         window.navigator.mimeTypes[mimeTypeName],
         "window.navigator.mimeTypes[" + mimeTypeName + "]",
-        property
+        property,
       );
     });
   }
@@ -105,12 +105,12 @@ export function instrumentFingerprintingApis({
     "closePath",
     "beginPath",
     "canvas",
-    "translate"
+    "translate",
   ];
   instrumentObject(
     window.CanvasRenderingContext2D.prototype,
     "CanvasRenderingContext2D",
-    { excludedProperties }
+    { excludedProperties },
   );
 
   // Access to webRTC

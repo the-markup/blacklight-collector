@@ -10,6 +10,7 @@
     "only-arrow-functions": {
       "severity": "warning"
     },
+    "trailing-comma": [true, { "multiline": "always", "singleline": "never" }],
     "no-bitwise": {
       "severity": "warning"
     },

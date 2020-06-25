@@ -1,5 +1,5 @@
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { flatten } from "lodash";
+import flatten from "lodash.flatten";
 import { join } from "path";
 import { Page } from "puppeteer";
 import { getDomain, getHostname } from "tldts";
@@ -52,6 +52,7 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
         });
       }
     } catch (error) {
+      // tslint:disable-next-line:no-console
       console.log(error);
     }
   });
@@ -209,7 +210,9 @@ export const captureBrowserCookies = async (
       JSON.stringify({ browser_cookies }, null, 2)
     );
   } catch (error) {
+    // tslint:disable-next-line:no-console
     console.log(error);
+    // tslint:disable-next-line:no-console
     console.log("Couldnt save browser cookies to file");
   }
   return browser_cookies;
@@ -229,22 +232,9 @@ export const loadBrowserCookies = (
       return [];
     }
   } catch (error) {
+    // tslint:disable:no-console
     console.log("Couldnt load browser cookies");
     console.log(error);
     return [];
   }
 };
-
-//   "name": "__cfduid",
-//   "value": "d619058d0f43143f8671c02667c980a271576533986",
-//   "domain": "propublica.org",
-//   "path": "/",
-//   "expires": 1579125986.439901,
-//   "size": 51,
-//   "httpOnly": true,
-//   "secure": false,
-//   "session": false,
-//   "expiresUTC": "2020-01-15T22:06:26.439Z",
-//   "expiresDays": 30,
-//   "script",
-//   "type": "http","js","unclear"

@@ -3,11 +3,11 @@ export function instrumentAddEventListener({ instrumentFunctionViaProxy }) {
   document.addEventListener = instrumentFunctionViaProxy(
     document,
     "document",
-    "addEventListener"
+    "addEventListener",
   );
   window.addEventListener = instrumentFunctionViaProxy(
     window,
     "window",
-    "addEventListener"
+    "addEventListener",
   );
 }

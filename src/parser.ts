@@ -2,6 +2,10 @@ import { getDomain } from "tldts";
 import { getCanvasFontFp, getCanvasFp } from "./canvas-fingerprinting";
 import { loadBrowserCookies, matchCookiesToEvents } from "./cookie-collector";
 import {
+  FB_ADVANCED_MATCHING_PARAMETERS,
+  FB_STANDARD_EVENTS,
+} from "./fb-pixel-lookup";
+import {
   BEHAVIOUR_TRACKING_EVENTS,
   BlacklightEvent,
   FINGERPRINTABLE_WINDOW_APIS,
@@ -11,10 +15,6 @@ import {
   TrackingRequestEvent,
 } from "./types";
 import { getScriptUrl, groupBy, loadJSONSafely } from "./utils";
-import {
-  FB_ADVANCED_MATCHING_PARAMETERS,
-  FB_STANDARD_EVENTS,
-} from "./fb-pixel-lookup";
 
 export const generateReport = (reportType, messages, dataDir, url) => {
   const eventData = getEventData(reportType, messages);
@@ -44,8 +44,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
 
 const filterByEvent = (messages, typePattern) => {
   return messages.filter(
-    (m) =>
-      m.message.type.includes(typePattern) && !m.message.type.includes("Error")
+    m =>
+      m.message.type.includes(typePattern) && !m.message.type.includes("Error"),
   );
 };
 const getEventData = (reportType, messages): BlacklightEvent[] => {
@@ -82,7 +82,7 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
     default:
       return [];
   }
-  return filtered.map((m) => m.message);
+  return filtered.map(m => m.message);
 };
 const reportSessionRecorders = (eventData: BlacklightEvent[]) => {
   const report = {};
@@ -108,9 +108,9 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
     if (data.symbol.indexOf("addEventListener") > -1) {
       const values = loadJSONSafely(data.value);
       if (Array.isArray(values) && MONITORED_EVENTS.includes(values[0])) {
-        const eventGroup = Object.keys(
-          BEHAVIOUR_TRACKING_EVENTS
-        ).filter((key) => BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0]));
+        const eventGroup = Object.keys(BEHAVIOUR_TRACKING_EVENTS).filter(key =>
+          BEHAVIOUR_TRACKING_EVENTS[key].includes(values[0]),
+        );
         parsedEvents.push({
           data: {
             event_group: eventGroup.length ? eventGroup[0] : "",
@@ -157,7 +157,7 @@ export const reportCanvasFingerprinters = (eventData: BlacklightEvent[]) => {
 };
 
 export const reportCanvasFontFingerprinters = (
-  eventData: BlacklightEvent[]
+  eventData: BlacklightEvent[],
 ) => {
   return getCanvasFontFp(eventData);
 };
@@ -165,7 +165,7 @@ export const reportCanvasFontFingerprinters = (
 export const reportCookieEvents = (
   eventData: BlacklightEvent[],
   dataDir,
-  url
+  url,
 ) => {
   const browser_cookies = loadBrowserCookies(dataDir);
   return matchCookiesToEvents(browser_cookies, eventData, url);
@@ -177,7 +177,7 @@ const reportKeyLogging = (eventData: BlacklightEvent[]) => {
     eventData.map((m: KeyLoggingEvent) => ({
       ...m.data,
       post_request_ps: getDomainSafely(m),
-    }))
+    })),
   );
 };
 
@@ -188,8 +188,8 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
     const data = event.data;
     if (WINDOW_FP_LIST.includes(data.symbol)) {
       const windowApiGroup = Object.keys(
-        FINGERPRINTABLE_WINDOW_APIS
-      ).filter((key) => FINGERPRINTABLE_WINDOW_APIS[key].includes(data.symbol));
+        FINGERPRINTABLE_WINDOW_APIS,
+      ).filter(key => FINGERPRINTABLE_WINDOW_APIS[key].includes(data.symbol));
       parsedEvents.push({
         api_group: windowApiGroup[0],
         stack: event.stack,
@@ -227,7 +227,7 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
 };
 
 const reportThirdPartyTrackers = (eventData: BlacklightEvent[], fpDomain) => {
-  return eventData.filter((e) => {
+  return eventData.filter(e => {
     const requestDomain = getDomain(e.url);
     const isThirdPartyDomain = requestDomain && requestDomain !== fpDomain;
     return isThirdPartyDomain;
@@ -240,22 +240,22 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
       e.url.includes("facebook") &&
       e.data.query &&
       Object.keys(e.data.query).includes("ev") &&
-      e.data.query.ev !== "Microdata"
+      e.data.query.ev !== "Microdata",
   );
-  let advancedMatchingParams = [];
-  let dataParams = [];
+  const advancedMatchingParams = [];
+  const dataParams = [];
   return events.map((e: TrackingRequestEvent) => {
     let eventName = "";
     let eventDescription = "";
     let pageUrl = "";
     let isStandardEvent = false;
-    for (let [key, value] of Object.entries(e.data.query)) {
+    for (const [key, value] of Object.entries(e.data.query)) {
       if (key === "dl") {
         pageUrl = value as string;
       }
       if (key === "ev") {
         const standardEvent = FB_STANDARD_EVENTS.filter(
-          (f) => f.eventName === value
+          f => f.eventName === value,
         );
         if (standardEvent.length > 0) {
           isStandardEvent = true;
@@ -273,9 +273,7 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
       if (/ud\[.*\]/.test(key)) {
         const description = FB_ADVANCED_MATCHING_PARAMETERS[key];
         if (
-          !advancedMatchingParams.some(
-            (s) => s.key === key && s.value === value
-          )
+          !advancedMatchingParams.some(s => s.key === key && s.value === value)
         ) {
           advancedMatchingParams.push({ key, value, description });
         }
@@ -283,12 +281,12 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
     }
 
     return {
-      eventName,
-      eventDescription,
-      pageUrl,
-      isStandardEvent,
-      dataParams,
       advancedMatchingParams,
+      dataParams,
+      eventDescription,
+      eventName,
+      isStandardEvent,
+      pageUrl,
       raw: e.url,
     };
   });
@@ -298,9 +296,10 @@ const getDomainSafely = (message: KeyLoggingEvent) => {
     if (message.data.post_request_url) {
       return getDomain(message.data.post_request_url);
     } else {
+      // tslint:disable-next-line:no-console
       console.log(
         "message.data missing post_request_url",
-        JSON.stringify(message)
+        JSON.stringify(message),
       );
       return "";
     }

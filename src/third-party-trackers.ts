@@ -38,13 +38,13 @@ const blockers = {
   "easyprivacy.txt": PuppeteerBlocker.parse(
     fs.readFileSync(
       path.join(__dirname, "../data/blocklists/easyprivacy.txt"),
-      "utf8"
+      "utf8",
     ),
-    blockerOptions
+    blockerOptions,
   ),
 };
 
-const safelyDecodeUri = (uri) => {
+const safelyDecodeUri = uri => {
   try {
     return decodeURIComponent(uri);
   } catch (e) {
@@ -52,7 +52,7 @@ const safelyDecodeUri = (uri) => {
   }
 };
 // source: https://gist.github.com/pirate/9298155edda679510723#gistcomment-2734349
-const decodeURLParams = (search) => {
+const decodeURLParams = search => {
   const hashes = search.slice(search.indexOf("?") + 1).split("&");
   return hashes.reduce((params, hash) => {
     const split = hash.indexOf("=");
@@ -69,7 +69,7 @@ const decodeURLParams = (search) => {
     };
   }, {});
 };
-const parseJSONSafely = (str) => {
+const parseJSONSafely = str => {
   try {
     const data = JSON.parse(str);
     return data;
@@ -80,12 +80,12 @@ const parseJSONSafely = (str) => {
 export const setupThirdpartyTrackersInspector = async (
   page,
   eventDataHandler: (event: BlacklightEvent) => void,
-  blockRequests = false
+  blockRequests = false,
 ) => {
   if (blockRequests) {
     await page.setRequestInterception(true);
   }
-  page.on("request", async (request) => {
+  page.on("request", async request => {
     let blocked = false;
     Object.entries(blockers).forEach(([listName, blocker]) => {
       const {

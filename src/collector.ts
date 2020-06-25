@@ -1,13 +1,13 @@
 /* tslint:disable:no-submodule-imports object-literal-sort-keys*/
 import { writeFileSync } from "fs";
-import { sampleSize } from "lodash";
+import sampleSize from "lodash.samplesize";
 import os from "os";
 import { join } from "path";
 import puppeteer, { Browser, LoadEvent, Page } from "puppeteer";
 import PuppeteerHar from "puppeteer-har";
 // https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
 import devices from "puppeteer/DeviceDescriptors";
-import { parse, getSubdomain, getDomain } from "tldts";
+import { getDomain, getSubdomain, parse } from "tldts";
 import url from "url";
 import {
   captureBrowserCookies,
@@ -25,8 +25,8 @@ import {
 import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
 import { setupSessionRecordingInspector } from "./session-recording";
-import { clearDir } from "./utils";
 import { setupThirdpartyTrackersInspector } from "./third-party-trackers";
+import { clearDir } from "./utils";
 export const collector = async ({
   inUrl,
   outDir = join(process.cwd(), "bl-tmp"),
@@ -311,7 +311,7 @@ export const collector = async ({
     }
   }
   // generate report
-  let fpRequests = Array.from(hosts.requests.first_party);
+  const fpRequests = Array.from(hosts.requests.first_party);
   const tpRequests = Array.from(hosts.requests.third_party);
   const incorrectTpAssignment = tpRequests.filter(
     (f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain

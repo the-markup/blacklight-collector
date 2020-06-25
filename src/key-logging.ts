@@ -7,7 +7,7 @@ const ts = [
   ...Object.values(getHashedValues("base64", DEFAULT_INPUT_VALUES)),
   ...Object.values(getHashedValues("md5", DEFAULT_INPUT_VALUES)),
   ...Object.values(getHashedValues("sha256", DEFAULT_INPUT_VALUES)),
-  ...Object.values(getHashedValues("sha512", DEFAULT_INPUT_VALUES))
+  ...Object.values(getHashedValues("sha512", DEFAULT_INPUT_VALUES)),
 ];
 
 const hashesMap = {
@@ -15,18 +15,18 @@ const hashesMap = {
   md5: Object.values(getHashedValues("md5", DEFAULT_INPUT_VALUES)),
   plaintext: Object.values(DEFAULT_INPUT_VALUES),
   sha256: Object.values(getHashedValues("sha256", DEFAULT_INPUT_VALUES)),
-  sha512: Object.values(getHashedValues("sha512", DEFAULT_INPUT_VALUES))
+  sha512: Object.values(getHashedValues("sha512", DEFAULT_INPUT_VALUES)),
 };
 export const setupKeyLoggingInspector = async (
   page: Page,
-  eventDataHandler: (event: BlacklightEvent) => void
+  eventDataHandler: (event: BlacklightEvent) => void,
 ) => {
   page.on("request", (request: Request) => {
     const stack = [
       {
         fileName: request.frame().url(),
-        source: `RequestHandler`
-      }
+        source: `RequestHandler`,
+      },
     ];
     if (request.method() === "POST") {
       try {
@@ -46,21 +46,21 @@ export const setupKeyLoggingInspector = async (
               filter,
               match_type,
               post_data: request.postData(),
-              post_request_url: request.url()
+              post_request_url: request.url(),
             },
             stack,
             type: `KeyLogging`,
-            url: request.frame().url()
+            url: request.frame().url(),
           });
         }
       } catch (error) {
         eventDataHandler({
           data: {
-            message: JSON.stringify(error)
+            message: JSON.stringify(error),
           },
           stack,
           type: `Error.KeyLogging`,
-          url: request.frame().url()
+          url: request.frame().url(),
         });
       }
     }

@@ -4,15 +4,15 @@ import { BlacklightEvent, SESSION_RECORDERS_LIST } from "./types";
 
 export const setupSessionRecordingInspector = async (
   page: Page,
-  eventDataHandler: (event: BlacklightEvent) => void
+  eventDataHandler: (event: BlacklightEvent) => void,
 ) => {
   page.on("request", async request => {
     const parsedUrl = url.parse(request.url());
     const cleanUrl = `${parsedUrl.hostname}${parsedUrl.pathname}`;
     const stack = [
       {
-        fileName: request.frame().url()
-      }
+        fileName: request.frame().url(),
+      },
     ];
     const matches = SESSION_RECORDERS_LIST.filter(s => cleanUrl.includes(s));
     if (matches.length > 0) {
@@ -20,7 +20,7 @@ export const setupSessionRecordingInspector = async (
         matches,
         stack,
         type: "SessionRecording",
-        url: cleanUrl
+        url: cleanUrl,
       });
     }
   });

@@ -12,8 +12,8 @@ export const getLogger = ({ outDir = "", quiet = false }) => {
   log_transports.push(
     new transports.Console({
       level: "info",
-      silent: quiet
-    })
+      silent: quiet,
+    }),
   );
 
   filename = outDir
@@ -24,13 +24,13 @@ export const getLogger = ({ outDir = "", quiet = false }) => {
     new transports.File({
       filename,
       level: "silly", // log everything to file
-      options: { flags: "w" } // overwrite instead of append, see https://github.com/winstonjs/winston/issues/1271
-    })
+      options: { flags: "w" }, // overwrite instead of append, see https://github.com/winstonjs/winston/issues/1271
+    }),
   );
 
   return createLogger({
     // https://stackoverflow.com/a/48573091/1407622
     format: format.combine(format.timestamp(), format.json()),
-    transports: log_transports
+    transports: log_transports,
   });
 };

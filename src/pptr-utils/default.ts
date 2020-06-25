@@ -8,7 +8,7 @@ export const savePageContent = async (
   index,
   outDir,
   page: Page,
-  screenshot = true
+  screenshot = true,
 ) => {
   try {
     const html = await page.content();
@@ -30,10 +30,10 @@ export const defaultPuppeteerBrowserOptions = {
     "--no-sandbox",
     "--disable-dev-shm-usage",
     "--ignore-certificate-errors",
-    "--autoplay-policy=no-user-gesture-required"
+    "--autoplay-policy=no-user-gesture-required",
   ],
   defaultViewport: null,
-  headless: true
+  headless: true,
 };
 
 /**

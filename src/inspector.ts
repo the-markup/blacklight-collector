@@ -23,11 +23,11 @@ export const setupBlacklightInspector = async (
   page: Page,
   eventDataHandler: (event: BlacklightEvent) => void,
   testing = false,
-  plugins = [instrumentAddEventListener, instrumentFingerprintingApis]
+  plugins = [instrumentAddEventListener, instrumentFingerprintingApis],
 ) => {
   const stackTraceHelper = readFileSync(
     require.resolve("stacktrace-js/dist/stacktrace.js"),
-    "utf8"
+    "utf8",
   );
   await page.evaluateOnNewDocument(stackTraceHelper);
   await page.evaluateOnNewDocument(getPageScriptAsString(plugins, testing));
@@ -39,11 +39,11 @@ export const setupBlacklightInspector = async (
     } catch (error) {
       eventDataHandler({
         data: {
-          message: JSON.stringify(eventData)
+          message: JSON.stringify(eventData),
         },
         stack: [],
         type: `Error.BlacklightInspector`,
-        url: ""
+        url: "",
       });
     }
   });
