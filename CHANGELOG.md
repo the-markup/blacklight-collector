@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@2.0.1...@themarkup/blacklight@2.0.2) (2020-07-19)
+
+
+### Bug Fixes
+
+* **screenshots:** added await to savePageContent calls in collector ([72fc537](https://gitlab.com/the_markup/blacklight/commit/72fc53790eec1651c154e7a2c6a7d567654bb55c))
+
 ### [2.0.1](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@2.0.0...@themarkup/blacklight@2.0.1) (2020-06-25)
 
 ## [2.0.0](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight@1.0.3...@themarkup/blacklight@2.0.0) (2020-05-19)

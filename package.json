@@ -1,6 +1,6 @@
 {
   "name": "@themarkup/blacklight-collector",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "build/index.js",
   "scripts": {
