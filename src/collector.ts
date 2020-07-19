@@ -188,7 +188,7 @@ export const collector = async ({
       timeout: defaultTimeout,
       waitUntil: defaultWaitUntil as LoadEvent,
     });
-    await savePageContent(pageIndex, outDir, page, saveScreenshots);
+    savePageContent(pageIndex, outDir, page, saveScreenshots);
     pageIndex++;
   } catch (error) {
     loadError = true;
@@ -267,7 +267,7 @@ export const collector = async ({
 
       await fillForms(page);
       await page.waitFor(800);
-      await savePageContent(pageIndex, outDir, page, saveScreenshots);
+      savePageContent(pageIndex, outDir, page, saveScreenshots);
       pageIndex++;
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);
