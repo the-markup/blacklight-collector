@@ -5,8 +5,6 @@ import os from "os";
 import { join } from "path";
 import puppeteer, { Browser, LoadEvent, Page } from "puppeteer";
 import PuppeteerHar from "puppeteer-har";
-// https://github.com/puppeteer/puppeteer/blob/master/lib/DeviceDescriptors.js
-import devices from "puppeteer/DeviceDescriptors";
 import { getDomain, getSubdomain, parse } from "tldts";
 import url from "url";
 import {
@@ -87,7 +85,7 @@ export const collector = async ({
     end_time: null,
   };
   if (emulateDevice) {
-    output.deviceEmulated = devices[emulateDevice];
+    output.deviceEmulated = puppeteer.devices[emulateDevice];
   }
 
   // Log network requests and page links
@@ -141,11 +139,11 @@ export const collector = async ({
       },
     };
     if (emulateDevice) {
-      const deviceOptions = devices[emulateDevice];
+      const deviceOptions = puppeteer.devices[emulateDevice];
       page.emulate(deviceOptions);
     }
     // record all requested hosts
-    await page.on("request", request => {
+    await page.on("request", (request) => {
       const l = parse(request.url());
       // note that hosts may appear as first and third party depending on the path
       if (FIRST_PARTY.domain === l.domain) {
@@ -162,14 +160,14 @@ export const collector = async ({
     }
 
     // Init blacklight instruments on page
-    await setupBlacklightInspector(page, event => logger.warn(event));
-    await setupKeyLoggingInspector(page, event => logger.warn(event));
-    await setupHttpCookieCapture(page, event => logger.warn(event));
-    await setupSessionRecordingInspector(page, event => logger.warn(event));
+    await setupBlacklightInspector(page, (event) => logger.warn(event));
+    await setupKeyLoggingInspector(page, (event) => logger.warn(event));
+    await setupHttpCookieCapture(page, (event) => logger.warn(event));
+    await setupSessionRecordingInspector(page, (event) => logger.warn(event));
     await setupThirdpartyTrackersInspector(
       page,
-      event => logger.warn(event),
-      enableAdBlock,
+      (event) => logger.warn(event),
+      enableAdBlock
     );
     if (captureHar) {
       har = new PuppeteerHar(page);
@@ -216,7 +214,7 @@ export const collector = async ({
     output.uri_redirects = page_response
       .request()
       .redirectChain()
-      .map(req => {
+      .map((req) => {
         return req.url();
       });
 
@@ -241,7 +239,7 @@ export const collector = async ({
     // TODO: Only browse links from the same sub domain. Exception: wwww
     let subDomainLinks = [];
     if (getSubdomain(output.uri_dest) !== "www") {
-      subDomainLinks = outputLinks.first_party.filter(f => {
+      subDomainLinks = outputLinks.first_party.filter((f) => {
         return getSubdomain(f.href) === getSubdomain(output.uri_dest);
       });
     } else {
@@ -249,7 +247,7 @@ export const collector = async ({
     }
     const browse_links = sampleSize(subDomainLinks, numPages);
     output.browsing_history = [output.uri_dest].concat(
-      browse_links.map(l => l.href),
+      browse_links.map((l) => l.href)
     );
 
     for (const link of output.browsing_history.slice(1)) {
@@ -282,7 +280,7 @@ export const collector = async ({
       `couldnt capture browser cookies ${JSON.stringify(error)} `,
       {
         type: "Browser",
-      },
+      }
     );
   }
 
@@ -314,12 +312,12 @@ export const collector = async ({
   const fpRequests = Array.from(hosts.requests.first_party);
   const tpRequests = Array.from(hosts.requests.third_party);
   const incorrectTpAssignment = tpRequests.filter(
-    (f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain,
+    (f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain
   );
   output.hosts = {
     requests: {
       first_party: fpRequests.concat(incorrectTpAssignment),
-      third_party: tpRequests.filter(t => !incorrectTpAssignment.includes(t)),
+      third_party: tpRequests.filter((t) => !incorrectTpAssignment.includes(t)),
     },
   };
 
@@ -328,7 +326,7 @@ export const collector = async ({
     output.social = getSocialLinks(links);
   }
 
-  const event_data_all = await new Promise(done => {
+  const event_data_all = await new Promise((done) => {
     logger.query(
       {
         start: 0,
@@ -344,7 +342,7 @@ export const collector = async ({
         }
 
         return done(results.file);
-      },
+      }
     );
   });
 
@@ -362,7 +360,7 @@ export const collector = async ({
   }
 
   // filter only events with type set
-  const event_data = event_data_all.filter(event => {
+  const event_data = event_data_all.filter((event) => {
     return !!event.message.type;
   });
   // We only consider something to be a third party tracker if:
@@ -372,7 +370,7 @@ export const collector = async ({
       cur,
       event_data,
       outDir,
-      REDIRECTED_FIRST_PARTY.domain,
+      REDIRECTED_FIRST_PARTY.domain
     );
     return acc;
   }, {});

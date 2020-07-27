@@ -24,7 +24,7 @@ export const setupKeyLoggingInspector = async (
   page.on("request", (request: Request) => {
     const stack = [
       {
-        fileName: request.frame().url(),
+        fileName: request.frame() ? request.frame().url() : "",
         source: `RequestHandler`,
       },
     ];
