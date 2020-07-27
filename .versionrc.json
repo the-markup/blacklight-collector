@@ -1,4 +1,4 @@
 {
-  "tagPrefix": "@themarkup/blacklight@",
-  "releaseCommitMessageFormat": "chore(release): @themarkup/blacklight@{{currentTag}}"
+  "tagPrefix": "@themarkup/blacklight-collector@",
+  "releaseCommitMessageFormat": "chore(release): @themarkup/blacklight-collector@{{currentTag}}"
 }

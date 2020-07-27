@@ -95,10 +95,8 @@ export const setupThirdpartyTrackersInspector = async (
       if (match) {
         const stack = [
           {
-            fileName: request.frame().url(),
-            source: `requested from ${request
-              .frame()
-              .url()} and matched with ${listName} filter ${filter}`,
+            fileName: request.frame() ? request.frame().url() : "",
+            source: `ThirdPartyTracker RequestHandler`,
           },
         ];
         const parsedUrl = url.parse(request.url());
@@ -109,7 +107,6 @@ export const setupThirdpartyTrackersInspector = async (
             if (query.hasOwnProperty(param)) {
               query[param] = parseJSONSafely(query[param]);
             }
-            // TODO: Add sha-256 check npm ->"js-sha256";
           }
         }
         eventDataHandler({
