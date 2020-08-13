@@ -33,10 +33,10 @@
   },
   "homepage": "https://gitlab.com/the_markup/blacklight#readme",
   "dependencies": {
-    "@cliqz/adblocker-puppeteer": "^1.4.0",
+    "@cliqz/adblocker-puppeteer": "^1.17.0",
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
-    "puppeteer": "^3.1.0",
+    "puppeteer": "^5.2.1",
     "puppeteer-har": "^1.1.1",
     "stacktrace-js": "^2.0.1",
     "tldts": "^5.6.2",
