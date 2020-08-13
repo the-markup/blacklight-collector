@@ -4,7 +4,7 @@ import { setupThirdpartyTrackersInspector } from "../src/third-party-trackers";
 import { generateReport } from "../src/parser";
 import { getDomain } from "tldts";
 
-jest.setTimeout(10000);
+jest.setTimeout(50000);
 it("captures requests that match the easyprivacy list ", async () => {
   const browser = await launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
