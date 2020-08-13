@@ -263,9 +263,9 @@ export const collector = async ({
         waitUntil: "networkidle2",
       });
 
+      await savePageContent(pageIndex, outDir, page, saveScreenshots);
       await fillForms(page);
       await page.waitFor(800);
-      await savePageContent(pageIndex, outDir, page, saveScreenshots);
       pageIndex++;
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);
