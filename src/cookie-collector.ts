@@ -91,6 +91,7 @@ export const getJsCookies = (events, url) => {
         m.type.includes("JsInstrument.ObjectProperty") &&
         m.data.symbol.includes("cookie") &&
         m.data.operation.startsWith("set") &&
+        typeof m.data.value !== "undefined" &&
         typeof Cookie.parse(m.data.value) !== "undefined",
     )
     .map(d => {
