@@ -3,7 +3,6 @@ import { BlacklightEvent, JsInstrumentEvent } from "./types";
 /**
  *  @fileOverview Utility functions for canvas finerprinting analysis.
  *  Implemented following the Princeton study's methodology.
- *  Might need to implement more techniques like {@link https://github.com/teamnsrg/mida/blob/master/jstrace/fingerprint.go | mida } does
  */
 
 import { parse } from "url";
@@ -22,7 +21,6 @@ const getCanvasText = (args: string[]) => {
   if (!args) {
     return "";
   }
-  // TODO: Makse sure this value is a string
   return args[0].toString();
 };
 
@@ -239,7 +237,6 @@ export const getCanvasFontFp = jsCalls => {
       map.delete(key);
     }
   });
-  // TODO: Test this, not adding yet to avoid false positives
   textMeasure.forEach((value, key, map) => {
     if (value.size < MIN_TEXT_MEASURE_COUNT) {
       map.delete(key);

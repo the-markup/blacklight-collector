@@ -34,7 +34,6 @@ export function instrumentFingerprintingApis({
 
   // Access to screen properties
   // instrumentObject(window.screen, "window.screen");
-  // TODO: why do we instrument only two screen properties
   const screenProperties = ["width", "height", "pixelDepth", "colorDepth"];
   screenProperties.forEach(function(property) {
     instrumentObjectProperty(window.screen, "window.screen", property);

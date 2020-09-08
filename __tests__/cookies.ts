@@ -565,25 +565,3 @@ it("can handle badly formed events", async () => {
     "totesfuckedcookie;expires=Sat, 02 Feb 2030 23:37:23 GMT;path=/";
   expect(getJsCookies([event], "whatever")).toHaveLength(0);
 });
-
-// TODO: See what to do about this
-// it.skip("can report cookies used by a website", async () => {
-//   const browser = await launch(defaultPuppeteerBrowserOptions);
-//   const page = (await browser.pages())[0];
-//   const rows = [];
-//   const URL = `https://girlscouts.org`;
-//   await setupBlacklightInspector(page, e => rows.push(e));
-//   await setupHttpCookieCapture(page, e => rows.push(e));
-//   await page.goto(URL, { waitUntil: "networkidle2" });
-//   const allCookies = await captureBrowserCookies(page, TEST_DIR);
-//   await browser.close();
-//   const cookies = matchCookiesToEvents(allCookies, rows, URL);
-//   console.log(
-//     cookies.map(c => ({
-//       domain: c.domain,
-//       name: c.name,
-//       path: c.path,
-//       third_party: c.third_party
-//     }))
-//   );
-// });

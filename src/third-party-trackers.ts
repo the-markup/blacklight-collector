@@ -7,8 +7,6 @@ import path from "path";
 import url from "url";
 import { BlacklightEvent } from "./types";
 
-// TODO: New Test for Facebook Trackers
-
 // This code is a slightly modified version of  https://github.com/EU-EDPS/website-evidence-collector/blob/master/lib/setup-beacon-recording.js
 // The following options make sure that blocker will behave optimally for the
 // use-case of identifying blocked network requests as well as the rule which

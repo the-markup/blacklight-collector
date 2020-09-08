@@ -23,10 +23,7 @@ export const DEFAULT_INPUT_VALUES = {
   "cc-given-name": "IDAAAA",
   "cc-family-name": "TARBELL",
   "cc-number": "4479846060020724",
-  // "cc-csc": "123",
   "cc-exp": "01/2026", // "MM/YY" or "MM/YYYY".
-  // "cc-exp-month": "01",
-  // "cc-exp-year": "2019",
   "cc-type": "Visa",
   "transaction-amount": "13371337",
   bday: "01-01-1970",

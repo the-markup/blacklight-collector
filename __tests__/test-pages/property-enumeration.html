@@ -1,4 +1,3 @@
-<!-- TODO: navigator.plugins and navigator.mimeTypes -->
 <html>
   <title>Property Enumeration Test Page</title>
   <h1>Property Enumeration Test Page</h1>
@@ -30,7 +29,7 @@
         "userLanguage",
         "userProfile",
         "vendorSub",
-        "vendor"
+        "vendor",
       ];
       navigatorProperties.forEach(function(property) {
         p["navigator." + property] = eval("window.navigator." + property);
@@ -45,7 +44,7 @@
         "availHeight",
         "availWidth",
         "pixelDepth",
-        "colorDepth"
+        "colorDepth",
       ];
       screenProperties.forEach(function(property) {
         p["screen." + property] = eval("window.screen." + property);
@@ -62,7 +61,7 @@
       ] = await navigator.mediaDevices.enumerateDevices();
       return p;
     }
-    enumProps().then(result => {
+    enumProps().then((result) => {
       pre = document.getElementById("result");
       pre.innerHTML = JSON.stringify(result, null, 2);
     });

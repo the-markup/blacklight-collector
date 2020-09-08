@@ -236,7 +236,6 @@ export const collector = async ({
     }
     await fillForms(page);
 
-    // TODO: Only browse links from the same sub domain. Exception: wwww
     let subDomainLinks = [];
     if (getSubdomain(output.uri_dest) !== "www") {
       subDomainLinks = outputLinks.first_party.filter(f => {
