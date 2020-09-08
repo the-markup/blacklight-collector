@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.4](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight-collector@2.1.3...@themarkup/blacklight-collector@2.1.4) (2020-09-08)
+
+
+### Bug Fixes
+
+* **cookie-collector:** Undefined check for cookie value ([018f0dc](https://gitlab.com/the_markup/blacklight/commit/018f0dcf75e39abdef0abbdacffa9f0f8d96c891)), closes [#53](https://gitlab.com/the_markup/blacklight/issues/53)
+* **sr:** rm leadid from session recorders list ([83bbcd4](https://gitlab.com/the_markup/blacklight/commit/83bbcd4e2168e20a6ba6d4759605d9e5b67d49e8))
+
 ### [2.1.3](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight-collector@2.1.2...@themarkup/blacklight-collector@2.1.3) (2020-08-13)
 
 ### [2.1.2](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight-collector@2.1.1...@themarkup/blacklight-collector@2.1.2) (2020-08-13)
