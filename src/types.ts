@@ -95,7 +95,6 @@ export const SESSION_RECORDERS_LIST = [
   "d10lpsik1i8c69.cloudfront.net",
   "luckyorange.com",
   "vwo.com",
-  "leadid.com",
 ];
 export const BEHAVIOUR_TRACKING_EVENTS = {
   KEYBOARD: ["keydown", "keypress", "keyup", "input"],
