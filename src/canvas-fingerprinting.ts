@@ -18,7 +18,7 @@ const MIN_TEXT_LENGTH = 10;
  * @param arguments
  */
 const getCanvasText = (args: string[]) => {
-  if (!args) {
+  if (!args || !args[0]) {
     return "";
   }
   return args[0].toString();

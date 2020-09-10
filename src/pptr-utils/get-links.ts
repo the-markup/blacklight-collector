@@ -4,14 +4,14 @@ export const getLinks = async (page): Promise<LinkObject[]> => {
   return page.evaluate(() => {
     try {
       return [].map
-        .call(document.querySelectorAll("a[href]"), (a) => {
+        .call(document.querySelectorAll("a[href]"), a => {
           return {
             href: a.href.split("#")[0], // link without fragment
             inner_html: a.innerHTML.trim(),
             inner_text: a.innerText,
           };
         })
-        .filter((link) => {
+        .filter(link => {
           return (
             link.href.startsWith("http") &&
             !link.href.endsWith(".pdf") &&
@@ -29,11 +29,11 @@ export const dedupLinks = (links_with_duplicates: LinkObject[]) => {
   const links = Array.from(
     new Set(
       links_with_duplicates
-        .filter((f) => f && f.hasOwnProperty("href"))
-        .map((link) => link.href)
-    )
-  ).map((href) => {
-    return links_with_duplicates.find((link) => link.href === href);
+        .filter(f => f && f.hasOwnProperty("href"))
+        .map(link => link.href),
+    ),
+  ).map(href => {
+    return links_with_duplicates.find(link => link.href === href);
   });
 
   return links;
@@ -63,7 +63,7 @@ const SOCIAL_URLS = [
 
 export const getSocialLinks = (links: LinkObject[]): LinkObject[] => {
   const spRegex = new RegExp(`\\b(${SOCIAL_URLS.join("|")})\\b`, "i");
-  return links.filter((link) => {
+  return links.filter(link => {
     return link.href.match(spRegex);
   });
 };
