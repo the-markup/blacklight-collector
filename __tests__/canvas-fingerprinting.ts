@@ -2,20 +2,20 @@ import { join } from "path";
 import {
   sortCanvasCalls,
   getCanvasFp,
-  getCanvasFontFp
+  getCanvasFontFp,
 } from "../src/canvas-fingerprinting";
 import { loadEventData } from "../src/utils";
 import { BlacklightEvent } from "../src/types";
 
 const TEST_DATA_DIR = join(__dirname, "test-data", "canvas-fingerprinting");
-const FONT_TEST_DATA_DIR = join(__dirname, "test-data", "kohls.com");
+const FONT_TEST_DATA_DIR = join(__dirname, "test-data", "kohls-new.com");
 let jsCalls: BlacklightEvent[];
 
 beforeAll(async () => {
   const allCalls = loadEventData(TEST_DATA_DIR);
   jsCalls = allCalls
-    .filter(m => m.message.type.indexOf("JsInstrument") > -1)
-    .map(m => m.message);
+    .filter((m) => m.message.type.indexOf("JsInstrument") > -1)
+    .map((m) => m.message);
 });
 
 afterAll(async () => {});
@@ -42,8 +42,10 @@ it("can identify canvas fp based on CITP criteria", async () => {
 it("can identify font fingerprinting", async () => {
   const allCalls = loadEventData(FONT_TEST_DATA_DIR);
   jsCalls = allCalls
-    .filter(m => m.message.type && m.message.type.indexOf("JsInstrument") > -1)
-    .map(m => m.message);
+    .filter(
+      (m) => m.message.type && m.message.type.indexOf("JsInstrument") > -1
+    )
+    .map((m) => m.message);
   const { canvas_font, text_measure } = getCanvasFontFp(jsCalls);
   expect(
     canvas_font["https://fc.kohls.com/2.2/w/w-756138/sync/js/"]
