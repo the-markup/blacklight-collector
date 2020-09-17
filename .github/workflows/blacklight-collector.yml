@@ -1,10 +1,20 @@
 name: blacklight-collector
-on: [push]
+on:
+  push:
+    branches:
+      - "setup-action"
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
-      - run: npm install -g bats
-      - run: bats -v
+        with:
+          node-version: "12"
+      - name: Run build script
+        run: ./.github/scripts/build.sh
+        shell: bash
+      - name: Build
+      - run: npm install
+      - name: Test
+      - run: npm run test
