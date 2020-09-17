@@ -11,10 +11,7 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - name: Run build script
-        run: ./.github/scripts/build.sh
+      - run: ./.github/scripts/build.sh
         shell: bash
-      - name: Build
       - run: npm install
-      - name: Test
       - run: npm run test
