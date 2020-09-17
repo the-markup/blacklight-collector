@@ -4,14 +4,12 @@ on:
     branches:
       - "setup-action"
 jobs:
-  check-bats-version:
+  blacklight-collector-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: "12"
-      - run: ./.github/scripts/build.sh
-        shell: bash
       - run: npm install
       - run: npm run test
