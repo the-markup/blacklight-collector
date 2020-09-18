@@ -1,11 +1,10 @@
 name: publish
 on:
-  push:
-    tags:
-      - "@themarkup/blacklight-collector@*"
+  release:
+    types: [published]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -16,7 +15,7 @@ jobs:
       - run: npm test
   publish-npm:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
