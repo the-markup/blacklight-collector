@@ -24,14 +24,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/the_markup/blacklight.git"
+    "url": "git+https://github.com/the-markup/blacklight-collector.git"
   },
   "author": "Surya Mattu",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://gitlab.com/the_markup/blacklight/issues"
+    "url": "https://github.com/the-markup/blacklight-collector/issues"
   },
-  "homepage": "https://gitlab.com/the_markup/blacklight#readme",
+  "homepage": "https://github.com/the-markup/blacklight-collector#readme",
   "dependencies": {
     "@cliqz/adblocker-puppeteer": "^1.17.0",
     "lodash.flatten": "^4.4.0",
