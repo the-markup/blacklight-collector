@@ -1,4 +1,4 @@
-name: blacklight-collector
+name: test
 on:
   push:
     branches:
