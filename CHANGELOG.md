@@ -2,6 +2,61 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### 2.1.5 (2020-09-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **third-party-tracker + redirection handling:** Renamed web beacons test to third party trackers
+* **key-logging:** Data exfiltration tests doesnt exist anymore. Need to update reporting software and rename it to key-logging
+
+### Features
+
+* **1m-prep:** config screenshot + waitUntil , autocomplete-text ([a33c436](https://github.com/the-markup/blacklight-collector/commit/a33c4365744d3b8fa7d525722eb9e3cd2cefb650)), closes [#22](https://github.com/the-markup/blacklight-collector/issues/22) [#25](https://github.com/the-markup/blacklight-collector/issues/25) [#26](https://github.com/the-markup/blacklight-collector/issues/26)
+* **autocomplete-input-fields:** added field for html autocomplete input attributes ([8e68df1](https://github.com/the-markup/blacklight-collector/commit/8e68df198dd00aa73d02178738ce4c7ebb5615ac))
+* **codebase:** init ([27d5e77](https://github.com/the-markup/blacklight-collector/commit/27d5e77d46e9dbbb180c0c7760c0f457b08667b7))
+* **collector:** - Social links added to output w/ tests- ([8eddec5](https://github.com/the-markup/blacklight-collector/commit/8eddec55f73b2b985fefc2ada67e8cdf943890ae))
+* **crawl:** Added functionality to browse  first_party urls ([400d84d](https://github.com/the-markup/blacklight-collector/commit/400d84de238f483d6338d12c9e1ba6aee5b142c1))
+* **fb_pixel_events:** Added a test to track Facebook pixel events ([790b545](https://github.com/the-markup/blacklight-collector/commit/790b5457d7087f177e0a3a6487d7eaaf46d37dc1))
+* **instrument+lint:** Added cookie instrument + tslint ([8f1f9ed](https://github.com/the-markup/blacklight-collector/commit/8f1f9ed7330494f956875bb2da6f732fc6e52613))
+* **js-instrument+canvas-fp:** Returning  values from functions in js instrument ([b0ef4bd](https://github.com/the-markup/blacklight-collector/commit/b0ef4bd040449084aab2093795a446bc205cd03b)), closes [#45](https://github.com/the-markup/blacklight-collector/issues/45)
+* **key-logging:** Renamed data_exfiltration test to key_logging ([5d86b4f](https://github.com/the-markup/blacklight-collector/commit/5d86b4f7b74af19b06eb3926bb0de1ffe6ef7d5c)), closes [#44](https://github.com/the-markup/blacklight-collector/issues/44) [#43](https://github.com/the-markup/blacklight-collector/issues/43) [#42](https://github.com/the-markup/blacklight-collector/issues/42)
+* **parser:** fingerprintable_api_calls, behavior _event_listen ([2c7cdb4](https://github.com/the-markup/blacklight-collector/commit/2c7cdb473d0b78fb3800c05ecbdfc49238cc0f51))
+* **reports+stackrace:** Behaviour_tracking + fp_api report , stack trace ([a51a123](https://github.com/the-markup/blacklight-collector/commit/a51a1237b2bc5984d298c04c139190f3e5a9da14))
+* **session-recording:** Added session recording detection test ([44c25ad](https://github.com/the-markup/blacklight-collector/commit/44c25ad390653faafafb5b1247384dafa2a1a80d)), closes [#50](https://github.com/the-markup/blacklight-collector/issues/50)
+* **technique:** Added canvas fingerprinting + tests ([669d271](https://github.com/the-markup/blacklight-collector/commit/669d271f2d34923543155bb0902fb38541aff69a))
+* **third-party-tracker + redirection handling:** improved  redirect, link selection and  TPT  func. ([fe403c4](https://github.com/the-markup/blacklight-collector/commit/fe403c484f2bbfebf369ddb8671638d88f9c3eeb))
+* **types:** Blacklight Events type implementation + example.js ([4e5f410](https://github.com/the-markup/blacklight-collector/commit/4e5f410c757dc16c518eee5489eb56c5f2cdc5e1))
+* **types+reports:** Implemented types and added reports to collector ([d05a628](https://github.com/the-markup/blacklight-collector/commit/d05a62822015c8f69f357e307a02936668fc006a))
+* **web-beacons:** `setupWebBeaconsInspector`,`web_beacons`-> output ([66564b9](https://github.com/the-markup/blacklight-collector/commit/66564b95597b9dc19e0750a4a56756d5e81fc495))
+
+
+### Bug Fixes
+
+* **browser-profile:** added saveBrowserProfile flag back ([9136539](https://github.com/the-markup/blacklight-collector/commit/913653912a4800f358229261111e527213754429))
+* **canvas-fp:** added toString to getCanvasText ([28d57d4](https://github.com/the-markup/blacklight-collector/commit/28d57d40a1406ae55684d1e6310d50d4da5c925c)), closes [#35](https://github.com/the-markup/blacklight-collector/issues/35) [#39](https://github.com/the-markup/blacklight-collector/issues/39)
+* **canvas-fp:** Fixes to canvas + canvas font fp. ([894ecac](https://github.com/the-markup/blacklight-collector/commit/894ecace2379e9c2cf2557310a1a1b4f700bc242)), closes [#20](https://github.com/the-markup/blacklight-collector/issues/20)
+* **canvas-fp:** get Text null check ([93f6620](https://github.com/the-markup/blacklight-collector/commit/93f6620a3a9a9a8fc64f72dba97b95fa07e84391)), closes [#55](https://github.com/the-markup/blacklight-collector/issues/55)
+* **canvas-fp:** overwrote the args variable by accident ([c14fd11](https://github.com/the-markup/blacklight-collector/commit/c14fd113ad68a79d65493246be3981b0d74bffb4))
+* **collector:** Added a check for browser disconnect ([16635e9](https://github.com/the-markup/blacklight-collector/commit/16635e9eb8b2472e00af07b6d0abeedae056fa27)), closes [#51](https://github.com/the-markup/blacklight-collector/issues/51)
+* **collector:** event_data_all check ([233bf04](https://github.com/the-markup/blacklight-collector/commit/233bf04bcca2f9ae4a0493583510e9672a49acbb)), closes [#52](https://github.com/the-markup/blacklight-collector/issues/52)
+* **cookie-collector:** Cookie instrumentation fix ([05d3a78](https://github.com/the-markup/blacklight-collector/commit/05d3a785f9ca4832b6c1a83b3dd9d419f3568a24))
+* **cookie-collector:** Undefined check for cookie value ([d8ecd18](https://github.com/the-markup/blacklight-collector/commit/d8ecd1816abc794417dcac5d7d7ddb4d907aa9ff)), closes [#53](https://github.com/the-markup/blacklight-collector/issues/53)
+* **cookies-report:** error handling for parseCookie and getJsCookies ([e935184](https://github.com/the-markup/blacklight-collector/commit/e935184653ef2a69705a78209475b5ffc9bf279f)), closes [#29](https://github.com/the-markup/blacklight-collector/issues/29) [#30](https://github.com/the-markup/blacklight-collector/issues/30) [#32](https://github.com/the-markup/blacklight-collector/issues/32)
+* **dedup-links:** null check ([d82649d](https://github.com/the-markup/blacklight-collector/commit/d82649d87f2285bf72f584d37e16748372b0d4c7)), closes [#54](https://github.com/the-markup/blacklight-collector/issues/54)
+* **domain null fix:** cookie parse fix ([c146983](https://github.com/the-markup/blacklight-collector/commit/c146983308bb31c6a773bec6e8ee4ec9bae88505))
+* **fillForms:** wrap page evaluate in try/catch ([edc856d](https://github.com/the-markup/blacklight-collector/commit/edc856dc7e7c748248c62e33fcae34eaf7bd9873)), closes [#34](https://github.com/the-markup/blacklight-collector/issues/34)
+* **pptr+data-exfil:** handle pptr launch errors better ([dff54dc](https://github.com/the-markup/blacklight-collector/commit/dff54dce7911537553f655a714df3e759bf6475f)), closes [#14](https://github.com/the-markup/blacklight-collector/issues/14) [#33](https://github.com/the-markup/blacklight-collector/issues/33) [#36](https://github.com/the-markup/blacklight-collector/issues/36) [#37](https://github.com/the-markup/blacklight-collector/issues/37) [#40](https://github.com/the-markup/blacklight-collector/issues/40)
+* **screenshots:** added await to savePageContent calls in collector ([bde6589](https://github.com/the-markup/blacklight-collector/commit/bde658933c3c86b467c62eeb3c2b5ac55874d0d7))
+* **sr:** rm leadid from session recorders list ([2a51b71](https://github.com/the-markup/blacklight-collector/commit/2a51b7156e3bb97101ef64366ddf27fb3e41b2aa))
+* **test-data:** added missing fb pixel test data ([544cab1](https://github.com/the-markup/blacklight-collector/commit/544cab1dbfcc601eeabbaeb8fc161987617c0781))
+* **third-party-trackers:** Fix for null frame that got introduced in pptr 3.1 ([236e97d](https://github.com/the-markup/blacklight-collector/commit/236e97de2d36d4ac4a6b3901904b92f2f8f368c8))
+* Add try catch on getLinks ([1dd50c3](https://github.com/the-markup/blacklight-collector/commit/1dd50c3cb68ce3cf4a1644c6156b7a410bffdd0a)), closes [#6](https://github.com/the-markup/blacklight-collector/issues/6) [#8](https://github.com/the-markup/blacklight-collector/issues/8) [#15](https://github.com/the-markup/blacklight-collector/issues/15)
+* Ignore pdfs and zipfiles in urls ([436b91b](https://github.com/the-markup/blacklight-collector/commit/436b91be2a293fa7929aacb1a9fe4c82b2de5eec)), closes [#1](https://github.com/the-markup/blacklight-collector/issues/1)
+* reportEventListeners json parse fix ([fbcc53b](https://github.com/the-markup/blacklight-collector/commit/fbcc53b637e1c4e641ed4a6067dc6f74ac35636f)), closes [#9](https://github.com/the-markup/blacklight-collector/issues/9)
+* Undefined prop fixes ([ccb1da3](https://github.com/the-markup/blacklight-collector/commit/ccb1da3788a358a1cefe9ba997aa489a4518abd4)), closes [#12](https://github.com/the-markup/blacklight-collector/issues/12) [#13](https://github.com/the-markup/blacklight-collector/issues/13)
+* URIError: URI malformed fix ([cd9c9e3](https://github.com/the-markup/blacklight-collector/commit/cd9c9e3823374c408438337a37a6e6477baa2afa)), closes [#7](https://github.com/the-markup/blacklight-collector/issues/7)
+
 ### [2.1.4](https://gitlab.com/the_markup/blacklight/compare/@themarkup/blacklight-collector@2.1.3...@themarkup/blacklight-collector@2.1.4) (2020-09-08)
 
 
