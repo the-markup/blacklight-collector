@@ -4,7 +4,7 @@
     "uncommittedChanges": true,
     "untrackedFiles": true,
     "sensitiveData": false,
-    "branch": "master",
+    "branch": "main",
     "gitTag": "@themarkup/blacklight-collector@"
   },
   "confirm": true,
