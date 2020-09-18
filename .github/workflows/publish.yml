@@ -1,7 +1,7 @@
 name: blacklight-collector
 on:
   push:
-    tag:
+    tags:
       - "@themarkup/blacklight-collector@*"
 jobs:
   build:
