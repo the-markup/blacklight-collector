@@ -2,7 +2,7 @@ name: blacklight-collector
 on:
   push:
     tag:
-      - @themarkup/blacklight-collector@*
+      - "@themarkup/blacklight-collector@*"
 jobs:
   build:
     runs-on: ubuntu-latest
