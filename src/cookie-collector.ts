@@ -98,19 +98,18 @@ export const getJsCookies = (events, url) => {
       const data = parseCookie(d.data.value, url);
       const script = getScriptUrl(d);
       return {
-        domain: d.hasOwnProperty("domain") ? d.domain : getHostname(url),
-        name: data ? data.key : "",
-        path: data ? data.path : "",
+        domain: d.hasOwnProperty("domain") ? d.domain : getDomain(url),
+        name: data && data.hasOwnProperty("key") ? data.key : "",
+        path: data && data.hasOwnProperty("path") ? data.path : "",
         script,
         type: d.type,
-        value: data ? data.value : "",
+        value: data && data.hasOwnProperty("value") ? data.value : "",
       };
     });
 };
 export const matchCookiesToEvents = (cookies, events, url) => {
   const jsCookies = getJsCookies(events, url);
   const httpCookie = getHTTPCookies(events, url);
-
   if (cookies.length < 1) {
     const js = jsCookies
       .map(j => ({

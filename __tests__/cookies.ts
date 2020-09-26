@@ -9,6 +9,7 @@ import {
   captureBrowserCookies,
   setupHttpCookieCapture,
   getJsCookies,
+  matchCookiesToEvents,
 } from "../src/cookie-collector";
 import { existsSync } from "fs";
 import { getLogger } from "../src/logger";
@@ -564,4 +565,95 @@ it("can handle badly formed events", async () => {
   event.data.value =
     "totesfuckedcookie;expires=Sat, 02 Feb 2030 23:37:23 GMT;path=/";
   expect(getJsCookies([event], "whatever")).toHaveLength(0);
+});
+
+it("can correctly handle cookies with no path set", async () => {
+  const event = {
+    data: {
+      operation: "set",
+      symbol: "window.document.cookie",
+      value: "X-Auth-Token=; expires=Thu, 01 Jan 1970 00:00:00 GMT",
+    },
+    stack: [
+      {
+        columnNumber: 42,
+        lineNumber: 253,
+        functionName: "HTMLDocument.set",
+        source: "    at HTMLDocument.set (<anonymous>:253:42)",
+      },
+      {
+        columnNumber: 22,
+        lineNumber: 6166,
+        fileName:
+          "https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js",
+        functionName: "c._writeDocumentCookie",
+        source:
+          "    at c._writeDocumentCookie (https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js:6166:22)",
+      },
+      {
+        columnNumber: 352,
+        lineNumber: 6164,
+        fileName:
+          "https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js",
+        functionName: "c.write",
+        source:
+          "    at c.write (https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js:6164:352)",
+      },
+      {
+        columnNumber: 493,
+        lineNumber: 6164,
+        fileName:
+          "https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js",
+        functionName: "clear",
+        source:
+          "    at clear (https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js:6164:493)",
+      },
+      {
+        columnNumber: 805,
+        lineNumber: 1600,
+        fileName:
+          "https://static.stacktune.com/app/assets/stacktune-86d71111dae76e08815e056be0f23e19.js",
+        functionName: "clear",
+        source:
+          "    at clear (https://static.stacktune.com/app/assets/stacktune-86d71111dae76e08815e056be0f23e19.js:1600:805)",
+      },
+      {
+        columnNumber: 247,
+        lineNumber: 1599,
+        fileName:
+          "https://static.stacktune.com/app/assets/stacktune-86d71111dae76e08815e056be0f23e19.js",
+        functionName: "c.restore",
+        source:
+          "    at c.restore (https://static.stacktune.com/app/assets/stacktune-86d71111dae76e08815e056be0f23e19.js:1599:247)",
+      },
+      {
+        columnNumber: 19,
+        lineNumber: 7339,
+        fileName:
+          "https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js",
+        functionName: "c.restore",
+        source:
+          "    at c.restore (https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js:7339:19)",
+      },
+      {
+        columnNumber: 10,
+        lineNumber: 7324,
+        fileName:
+          "https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js",
+        functionName: "P.beforeModel",
+        source:
+          "    at P.beforeModel (https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js:7324:10)",
+      },
+    ],
+    type: "JsInstrument.ObjectProperty",
+    url: "https://stacktune.com/",
+  };
+
+  expect(
+    matchCookiesToEvents(
+      [],
+      [event],
+      "https://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.jshttps://static.stacktune.com/app/assets/vendor-1f78e1a39b40f38070c3090ffa0b8da1.js"
+    )[0].third_party
+  ).toBe(false);
 });
