@@ -25,7 +25,7 @@
     "url": "git+https://github.com/the-markup/blacklight-collector.git"
   },
   "author": "Surya Mattu",
-  "license": "BSD-3-Clause",
+  "license": "https://github.com/the-markup/blacklight-collector#licensing",
   "bugs": {
     "url": "https://github.com/the-markup/blacklight-collector/issues"
   },
