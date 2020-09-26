@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.11](https://github.com/the-markup/blacklight-collector/compare/@themarkup/blacklight-collector@2.1.10...@themarkup/blacklight-collector@2.1.11) (2020-09-26)
+
+
+### Bug Fixes
+
+* **cookies:** correctly handling null paths in cookies ([3828a60](https://github.com/the-markup/blacklight-collector/commit/3828a60a2963689111e923a97f31b428d60697d5))
+
 ### [2.1.10](https://github.com/the-markup/blacklight-collector/compare/@themarkup/blacklight-collector@2.1.9...@themarkup/blacklight-collector@2.1.10) (2020-09-19)
 
 ### [2.1.9](https://github.com/the-markup/blacklight-collector/compare/@themarkup/blacklight-collector@2.1.7...@themarkup/blacklight-collector@2.1.9) (2020-09-19)
