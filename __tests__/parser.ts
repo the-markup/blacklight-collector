@@ -42,6 +42,7 @@ it("can parse AddEventlistener events", async () => {
       "touchmove",
       "touchstart",
       "touchend",
+      "touchcancel",
     ],
   });
 });
