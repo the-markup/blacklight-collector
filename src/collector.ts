@@ -24,7 +24,7 @@ import { dedupLinks, getLinks, getSocialLinks } from "./pptr-utils/get-links";
 import { autoScroll, fillForms } from "./pptr-utils/interaction-utils";
 import { setupSessionRecordingInspector } from "./session-recording";
 import { setupThirdpartyTrackersInspector } from "./third-party-trackers";
-import { clearDir } from "./utils";
+import { clearDir, sleep } from "./utils";
 export const collector = async ({
   inUrl,
   outDir = join(process.cwd(), "bl-tmp"),
@@ -264,7 +264,7 @@ export const collector = async ({
 
       await savePageContent(pageIndex, outDir, page, saveScreenshots);
       await fillForms(page);
-      await page.waitFor(800);
+      await sleep(800);
       pageIndex++;
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);
@@ -381,3 +381,4 @@ export const collector = async ({
   }
   return { status: "success", ...output, reports };
 };
+

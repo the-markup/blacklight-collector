@@ -143,3 +143,7 @@ export const getHashedValues = (algorithm, object) => {
     return acc;
   }, {});
 };
+
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

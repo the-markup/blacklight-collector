@@ -1,4 +1,5 @@
 import { Page } from "puppeteer";
+import {sleep} from "../utils"
 
 // tslint:disable:object-literal-sort-keys
 export const DEFAULT_INPUT_VALUES = {
@@ -77,7 +78,7 @@ export const fillForms = async (page: Page) => {
         await el.press("Backspace");
         await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
       }
-      await page.waitFor(100);
+      await sleep(100);
     }
   } catch {
     // console.log(error);
