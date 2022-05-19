@@ -108,7 +108,7 @@ it("can group fingerprintable window objects", async () => {
   expect(output["NAVIGATOR"]).toEqual(NAVIGATOR_SYMBOLS);
   expect(output["SCREEN"]).toEqual(SCREEN_SYMBOLS);
   expect(output["MEDIA_DEVICES"]).toEqual(MEDIA_DEVICES_SYMBOLS);
-});
+}, 60000);
 
 it("can parse FB Pixel tracking events", async () => {
   const TEST_DIR = join(__dirname, "test-data", "veteransunited-1.0.3");
