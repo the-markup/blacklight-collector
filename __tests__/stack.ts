@@ -1,4 +1,4 @@
-import { launch } from "puppeteer";
+import puppeteer from "puppeteer";
 
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { Global, BlacklightEvent } from "../src/types";
@@ -26,7 +26,7 @@ const JS_STACK_CALLS = [
 ];
 
 it("can correctly parse the stack trace", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows: BlacklightEvent[] = [];
   const url = JS_STACK_TEST_URL;

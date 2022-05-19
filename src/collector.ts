@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import sampleSize from "lodash.samplesize";
 import os from "os";
 import { join } from "path";
-import puppeteer, { Browser, LoadEvent, Page } from "puppeteer";
+import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent } from "puppeteer";
 import PuppeteerHar from "puppeteer-har";
 import { getDomain, getSubdomain, parse } from "tldts";
 import url from "url";
@@ -184,7 +184,7 @@ export const collector = async ({
     // Go to the url
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
-      waitUntil: defaultWaitUntil as LoadEvent,
+      waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent ,
     });
     await savePageContent(pageIndex, outDir, page, saveScreenshots);
     pageIndex++;

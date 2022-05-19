@@ -1,4 +1,4 @@
-import { Browser, Page, launch } from "puppeteer";
+import puppeteer, { Browser } from "puppeteer";
 import { Global } from "../src/types";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { setupBlacklightInspector } from "../src/inspector";
@@ -98,7 +98,7 @@ declare var global: Global;
 let browser = {} as Browser;
 
 beforeAll(async () => {
-  browser = await launch(defaultPuppeteerBrowserOptions);
+  browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
 });
 
 afterAll(async () => {

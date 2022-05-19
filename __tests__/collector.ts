@@ -4,7 +4,7 @@ import { join } from "path";
 import fs from "fs";
 import generate from "@babel/generator";
 import { clearDir } from "../src/utils";
-import { launch } from "puppeteer";
+import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import {
   getLinks,
@@ -83,7 +83,7 @@ const SOCIAL_LINKS = [
   },
 ];
 it("can get links from multiple pages and deduplicate them", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   await page.goto(`${global.__DEV_SERVER__}/simple.html`);
   let dupeLinks = await getLinks(page);
@@ -95,7 +95,7 @@ it("can get links from multiple pages and deduplicate them", async () => {
 });
 
 it("can get social links", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   await page.goto(`${global.__DEV_SERVER__}/social.html`);
   let dupeLinks = await getLinks(page);

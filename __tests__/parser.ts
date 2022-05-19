@@ -1,14 +1,14 @@
 import { join } from "path";
 import { generateReport } from "../src/parser";
 import { loadEventData } from "../src/utils";
-import { launch } from "puppeteer";
+import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { Global } from "../src/types";
 import { setupThirdpartyTrackersInspector } from "../src/third-party-trackers";
 import { setupBlacklightInspector } from "../src/inspector";
 declare var global: Global;
 it("can parse AddEventlistener events", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   const EVENTS_URL = `${global.__DEV_SERVER__}/session_recorder.html`;
@@ -92,7 +92,7 @@ const MEDIA_DEVICES_SYMBOLS = {
   ],
 };
 it("can group fingerprintable window objects", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   const PROPERTIES_URL = `${global.__DEV_SERVER__}/property-enumeration.html`;
@@ -129,7 +129,7 @@ it("can parse FB Pixel tracking events", async () => {
   );
 });
 it.skip("can parse FB Pixel tracking events - live capture", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   const url = "https://vogue.com";

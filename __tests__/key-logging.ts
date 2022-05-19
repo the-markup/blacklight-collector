@@ -1,7 +1,7 @@
 // import { launchBrowser } from "../../src";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { fillForms } from "../src/pptr-utils/interaction-utils";
-import { Browser, launch } from "puppeteer";
+import puppeteer, { Browser } from "puppeteer";
 import { setupKeyLoggingInspector } from "../src/key-logging";
 import { Global } from "../src/types";
 
@@ -637,7 +637,7 @@ const DATA_EXFILTRATION_BASE64 = [
 ];
 let browser = {} as Browser;
 beforeAll(async () => {
-  browser = await launch({
+  browser = await puppeteer.launch({
     ...defaultPuppeteerBrowserOptions,
     headless: true
   });

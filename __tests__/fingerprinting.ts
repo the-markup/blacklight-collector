@@ -1,5 +1,5 @@
-import { Browser, launch } from "puppeteer";
-import { Global, BlacklightEvent, JsInstrumentEvent } from "../src/types";
+import puppeteer, { Browser } from "puppeteer";
+import { Global, JsInstrumentEvent } from "../src/types";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { setupBlacklightInspector } from "../src/inspector";
 import { getScriptUrl } from "../src/utils";
@@ -7,12 +7,12 @@ declare var global: Global;
 let browser = {} as Browser;
 
 beforeAll(async () => {
-  browser = await launch(defaultPuppeteerBrowserOptions);
-});
+  browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
+}, 60000);
 
 afterAll(async () => {
   await browser.close();
-});
+}, 60000);
 
 // Expected Navigator and Screen properties
 // BuildId and oscpu are Firefox specific so removing them
