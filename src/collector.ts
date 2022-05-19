@@ -264,7 +264,7 @@ export const collector = async ({
 
       await savePageContent(pageIndex, outDir, page, saveScreenshots);
       await fillForms(page);
-      await page.waitFor(800);
+      await page.waitForTimeout(800);
       pageIndex++;
       duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
       await autoScroll(page);

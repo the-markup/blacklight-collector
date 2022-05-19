@@ -673,7 +673,7 @@ describe("KeyLogging", () => {
     const testUrl = `${global.__DEV_SERVER__}/input-form.html`;
     await page.goto(testUrl, { timeout: 10000 });
     await fillForms(page);
-    await page.waitFor(2000);
+    await page.waitForTimeout(2000);
 
     const inputValues: any = await page.evaluate(async () => {
       return new Promise((res, rej) => {
@@ -702,9 +702,9 @@ describe("KeyLogging", () => {
 
     await setupKeyLoggingInspector(page, eventHandler);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
-    await page.waitFor(1000);
+    await page.waitForTimeout(1000);
     await fillForms(page);
-    await page.waitFor(100);
+    await page.waitForTimeout(100);
     await page.close();
     // console.log(rows);
     expect(rows.filter(r => r.type === "KeyLogging").sort()).toEqual(
@@ -779,9 +779,9 @@ describe("KeyLogging", () => {
     };
     await setupKeyLoggingInspector(page, eventHandler);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
-    await page.waitFor(1000);
+    await page.waitForTimeout(1000);
     await fillForms(page);
-    await page.waitFor(100);
+    await page.waitForTimeout(100);
     await page.close();
     expect(rows.filter(r => r.type === "KeyLogging").sort()).toEqual(
       DATA_EXFILTRATION_MIXED.sort()
