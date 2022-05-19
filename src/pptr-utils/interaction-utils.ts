@@ -98,7 +98,7 @@ export const autoScroll = async page => {
           count += 1;
           if (totalHeight >= scrollHeight || count > COUNT_MAX) {
             clearInterval(timer);
-            resolve();
+            resolve(undefined);
           }
         }, 100);
       } catch (error) {
