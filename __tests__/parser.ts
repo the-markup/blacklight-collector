@@ -18,13 +18,13 @@ it("can parse AddEventlistener events", async () => {
   await browser.close();
   expect(report["KEYBOARD"]).toEqual({
     "http://localhost:8125/shared/event-listener.js": ["keyup"],
-    "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
+    "https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/record/rrweb-record.min.js": [
       "input",
     ],
   });
   expect(report["MOUSE"]).toEqual({
     "http://localhost:8125/shared/event-listener.js": ["mousedown", "click"],
-    "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
+    "https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/record/rrweb-record.min.js": [
       "mousemove",
       "mouseup",
       "mousedown",
@@ -38,10 +38,11 @@ it("can parse AddEventlistener events", async () => {
   });
   expect(report["TOUCH"]).toEqual({
     "http://localhost:8125/shared/event-listener.js": ["touchend"],
-    "https://cdn.jsdelivr.net/npm/rrweb@latest/dist/record/rrweb-record.min.js": [
+    "https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/record/rrweb-record.min.js": [
       "touchmove",
       "touchstart",
       "touchend",
+      "touchcancel",
     ],
   });
 });
