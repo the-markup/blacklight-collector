@@ -1,4 +1,4 @@
-import { Page, Request } from "puppeteer";
+import { HTTPRequest, Page } from "puppeteer";
 import { DEFAULT_INPUT_VALUES } from "./pptr-utils/interaction-utils";
 import { BlacklightEvent } from "./types";
 import { getHashedValues } from "./utils";
@@ -21,7 +21,7 @@ export const setupKeyLoggingInspector = async (
   page: Page,
   eventDataHandler: (event: BlacklightEvent) => void,
 ) => {
-  page.on("request", (request: Request) => {
+  page.on("request", (request: HTTPRequest) => {
     const stack = [
       {
         fileName: request.frame() ? request.frame().url() : "",

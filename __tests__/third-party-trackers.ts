@@ -1,4 +1,4 @@
-import { launch } from "puppeteer";
+import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { setupThirdpartyTrackersInspector } from "../src/third-party-trackers";
 import { generateReport } from "../src/parser";
@@ -6,7 +6,7 @@ import { getDomain } from "tldts";
 
 jest.setTimeout(50000);
 it("captures requests that match the easyprivacy list ", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   await setupThirdpartyTrackersInspector(page, (e) =>
@@ -30,7 +30,7 @@ it("captures requests that match the easyprivacy list ", async () => {
 });
 
 it("considers the first party domain to be the domain set after any redirects ", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   await setupThirdpartyTrackersInspector(page, (e) =>
@@ -54,7 +54,7 @@ it("considers the first party domain to be the domain set after any redirects ",
 });
 
 it("does not include any analytics that might be hosted by the first party ", async () => {
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
   await setupThirdpartyTrackersInspector(page, (e) =>

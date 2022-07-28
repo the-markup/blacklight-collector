@@ -1,4 +1,4 @@
-import { launch, Page } from "puppeteer";
+import puppeteer, { Page } from "puppeteer";
 
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { reportCookieEvents } from "../src/parser";
@@ -472,7 +472,7 @@ it("can capture cookies from the browser, javascript and network requests", asyn
     "test-data",
     `${CAPTURE_TEST_URL}-capture-test`
   );
-  const browser = await launch(defaultPuppeteerBrowserOptions);
+  const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const logger = getLogger({ outDir: CAPTURE_TEST_DIR, quiet: true });
   const PAGE_URL = `https://www.propublica.org`;

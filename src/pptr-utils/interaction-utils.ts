@@ -77,7 +77,7 @@ export const fillForms = async (page: Page) => {
         await el.press("Backspace");
         await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
       }
-      await page.waitFor(100);
+      await page.waitForTimeout(100);
     }
   } catch {
     // console.log(error);
@@ -98,7 +98,7 @@ export const autoScroll = async page => {
           count += 1;
           if (totalHeight >= scrollHeight || count > COUNT_MAX) {
             clearInterval(timer);
-            resolve();
+            resolve(undefined);
           }
         }, 100);
       } catch (error) {
