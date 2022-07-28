@@ -27,6 +27,7 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
   await page.on("response", response => {
     try {
       const req = response.request();
+      if(!response._headers) return;
       const cookieHTTP = response._headers["set-cookie"];
       if (cookieHTTP) {
         const stack = [
