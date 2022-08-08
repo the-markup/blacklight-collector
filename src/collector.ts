@@ -52,6 +52,8 @@ export const collector = async ({
     "third_party_trackers",
   ],
 }) => {
+  console.log("first");
+  console.warn("First");
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
   let REDIRECTED_FIRST_PARTY = parse(inUrl);
