@@ -56,7 +56,7 @@ export const collector = async ({
   const FIRST_PARTY = parse(inUrl);
   let REDIRECTED_FIRST_PARTY = parse(inUrl);
   const logger = getLogger({ outDir, quiet });
-
+  console.log("entered");
   const output: any = {
     title,
     uri_ins: inUrl,
@@ -127,6 +127,7 @@ export const collector = async ({
         page_response: "Chrome crashed",
       };
     }
+    console.log("started Puppeteer");
     logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
     page = (await browser.pages())[0];
     output.browser = {
@@ -142,6 +143,7 @@ export const collector = async ({
       const deviceOptions = puppeteer.devices[emulateDevice];
       page.emulate(deviceOptions);
     }
+    console.log("awaiting requests");
     // record all requested hosts
     await page.on("request", request => {
       const l = parse(request.url());
@@ -154,7 +156,6 @@ export const collector = async ({
         }
       }
     });
-
     if (clearCache) {
       await clearCookiesCache(page);
     }
@@ -169,6 +170,7 @@ export const collector = async ({
       event => logger.warn(event),
       enableAdBlock,
     );
+    console.log("set up done");
     if (captureHar) {
       har = new PuppeteerHar(page);
       await har.start({
