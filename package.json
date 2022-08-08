@@ -14,7 +14,6 @@
     "fix": "run-s fix:*",
     "fix:prettier": "prettier \"src/**/*.ts\" --write",
     "fix:tslint": "tslint -t verbose --fix --project .",
-    "prepare": "run-s build test",
     "version-beta": "git stash && standard-version --prerelease beta",
     "version-major": "git stash && standard-version --release-as major",
     "version-minor": "git stash && standard-version --release-as minor",
