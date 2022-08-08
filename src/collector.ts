@@ -306,6 +306,7 @@ export const collector = async ({
 
   const links = dedupLinks(duplicatedLinks);
   output.end_time = new Date();
+  console.log("before loop");
   for (const link of links) {
     const l = parse(link.href);
 
