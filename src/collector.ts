@@ -179,20 +179,25 @@ export const collector = async ({
         path: outDir ? join(outDir, "requests.har") : undefined,
       });
     }
+    console.log(1);
     if (didBrowserDisconnect) {
       return {
         status: "failed",
         page_response: "Chrome crashed",
       };
     }
+    console.log(2);
     // Go to the url
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
       waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent ,
     });
+    console.log(3);
     await savePageContent(pageIndex, outDir, page, saveScreenshots);
     pageIndex++;
+    console.log(4);
   } catch (error) {
+    console.log(5);
     loadError = true;
     page_response = error;
   }
