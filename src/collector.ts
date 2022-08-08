@@ -202,7 +202,7 @@ export const collector = async ({
     first_party: [],
     third_party: [],
   };
-
+  console.log("entering try");
   try {
     // Return if the page doesnt load
     if (loadError) {
@@ -238,6 +238,7 @@ export const collector = async ({
         }
       }
     }
+    console.log("before fillForms");
     await fillForms(page);
 
     let subDomainLinks = [];
@@ -265,6 +266,7 @@ export const collector = async ({
         timeout: defaultTimeout,
         waitUntil: "networkidle2",
       });
+      console.log("before fillForms2");
 
       await savePageContent(pageIndex, outDir, page, saveScreenshots);
       await fillForms(page);
@@ -286,6 +288,7 @@ export const collector = async ({
       },
     );
   }
+  console.log("second try");
 
   try {
     await browser.close();
@@ -311,6 +314,7 @@ export const collector = async ({
       }
     }
   }
+  console.log("before report generation");
   // generate report
   const fpRequests = Array.from(hosts.requests.first_party);
   const tpRequests = Array.from(hosts.requests.third_party);
@@ -377,7 +381,7 @@ export const collector = async ({
     );
     return acc;
   }, {});
-
+  console.log("before dump");
   const json_dump = JSON.stringify({ ...output, reports }, null, 2);
   writeFileSync(join(outDir, "inspection.json"), json_dump);
   if (outDir.includes("bl-tmp")) {
