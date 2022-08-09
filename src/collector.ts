@@ -175,6 +175,7 @@ export const collector = async ({
     console.log("set up done");
     if (captureHar) {
       har = new PuppeteerHar(page);
+      console.log("in between")
       await har.start({
         path: outDir ? join(outDir, "requests.har") : undefined,
       });
@@ -297,10 +298,14 @@ export const collector = async ({
 
   try {
     await browser.close();
+    console.log("browser closed");
     if (typeof userDataDir !== "undefined") {
       clearDir(userDataDir, false);
     }
+    console.log("dir cleared");
+
   } catch (err) {
+    console.log("error in browser close block" + err);
     logger.log("error", `couldnt cleanup browser ${JSON.stringify(err)} `);
   }
 
