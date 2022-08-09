@@ -199,6 +199,7 @@ export const collector = async ({
     console.log(4);
   } catch (error) {
     console.log(5);
+    console.log(error);
     loadError = true;
     page_response = error;
   }
@@ -297,6 +298,7 @@ export const collector = async ({
   console.log("second try");
 
   try {
+    console.log("before browser close")
     await browser.close();
     console.log("browser closed");
     if (typeof userDataDir !== "undefined") {
