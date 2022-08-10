@@ -28,6 +28,7 @@ export const savePageContent = async (
  */
 export const defaultPuppeteerBrowserOptions = {
   args: [
+    "--disable-gpu",
     "--no-sandbox",
     "--disable-dev-shm-usage",
     "--ignore-certificate-errors",
