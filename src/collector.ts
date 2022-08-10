@@ -117,6 +117,7 @@ export const collector = async ({
       ...defaultPuppeteerBrowserOptions,
       headless,
       userDataDir,
+      "dumpio": true,
     };
     browser = await puppeteer.launch(options);
     browser.on("disconnected", () => {
