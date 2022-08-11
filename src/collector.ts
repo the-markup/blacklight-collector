@@ -133,6 +133,7 @@ export const collector = async ({
     console.log("started Puppeteer");
     logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
     page = (await browser.pages())[0];
+    await page.setCacheEnabled(false);
     output.browser = {
       name: "Chromium",
       version: await browser.version(),
