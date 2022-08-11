@@ -302,9 +302,11 @@ export const collector = async ({
   try {
     console.log("before browser close")
     let pageArr = await browser.pages();
+    console.log("pageArr" + pageArr);
     for(let page of pageArr){
       await page.close();
     }
+    console.log("after page close");
     await browser.close();
     console.log("browser closed");
     if (typeof userDataDir !== "undefined") {
