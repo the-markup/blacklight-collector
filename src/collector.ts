@@ -51,6 +51,9 @@ export const collector = async ({
     "session_recorders",
     "third_party_trackers",
   ],
+  extraChromiumArgs = [],
+  puppeteerExecutablePath = null,
+  defaultViewport = null,
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
@@ -113,8 +116,15 @@ export const collector = async ({
   try {
     const options = {
       ...defaultPuppeteerBrowserOptions,
+      args: [...defaultPuppeteerBrowserOptions.args, ...extraChromiumArgs],
       headless,
       userDataDir,
+    };
+    if (puppeteerExecutablePath) {
+      options["executablePath"] = puppeteerExecutablePath;
+    };
+    if (defaultViewport) {
+      options["defaultViewport"] = defaultViewport;
     };
     browser = await puppeteer.launch(options);
     browser.on("disconnected", () => {
