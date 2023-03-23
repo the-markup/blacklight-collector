@@ -110,88 +110,84 @@ export const collector = async ({
     ? join(outDir, "browser-profile")
     : undefined;
   let didBrowserDisconnect = false;
-  try {
-    const options = {
-      ...defaultPuppeteerBrowserOptions,
-      headless,
-      userDataDir,
+
+  const options = {
+    ...defaultPuppeteerBrowserOptions,
+    headless,
+    userDataDir,
+  };
+  browser = await puppeteer.launch(options);
+  browser.on("disconnected", () => {
+    didBrowserDisconnect = true;
+  });
+
+  if (didBrowserDisconnect) {
+    return {
+      status: "failed",
+      page_response: "Chrome crashed",
     };
-    browser = await puppeteer.launch(options);
-    browser.on("disconnected", () => {
-      didBrowserDisconnect = true;
-    });
-
-    if (didBrowserDisconnect) {
-      return {
-        status: "failed",
-        page_response: "Chrome crashed",
-      };
-    }
-    logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
-    page = (await browser.pages())[0];
-    output.browser = {
-      name: "Chromium",
-      version: await browser.version(),
-      user_agent: await browser.userAgent(),
-      platform: {
-        name: os.type(),
-        version: os.release(),
-      },
-    };
-    if (emulateDevice) {
-      const deviceOptions = puppeteer.devices[emulateDevice];
-      page.emulate(deviceOptions);
-    }
-    // record all requested hosts
-    await page.on("request", request => {
-      const l = parse(request.url());
-      // note that hosts may appear as first and third party depending on the path
-      if (FIRST_PARTY.domain === l.domain) {
-        hosts.requests.first_party.add(l.hostname);
-      } else {
-        if (request.url().indexOf("data://") < 1 && !!l.hostname) {
-          hosts.requests.third_party.add(l.hostname);
-        }
-      }
-    });
-
-    if (clearCache) {
-      await clearCookiesCache(page);
-    }
-
-    // Init blacklight instruments on page
-    await setupBlacklightInspector(page, event => logger.warn(event));
-    await setupKeyLoggingInspector(page, event => logger.warn(event));
-    await setupHttpCookieCapture(page, event => logger.warn(event));
-    await setupSessionRecordingInspector(page, event => logger.warn(event));
-    await setupThirdpartyTrackersInspector(
-      page,
-      event => logger.warn(event),
-      enableAdBlock,
-    );
-    if (captureHar) {
-      har = new PuppeteerHar(page);
-      await har.start({
-        path: outDir ? join(outDir, "requests.har") : undefined,
-      });
-    }
-    if (didBrowserDisconnect) {
-      return {
-        status: "failed",
-        page_response: "Chrome crashed",
-      };
-    }
-    // Go to the url
-    page_response = await page.goto(inUrl, {
-      timeout: defaultTimeout,
-      waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent ,
-    });
-    await savePageContent(pageIndex, outDir, page, saveScreenshots);
-    pageIndex++;
-  } catch (error) {
-    loadError = true;
-    page_response = error;
   }
+  logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
+  page = (await browser.pages())[0];
+  output.browser = {
+    name: "Chromium",
+    version: await browser.version(),
+    user_agent: await browser.userAgent(),
+    platform: {
+      name: os.type(),
+      version: os.release(),
+    },
+  };
+  if (emulateDevice) {
+    const deviceOptions = puppeteer.devices[emulateDevice];
+    page.emulate(deviceOptions);
+  }
+  // record all requested hosts
+  await page.on("request", request => {
+    const l = parse(request.url());
+    // note that hosts may appear as first and third party depending on the path
+    if (FIRST_PARTY.domain === l.domain) {
+      hosts.requests.first_party.add(l.hostname);
+    } else {
+      if (request.url().indexOf("data://") < 1 && !!l.hostname) {
+        hosts.requests.third_party.add(l.hostname);
+      }
+    }
+  });
+
+  if (clearCache) {
+    await clearCookiesCache(page);
+  }
+
+  // Init blacklight instruments on page
+  await setupBlacklightInspector(page, event => logger.warn(event));
+  await setupKeyLoggingInspector(page, event => logger.warn(event));
+  await setupHttpCookieCapture(page, event => logger.warn(event));
+  await setupSessionRecordingInspector(page, event => logger.warn(event));
+  await setupThirdpartyTrackersInspector(
+    page,
+    event => logger.warn(event),
+    enableAdBlock,
+  );
+  if (captureHar) {
+    har = new PuppeteerHar(page);
+    await har.start({
+      path: outDir ? join(outDir, "requests.har") : undefined,
+    });
+  }
+  if (didBrowserDisconnect) {
+    return {
+      status: "failed",
+      page_response: "Chrome crashed",
+    };
+  }
+  // Go to the url
+  page_response = await page.goto(inUrl, {
+    timeout: defaultTimeout,
+    waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent,
+  });
+  await savePageContent(pageIndex, outDir, page, saveScreenshots);
+  pageIndex++;
 
   let duplicatedLinks = [];
   const outputLinks = {
@@ -199,98 +195,85 @@ export const collector = async ({
     third_party: [],
   };
 
-  try {
-    // Return if the page doesnt load
-    if (loadError) {
-      await browser.close();
-      if (typeof userDataDir !== "undefined") {
-        clearDir(userDataDir, false);
-      }
-      if (outDir.includes("bl-tmp")) {
-        clearDir(outDir, false);
-      }
-      return { status: "failed", page_response };
-    }
-    output.uri_redirects = page_response
-      .request()
-      .redirectChain()
-      .map(req => {
-        return req.url();
-      });
-
-    output.uri_dest = page.url();
-    duplicatedLinks = await getLinks(page);
-    REDIRECTED_FIRST_PARTY = parse(output.uri_dest);
-    for (const link of dedupLinks(duplicatedLinks)) {
-      const l = parse(link.href);
-
-      if (REDIRECTED_FIRST_PARTY.domain === l.domain) {
-        outputLinks.first_party.push(link);
-        hosts.links.first_party.add(l.hostname);
-      } else {
-        if (l.hostname && l.hostname !== "data") {
-          outputLinks.third_party.push(link);
-          hosts.links.third_party.add(l.hostname);
-        }
-      }
-    }
-    await fillForms(page);
-
-    let subDomainLinks = [];
-    if (getSubdomain(output.uri_dest) !== "www") {
-      subDomainLinks = outputLinks.first_party.filter(f => {
-        return getSubdomain(f.href) === getSubdomain(output.uri_dest);
-      });
-    } else {
-      subDomainLinks = outputLinks.first_party;
-    }
-    const browse_links = sampleSize(subDomainLinks, numPages);
-    output.browsing_history = [output.uri_dest].concat(
-      browse_links.map(l => l.href),
-    );
-
-    for (const link of output.browsing_history.slice(1)) {
-      logger.log("info", `browsing now to ${link}`, { type: "Browser" });
-      if (didBrowserDisconnect) {
-        return {
-          status: "failed",
-          page_response: "Chrome crashed",
-        };
-      }
-      await page.goto(link, {
-        timeout: defaultTimeout,
-        waitUntil: "networkidle2",
-      });
-
-      await savePageContent(pageIndex, outDir, page, saveScreenshots);
-      await fillForms(page);
-      await page.waitForTimeout(800);
-      pageIndex++;
-      duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
-      await autoScroll(page);
-    }
-    await captureBrowserCookies(page, outDir);
-    if (captureHar) {
-      await har.stop();
-    }
-  } catch (error) {
-    logger.log(
-      "error",
-      `couldnt capture browser cookies ${JSON.stringify(error)} `,
-      {
-        type: "Browser",
-      },
-    );
-  }
-
-  try {
+  // Return if the page doesnt load
+  if (loadError) {
     await browser.close();
     if (typeof userDataDir !== "undefined") {
       clearDir(userDataDir, false);
     }
-  } catch (err) {
-    logger.log("error", `couldnt cleanup browser ${JSON.stringify(err)} `);
+    if (outDir.includes("bl-tmp")) {
+      clearDir(outDir, false);
+    }
+    return { status: "failed", page_response };
   }
+  output.uri_redirects = page_response
+    .request()
+    .redirectChain()
+    .map(req => {
+      return req.url();
+    });
+
+  output.uri_dest = page.url();
+  duplicatedLinks = await getLinks(page);
+  REDIRECTED_FIRST_PARTY = parse(output.uri_dest);
+  for (const link of dedupLinks(duplicatedLinks)) {
+    const l = parse(link.href);
+
+    if (REDIRECTED_FIRST_PARTY.domain === l.domain) {
+      outputLinks.first_party.push(link);
+      hosts.links.first_party.add(l.hostname);
+    } else {
+      if (l.hostname && l.hostname !== "data") {
+        outputLinks.third_party.push(link);
+        hosts.links.third_party.add(l.hostname);
+      }
+    }
+  }
+  await fillForms(page);
+
+  let subDomainLinks = [];
+  if (getSubdomain(output.uri_dest) !== "www") {
+    subDomainLinks = outputLinks.first_party.filter(f => {
+      return getSubdomain(f.href) === getSubdomain(output.uri_dest);
+    });
+  } else {
+    subDomainLinks = outputLinks.first_party;
+  }
+  const browse_links = sampleSize(subDomainLinks, numPages);
+  output.browsing_history = [output.uri_dest].concat(
+    browse_links.map(l => l.href),
+  );
+
+  for (const link of output.browsing_history.slice(1)) {
+    logger.log("info", `browsing now to ${link}`, { type: "Browser" });
+    if (didBrowserDisconnect) {
+      return {
+        status: "failed",
+        page_response: "Chrome crashed",
+      };
+    }
+    await page.goto(link, {
+      timeout: defaultTimeout,
+      waitUntil: "networkidle2",
+    });
+
+    await savePageContent(pageIndex, outDir, page, saveScreenshots);
+    await fillForms(page);
+    await page.waitForTimeout(800);
+    pageIndex++;
+    duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
+    await autoScroll(page);
+  }
+  await captureBrowserCookies(page, outDir);
+  if (captureHar) {
+    await har.stop();
+  }
+
+  await browser.close();
+  if (typeof userDataDir !== "undefined") {
+    clearDir(userDataDir, false);
+  }
+
 
   const links = dedupLinks(duplicatedLinks);
   output.end_time = new Date();
