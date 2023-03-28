@@ -53,7 +53,6 @@ export const collector = async ({
   ],
   extraChromiumArgs = [],
   puppeteerExecutablePath = null,
-  defaultViewport = null,
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
@@ -123,9 +122,6 @@ export const collector = async ({
     if (puppeteerExecutablePath) {
       options["executablePath"] = puppeteerExecutablePath;
     };
-    if (defaultViewport) {
-      options["defaultViewport"] = defaultViewport;
-    };
     browser = await puppeteer.launch(options);
     browser.on("disconnected", () => {
       didBrowserDisconnect = true;
@@ -194,7 +190,7 @@ export const collector = async ({
     // Go to the url
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
-      waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent ,
+      waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent,
     });
     await savePageContent(pageIndex, outDir, page, saveScreenshots);
     pageIndex++;
