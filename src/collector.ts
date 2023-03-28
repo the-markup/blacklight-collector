@@ -51,8 +51,8 @@ export const collector = async ({
     "session_recorders",
     "third_party_trackers",
   ],
-  extraChromiumArgs = [],
   puppeteerExecutablePath = null,
+  extraChromiumArgs = [],
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
