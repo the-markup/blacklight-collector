@@ -77,7 +77,7 @@ Results are stored in `demo-dir` by default
 - `defaultWaitUntil`
   - default: 'networkidle2'
   - [Other options](https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagegotourl-options)
-- `executablePath`
+- `puppeteerExecutablePath`
   - Path to Chromium executable.
   - default: uses bundled puppeteer chromium
 - `extraChromiumArgs`
