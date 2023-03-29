@@ -10,7 +10,7 @@ it.skip("checks network requests for known session recorders", async () => {
   });
 
   const page = (await browser.pages())[0];
-  await page.emulate(devices["iPhone X"]);
+  await page.emulate(devices["iPhone 13 Mini"]);
   const rows = [];
   await setupSessionRecordingInspector(page, (e) => rows.push(e));
   await page.goto(`https://www.jetblue.com`, {

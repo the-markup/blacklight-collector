@@ -30,7 +30,7 @@ export const collector = async ({
   outDir = join(process.cwd(), "bl-tmp"),
   headless = true,
   title = "Blacklight Inspection",
-  emulateDevice = "iPhone X",
+  emulateDevice = "iPhone 13 Mini",
   captureHar = true,
   captureLinks = false,
   enableAdBlock = false,
@@ -51,6 +51,8 @@ export const collector = async ({
     "session_recorders",
     "third_party_trackers",
   ],
+  puppeteerExecutablePath = null,
+  extraChromiumArgs = [],
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
@@ -113,8 +115,12 @@ export const collector = async ({
   try {
     const options = {
       ...defaultPuppeteerBrowserOptions,
+      args: [...defaultPuppeteerBrowserOptions.args, ...extraChromiumArgs],
       headless,
       userDataDir,
+    };
+    if (puppeteerExecutablePath) {
+      options["executablePath"] = puppeteerExecutablePath;
     };
     browser = await puppeteer.launch(options);
     browser.on("disconnected", () => {
