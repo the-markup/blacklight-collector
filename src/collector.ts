@@ -51,6 +51,8 @@ export const collector = async ({
     "session_recorders",
     "third_party_trackers",
   ],
+  puppeteerExecutablePath = null,
+  extraChromiumArgs = [],
 }) => {
   clearDir(outDir);
   const FIRST_PARTY = parse(inUrl);
@@ -113,8 +115,12 @@ export const collector = async ({
   try {
     const options = {
       ...defaultPuppeteerBrowserOptions,
+      args: [...defaultPuppeteerBrowserOptions.args, ...extraChromiumArgs],
       headless,
       userDataDir,
+    };
+    if (puppeteerExecutablePath) {
+      options["executablePath"] = puppeteerExecutablePath;
     };
     browser = await puppeteer.launch(options);
     browser.on("disconnected", () => {
@@ -184,7 +190,7 @@ export const collector = async ({
     // Go to the url
     page_response = await page.goto(inUrl, {
       timeout: defaultTimeout,
-      waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent ,
+      waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent,
     });
     await savePageContent(pageIndex, outDir, page, saveScreenshots);
     pageIndex++;
