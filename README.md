@@ -27,7 +27,7 @@ Results are stored in `demo-dir` by default
 `collector` takes the following arguments:
 
 - `inUrl` **required**
-  - The URL you want to scrapes
+  - The URL you want to scrape
 - `outDir`
   - default: saves to tmp directory and deletes after completion
   - To save the full report provide a directory path
