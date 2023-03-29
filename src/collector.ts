@@ -3,7 +3,7 @@ import { writeFileSync } from "fs";
 import sampleSize from "lodash.samplesize";
 import os from "os";
 import { join } from "path";
-import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent } from "puppeteer";
+import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices } from "puppeteer";
 import PuppeteerHar from "puppeteer-har";
 import { getDomain, getSubdomain, parse } from "tldts";
 import url from "url";
@@ -87,7 +87,7 @@ export const collector = async ({
     end_time: null,
   };
   if (emulateDevice) {
-    output.deviceEmulated = puppeteer.devices[emulateDevice];
+    output.deviceEmulated = KnownDevices[emulateDevice];
   }
 
   // Log network requests and page links
@@ -145,7 +145,7 @@ export const collector = async ({
       },
     };
     if (emulateDevice) {
-      const deviceOptions = puppeteer.devices[emulateDevice];
+      const deviceOptions = KnownDevices[emulateDevice];
       page.emulate(deviceOptions);
     }
     // record all requested hosts
