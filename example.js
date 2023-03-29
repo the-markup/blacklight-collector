@@ -2,7 +2,7 @@ const { collector } = require("./build");
 const { join } = require("path");
 
 (async () => {
-  const EMULATE_DEVICE = "iPhone X";
+  const EMULATE_DEVICE = "iPhone 13 Mini";
 
   // Save the results to a folder
   let OUT_DIR = true;
