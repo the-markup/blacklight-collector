@@ -30,12 +30,19 @@ const blockerOptions = {
   loadCosmeticFilters: false,
 };
 
-// setup easyprivacy matching
+// setup easyprivacy and easylist matching
 // https://github.com/cliqz-oss/adblocker/issues/123
 const blockers = {
   "easyprivacy.txt": PuppeteerBlocker.parse(
     fs.readFileSync(
       path.join(__dirname, "../data/blocklists/easyprivacy.txt"),
+      "utf8",
+    ),
+    blockerOptions,
+  ),
+  "easylist.txt": PuppeteerBlocker.parse(
+    fs.readFileSync(
+      path.join(__dirname, "../data/blocklists/easylist.txt"),
       "utf8",
     ),
     blockerOptions,
