@@ -1,6 +1,6 @@
 # Blacklight-Collector
 
-** NOTE: This repo contains some, but not all, of the code backing [Blacklight](https://themarkup.org/blacklight). It may not be very useful on its own. We're thinking about ways to move more of the functionality into this package in order to make it more generally useful.**
+**NOTE: This repo contains some, but not all, of the code backing [Blacklight](https://themarkup.org/blacklight). It may not be very useful on its own. We're thinking about ways to move more of the functionality into this package in order to make it more generally useful.**
 
 For more information about the `blacklight-collector` please read our [methodology](https://themarkup.org/blacklight/2020/09/22/how-we-built-a-real-time-privacy-inspector).
 
