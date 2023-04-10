@@ -36,7 +36,7 @@
     "puppeteer": "^19.7.5",
     "puppeteer-har": "^1.1.1",
     "stacktrace-js": "^2.0.1",
-    "tldts": "^5.6.2",
+    "tldts": "^6.0.2",
     "tmp": "^0.1.0",
     "tough-cookie": "^3.0.1",
     "winston": "^3.2.1"
