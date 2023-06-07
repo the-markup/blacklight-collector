@@ -1,3 +1,1 @@
-import { collector } from "./collector";
-
-export { collector };
+export { collector } from './collector';
