@@ -1,6 +1,5 @@
 import { Page } from "puppeteer";
 
-// tslint:disable:object-literal-sort-keys
 export const DEFAULT_INPUT_VALUES = {
   date: "01/01/2026",
   email: "blacklight-headless@themarkup.org",

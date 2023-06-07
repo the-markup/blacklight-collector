@@ -6,7 +6,6 @@ import { jsInstruments } from "./plugins/js-instrument";
 import { injectPlugins } from "./pptr-utils/eval-scripts";
 import { BlacklightEvent } from "./types";
 
-// tslint:disable-next-line:only-arrow-functions
 function getPageScriptAsString(observers, testing = false) {
   let observersString = "";
   let observersNameString = "";

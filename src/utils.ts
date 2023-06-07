@@ -40,7 +40,6 @@ export const loadJSONSafely = str => {
   try {
     return JSON.parse(str);
   } catch (error) {
-    // tslint:disable-next-line:no-console
     console.log("couldnt load json safely", str);
     return { level: "error" };
   }

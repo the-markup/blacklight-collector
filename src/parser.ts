@@ -296,7 +296,6 @@ const getDomainSafely = (message: KeyLoggingEvent) => {
     if (message.data.post_request_url) {
       return getDomain(message.data.post_request_url);
     } else {
-      // tslint:disable-next-line:no-console
       console.log(
         "message.data missing post_request_url",
         JSON.stringify(message),

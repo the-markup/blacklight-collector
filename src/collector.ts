@@ -324,7 +324,6 @@ export const collector = async ({
       },
       (err, results) => {
         if (err) {
-          // tslint:disable-next-line:no-console
           console.log(`Couldnt load event data ${JSON.stringify(err)}`);
           return done([]);
         }

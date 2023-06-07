@@ -19,7 +19,6 @@ export const savePageContent = async (
       await page.screenshot({ path: outPathImg, type: "jpeg", quality: 50 });
     }
   } catch (error) {
-    // tslint:disable-next-line:no-console
     console.log(`couldnt save page content: ${JSON.stringify(error)}`);
   }
 };

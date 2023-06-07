@@ -1,5 +1,4 @@
 // https://web.archive.org/web/20200413102542/https://developers.facebook.com/docs/facebook-pixel/advanced/advanced-matching
-// tslint:disable:object-literal-sort-keys
 export const FB_ADVANCED_MATCHING_PARAMETERS = {
   "ud[em]": "Email",
   "ud[fn]": "First Name",

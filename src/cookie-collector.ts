@@ -53,7 +53,6 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
         });
       }
     } catch (error) {
-      // tslint:disable-next-line:no-console
       console.log(error);
     }
   });
@@ -211,9 +210,7 @@ export const captureBrowserCookies = async (
       JSON.stringify({ browser_cookies }, null, 2),
     );
   } catch (error) {
-    // tslint:disable-next-line:no-console
     console.log(error);
-    // tslint:disable-next-line:no-console
     console.log("Couldnt save browser cookies to file");
   }
   return browser_cookies;
@@ -233,7 +230,6 @@ export const loadBrowserCookies = (
       return [];
     }
   } catch (error) {
-    // tslint:disable:no-console
     console.log("Couldnt load browser cookies");
     console.log(error);
     return [];

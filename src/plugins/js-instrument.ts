@@ -145,7 +145,6 @@ export function jsInstruments(loggerHandler, StackTrace) {
       return "Serialization error: " + error;
     }
   };
-  // tslint:
   Object.getPropertyDescriptor = function(subject, name) {
     let pd = Object.getOwnPropertyDescriptor(subject, name);
     let proto = Object.getPrototypeOf(subject);
