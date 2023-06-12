@@ -15,7 +15,7 @@ import { defaultPuppeteerBrowserOptions, savePageContent } from './pptr-utils/de
 import { dedupLinks, getLinks, getSocialLinks } from './pptr-utils/get-links';
 import { autoScroll, fillForms } from './pptr-utils/interaction-utils';
 import { setupSessionRecordingInspector } from './session-recording';
-import { setupThirdpartyTrackersInspector } from './third-party-trackers';
+import { setUpThirdPartyTrackersInspector } from './third-party-trackers';
 import { clearDir } from './utils';
 export const collector = async ({
     inUrl,
@@ -156,11 +156,12 @@ export const collector = async ({
     }
 
     // Init blacklight instruments on page
-    await setupBlacklightInspector(page, event => logger.warn(event));
-    await setupKeyLoggingInspector(page, event => logger.warn(event));
-    await setupHttpCookieCapture(page, event => logger.warn(event));
-    await setupSessionRecordingInspector(page, event => logger.warn(event));
-    await setupThirdpartyTrackersInspector(page, event => logger.warn(event), enableAdBlock);
+    await setupBlacklightInspector(page, logger.warn);
+    await setupKeyLoggingInspector(page, logger.warn);
+    await setupHttpCookieCapture(page, logger.warn);
+    await setupSessionRecordingInspector(page, logger.warn);
+    await setUpThirdPartyTrackersInspector(page, logger.warn, enableAdBlock);
+
     if (captureHar) {
         har = new PuppeteerHar(page);
         await har.start({
