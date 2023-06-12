@@ -2,7 +2,7 @@ const { collector } = require('./build');
 const { join } = require('path');
 
 (async () => {
-    const URL = 'amazon.com';
+    const URL = 'example.com';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
     const config = {
