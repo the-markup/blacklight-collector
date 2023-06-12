@@ -6,7 +6,7 @@ import { TrackingRequestEvent } from './types';
 
 /**
  * @fileoverview
- * @see https://github.com/EU-EDPS/website-evidence-collector/blob/master/lib/setup-beacon-recording.js
+ * @see https://github.com/EU-EDPS/website-evidence-collector/blob/f75ef3ea7ff1be24940c4c33218c900afcf31979/lib/setup-beacon-recording.js
  */
 
 const blockerOptions = {
