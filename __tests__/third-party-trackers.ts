@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
-import { setupThirdpartyTrackersInspector } from "../src/third-party-trackers";
+import { setUpThirdPartyTrackersInspector } from "../src/third-party-trackers";
 import { generateReport } from "../src/parser";
 import { getDomain } from "tldts";
 
@@ -9,7 +9,7 @@ it("captures requests that match the easyprivacy list ", async () => {
   const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
-  await setupThirdpartyTrackersInspector(page, (e) =>
+  await setUpThirdPartyTrackersInspector(page, (e) =>
     rows.push({ message: e })
   );
   await page.goto(`https://jetblue.com`, { waitUntil: "networkidle2" });
@@ -33,7 +33,7 @@ it("considers the first party domain to be the domain set after any redirects ",
   const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
-  await setupThirdpartyTrackersInspector(page, (e) =>
+  await setUpThirdPartyTrackersInspector(page, (e) =>
     rows.push({ message: e })
   );
   await page.goto(`https://nyt.com`, { waitUntil: "networkidle2" });
@@ -57,7 +57,7 @@ it("does not include any analytics that might be hosted by the first party ", as
   const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   const rows = [];
-  await setupThirdpartyTrackersInspector(page, (e) =>
+  await setUpThirdPartyTrackersInspector(page, (e) =>
     rows.push({ message: e })
   );
   await page.goto(`https://eff.org`, { waitUntil: "networkidle2" });

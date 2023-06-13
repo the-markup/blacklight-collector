@@ -1,30 +1,21 @@
-const { collector } = require("./build");
-const { join } = require("path");
+const { collector } = require('./build');
+const { join } = require('path');
 
 (async () => {
-  const EMULATE_DEVICE = "iPhone 13 Mini";
+    const URL = 'example.com';
+    const EMULATE_DEVICE = 'iPhone 13 Mini';
 
-  // Save the results to a folder
-  let OUT_DIR = true;
+    const config = {
+        inUrl: `http://${URL}`,
+        numPages: 3,
+        headless: true,
+        emulateDevice: EMULATE_DEVICE,
+        outDir: join(__dirname, 'demo-dir')
+    };
 
-  // The URL to test
-  const URL = "example.com";
+    console.log(`Beginning scan of ${URL}`);
 
-  const defaultConfig = {
-    inUrl: `http://${URL}`,
-    numPages: 3,
-    headless: true,
-    emulateDevice: EMULATE_DEVICE,
-  };
+    await collector(config);
 
-  const result = await collector(
-    OUT_DIR
-      ? { ...defaultConfig, ...{ outDir: join(__dirname, "demo-dir") } }
-      : defaultConfig
-  );
-  if (OUT_DIR) {
-    console.log(
-      `For captured data please look in ${join(__dirname, "demo-dir")}`
-    );
-  }
+    console.log(`Scan complete: ${config.outDir}`);
 })();

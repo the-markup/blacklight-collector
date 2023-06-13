@@ -45,6 +45,7 @@
     "@types/chrome": "0.0.91",
     "@types/jest": "^27.5.1",
     "@types/lodash": "^4.14.149",
+    "@types/node": "^20.3.0",
     "@types/psl": "^1.1.0",
     "@types/puppeteer": "^5.4.6",
     "@types/stacktrace-js": "^2.0.3",

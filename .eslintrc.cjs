@@ -18,6 +18,7 @@ module.exports = {
         'prefer-const': 'warn',
         'prefer-object-spread': 'warn',
         'no-await-in-loop': 'warn',
-        '@typescript-eslint/no-var-requires': 'off'
+        '@typescript-eslint/no-var-requires': 'off',
+        'no-empty': ['error', { 'allowEmptyCatch': true }]
     }
 }

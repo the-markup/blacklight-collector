@@ -4,7 +4,7 @@ import { loadEventData } from "../src/utils";
 import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { Global } from "../src/types";
-import { setupThirdpartyTrackersInspector } from "../src/third-party-trackers";
+import { setUpThirdPartyTrackersInspector } from "../src/third-party-trackers";
 import { setupBlacklightInspector } from "../src/inspector";
 declare var global: Global;
 it("can parse AddEventlistener events", async () => {
@@ -133,7 +133,7 @@ it.skip("can parse FB Pixel tracking events - live capture", async () => {
   const page = (await browser.pages())[0];
   const rows = [];
   const url = "https://vogue.com";
-  await setupThirdpartyTrackersInspector(page, (e) =>
+  await setUpThirdPartyTrackersInspector(page, (e) =>
     rows.push({ message: e })
   );
   await page.goto(url, { waitUntil: "networkidle2" });
