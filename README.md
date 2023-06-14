@@ -20,7 +20,7 @@ If you are interested in running it locally you can clone this repository and fo
 
 ## Usage
 
-`node example.js`.
+`npm run example`.
 
 Results are stored in `demo-dir` by default
 
@@ -118,39 +118,6 @@ Results are stored in `demo-dir` by default
   - _TIP:_ Firefox lets you import a HAR file and visualize it using the network tab in the developer tools.
   - You can also view it [here](https://toolbox.googleapps.com/apps/har_analyzer/).
 
-```
-const { collector } = require("@themarkup/blacklight-collector");
-const { join } = require("path");
-
-(async () => {
-  const EMULATE_DEVICE = false;
-
- // Save the results to a folder
-  let OUT_DIR = true;
-
-  // The URL to test
-  const URL = "jetblue.com";
-
-  const defaultConfig = {
-    inUrl: `http://${URL}`,
-    numPages: 2,
-    headless: false,
-    emulateDevice: EMULATE_DEVICE
-  };
-
-  const result = await collector(
-    OUT_DIR
-      ? { ...defaultConfig, ...{ outDir: join(__dirname, "demo-dir") } }
-      : defaultConfig
-  );
-  if (OUT_DIR) {
-    console.log(
-      `For captured data please look in ${join(__dirname, "demo-dir")}`
-    );
-  }
-})();
-
-```
 
 Blacklight would not be possible without the work of [OpenWPM](https://github.com/mozilla/OpenWPM)
 and the EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/website-evidence-collector)
