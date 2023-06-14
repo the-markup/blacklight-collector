@@ -1,12 +1,11 @@
-const { collector } = require('./build');
-const { join } = require('path');
+import { CollectorOptions, collector } from "./src";
+import { join } from 'path';
 
 (async () => {
     const URL = 'example.com';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
-    const config = {
-        inUrl: `http://${URL}`,
+    const config: CollectorOptions = {
         numPages: 3,
         headless: true,
         emulateDevice: EMULATE_DEVICE,
@@ -15,7 +14,7 @@ const { join } = require('path');
 
     console.log(`Beginning scan of ${URL}`);
 
-    await collector(config);
+    await collector(`http://${URL}`, config);
 
     console.log(`Scan complete: ${config.outDir}`);
 })();
