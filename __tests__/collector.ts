@@ -106,8 +106,7 @@ it("can get social links", async () => {
 jest.setTimeout(15000);
 it.skip("Considers first party domains to be those from the domain requested or the domain of the page loaded after redirects", async () => {
   const URL = "https://nyt.com";
-  const response = await collector({
-    inUrl: URL,
+  const response = await collector(URL, {
     numPages: 1,
     defaultWaitUntil: "domcontentloaded",
   });
@@ -122,8 +121,7 @@ it.skip("Considers first party domains to be those from the domain requested or 
 
 it.skip("If a user enters a url with a subdomain blacklight will only browse to other pages in that subdomain", async () => {
   const URL = "https://jobs.theguardian.com";
-  const response = await collector({
-    inUrl: URL,
+  const response = await collector(URL, {
     numPages: 1,
     defaultWaitUntil: "domcontentloaded",
   });
@@ -139,8 +137,7 @@ it.skip("If a user enters a url with a subdomain blacklight will only browse to 
 
 it.skip("only exception to the subdomain rule is www", async () => {
   const URL = "https://www.themarkup.org";
-  const response = await collector({
-    inUrl: URL,
+  const response = await collector(URL, {
     numPages: 1,
     defaultWaitUntil: "domcontentloaded",
   });

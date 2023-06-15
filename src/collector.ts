@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs';
 import sampleSize from 'lodash.samplesize';
 import os from 'os';
 import { join } from 'path';
-import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices } from 'puppeteer';
+import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
 import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
 import url from 'url';
@@ -17,23 +17,25 @@ import { autoScroll, fillForms } from './pptr-utils/interaction-utils';
 import { setupSessionRecordingInspector } from './session-recording';
 import { setUpThirdPartyTrackersInspector } from './third-party-trackers';
 import { clearDir } from './utils';
-export const collector = async ({
-    inUrl,
-    outDir = join(process.cwd(), 'bl-tmp'),
-    headless = true,
-    title = 'Blacklight Inspection',
-    emulateDevice = 'iPhone 13 Mini',
-    captureHar = true,
-    captureLinks = false,
-    enableAdBlock = false,
-    clearCache = true,
-    quiet = true,
-    defaultTimeout = 30000,
-    numPages = 3,
-    defaultWaitUntil = 'networkidle2',
-    saveBrowserProfile = false,
-    saveScreenshots = true,
-    blTests = [
+
+export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS>;
+
+const DEFAULT_OPTIONS = {
+    outDir: join(process.cwd(), 'bl-tmp'),
+    title: 'Blacklight Inspection',
+    emulateDevice: KnownDevices['iPhone 13 Mini'],
+    captureHar: true,
+    captureLinks: false,
+    enableAdBlock: false,
+    clearCache: true,
+    quiet: true,
+    headless: true,
+    defaultTimeout: 30000,
+    numPages: 3,
+    defaultWaitUntil: 'networkidle2' as PuppeteerLifeCycleEvent,
+    saveBrowserProfile: false,
+    saveScreenshots: true,
+    blTests: [
         'behaviour_event_listeners',
         'canvas_fingerprinters',
         'canvas_font_fingerprinters',
@@ -43,28 +45,31 @@ export const collector = async ({
         'session_recorders',
         'third_party_trackers'
     ],
-    puppeteerExecutablePath = null,
-    extraChromiumArgs = []
-}) => {
-    clearDir(outDir);
+    puppeteerExecutablePath: null as string|null,
+    extraChromiumArgs: [] as string[],
+    extraPuppeteerOptions: {} as Partial<PuppeteerLaunchOptions>
+}
+
+export const collect = async (inUrl: string, args: CollectorOptions) => {
+    args = { ...DEFAULT_OPTIONS, ...args };
+    clearDir(args.outDir);
     const FIRST_PARTY = parse(inUrl);
     let REDIRECTED_FIRST_PARTY = parse(inUrl);
-    const logger = getLogger({ outDir, quiet });
+    const logger = getLogger({ outDir: args.outDir, quiet: args.quiet });
 
     const output: any = {
-        title,
+        args: args.title,
         uri_ins: inUrl,
         uri_dest: null,
         uri_redirects: null,
         secure_connection: {},
         host: url.parse(inUrl).hostname,
         config: {
-            clearCache,
-            captureHar,
-            captureLinks,
-            enableAdBlock,
-            emulateDevice,
-            numPages
+            cleareCache: args.clearCache,
+            captureHar: args.captureHar,
+            captureLinks: args.captureLinks,
+            enableAdBlock: args.enableAdBlock,
+            numPages: args.numPages
         },
         browser: null,
         script: {
@@ -78,9 +83,6 @@ export const collector = async ({
         start_time: new Date(),
         end_time: null
     };
-    if (emulateDevice) {
-        output.deviceEmulated = KnownDevices[emulateDevice];
-    }
 
     // Log network requests and page links
     const hosts = {
@@ -100,17 +102,17 @@ export const collector = async ({
     let har = {} as any;
     let page_response = null;
     let loadError = false;
-    const userDataDir = saveBrowserProfile ? join(outDir, 'browser-profile') : undefined;
+    const userDataDir = args.saveBrowserProfile ? join(args.outDir, 'browser-profile') : undefined;
     let didBrowserDisconnect = false;
 
     const options = {
         ...defaultPuppeteerBrowserOptions,
-        args: [...defaultPuppeteerBrowserOptions.args, ...extraChromiumArgs],
-        headless,
+        args: [...defaultPuppeteerBrowserOptions.args, ...args.extraChromiumArgs],
+        headless: args.headless,
         userDataDir
     };
-    if (puppeteerExecutablePath) {
-        options['executablePath'] = puppeteerExecutablePath;
+    if (args.puppeteerExecutablePath) {
+        options['executablePath'] = args.puppeteerExecutablePath;
     }
     browser = await puppeteer.launch(options);
     browser.on('disconnected', () => {
@@ -134,10 +136,8 @@ export const collector = async ({
             version: os.release()
         }
     };
-    if (emulateDevice) {
-        const deviceOptions = KnownDevices[emulateDevice];
-        page.emulate(deviceOptions);
-    }
+    page.emulate(args.emulateDevice);
+
     // record all requested hosts
     await page.on('request', request => {
         const l = parse(request.url());
@@ -151,7 +151,7 @@ export const collector = async ({
         }
     });
 
-    if (clearCache) {
+    if (args.clearCache) {
         await clearCookiesCache(page);
     }
 
@@ -160,12 +160,12 @@ export const collector = async ({
     await setupKeyLoggingInspector(page, logger.warn);
     await setupHttpCookieCapture(page, logger.warn);
     await setupSessionRecordingInspector(page, logger.warn);
-    await setUpThirdPartyTrackersInspector(page, logger.warn, enableAdBlock);
+    await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock);
 
-    if (captureHar) {
+    if (args.captureHar) {
         har = new PuppeteerHar(page);
         await har.start({
-            path: outDir ? join(outDir, 'requests.har') : undefined
+            path: args.outDir ? join(args.outDir, 'requests.har') : undefined
         });
     }
     if (didBrowserDisconnect) {
@@ -176,10 +176,10 @@ export const collector = async ({
     }
     // Go to the url
     page_response = await page.goto(inUrl, {
-        timeout: defaultTimeout,
-        waitUntil: defaultWaitUntil as PuppeteerLifeCycleEvent
+        timeout: args.defaultTimeout,
+        waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent
     });
-    await savePageContent(pageIndex, outDir, page, saveScreenshots);
+    await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
     pageIndex++;
 
     let duplicatedLinks = [];
@@ -194,8 +194,8 @@ export const collector = async ({
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
         }
-        if (outDir.includes('bl-tmp')) {
-            clearDir(outDir, false);
+        if (args.outDir.includes('bl-tmp')) {
+            clearDir(args.outDir, false);
         }
         return { status: 'failed', page_response };
     }
@@ -232,7 +232,7 @@ export const collector = async ({
     } else {
         subDomainLinks = outputLinks.first_party;
     }
-    const browse_links = sampleSize(subDomainLinks, numPages);
+    const browse_links = sampleSize(subDomainLinks, args.numPages);
     output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
 
     for (const link of output.browsing_history.slice(1)) {
@@ -244,19 +244,19 @@ export const collector = async ({
             };
         }
         await page.goto(link, {
-            timeout: defaultTimeout,
+            timeout: args.defaultTimeout,
             waitUntil: 'networkidle2'
         });
 
-        await savePageContent(pageIndex, outDir, page, saveScreenshots);
+        await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
         await fillForms(page);
         await page.waitForTimeout(800);
         pageIndex++;
         duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
         await autoScroll(page);
     }
-    await captureBrowserCookies(page, outDir);
-    if (captureHar) {
+    await captureBrowserCookies(page, args.outDir);
+    if (args.captureHar) {
         await har.stop();
     }
 
@@ -291,7 +291,7 @@ export const collector = async ({
         }
     };
 
-    if (captureLinks) {
+    if (args.captureLinks) {
         output.links = outputLinks;
         output.social = getSocialLinks(links);
     }
@@ -334,15 +334,15 @@ export const collector = async ({
     });
     // We only consider something to be a third party tracker if:
     // The domain is different to that of the final url (after any redirection) of the page the user requested to load.
-    const reports = blTests.reduce((acc, cur) => {
-        acc[cur] = generateReport(cur, event_data, outDir, REDIRECTED_FIRST_PARTY.domain);
+    const reports = args.blTests.reduce((acc, cur) => {
+        acc[cur] = generateReport(cur, event_data, args.outDir, REDIRECTED_FIRST_PARTY.domain);
         return acc;
     }, {});
 
     const json_dump = JSON.stringify({ ...output, reports }, null, 2);
-    writeFileSync(join(outDir, 'inspection.json'), json_dump);
-    if (outDir.includes('bl-tmp')) {
-        clearDir(outDir, false);
+    writeFileSync(join(args.outDir, 'inspection.json'), json_dump);
+    if (args.outDir.includes('bl-tmp')) {
+        clearDir(args.outDir, false);
     }
     return { status: 'success', ...output, reports };
 };
