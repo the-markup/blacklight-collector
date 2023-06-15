@@ -23,7 +23,7 @@ export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS>;
 const DEFAULT_OPTIONS = {
     outDir: join(process.cwd(), 'bl-tmp'),
     title: 'Blacklight Inspection',
-    emulateDevice: 'iPhone 13 Mini' as keyof typeof KnownDevices,
+    emulateDevice: KnownDevices['iPhone 13 Mini'],
     captureHar: true,
     captureLinks: false,
     enableAdBlock: false,
@@ -69,7 +69,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             captureHar: args.captureHar,
             captureLinks: args.captureLinks,
             enableAdBlock: args.enableAdBlock,
-            emulateDevice: args.emulateDevice,
             numPages: args.numPages
         },
         browser: null,
@@ -84,9 +83,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         start_time: new Date(),
         end_time: null
     };
-    if (args.emulateDevice) {
-        output.deviceEmulated = args.emulateDevice;
-    }
 
     // Log network requests and page links
     const hosts = {
@@ -140,9 +136,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             version: os.release()
         }
     };
-    if (args.emulateDevice) {
-        page.emulate(KnownDevices[args.emulateDevice]);
-    }
+    page.emulate(args.emulateDevice);
 
     // record all requested hosts
     await page.on('request', request => {
