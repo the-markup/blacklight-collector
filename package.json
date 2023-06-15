@@ -1,6 +1,6 @@
 {
   "name": "@themarkup/blacklight-collector",
-  "version": "2.1.12",
+  "version": "3.0.0-dev",
   "description": "A real-time website privacy inspector.",
   "main": "build/index.js",
   "scripts": {
