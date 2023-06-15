@@ -50,7 +50,7 @@ const DEFAULT_OPTIONS = {
     extraPuppeteerOptions: {} as Partial<PuppeteerLaunchOptions>
 }
 
-export const collector = async (inUrl: string, args: CollectorOptions) => {
+export const collect = async (inUrl: string, args: CollectorOptions) => {
     args = { ...DEFAULT_OPTIONS, ...args };
     clearDir(args.outDir);
     const FIRST_PARTY = parse(inUrl);

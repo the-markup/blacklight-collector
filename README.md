@@ -26,7 +26,7 @@ Results are stored in `demo-dir` by default
 
 ## Collector configuration
 
-`collector` takes the following arguments:
+`collect` takes the following arguments:
 
 - `inUrl` **required**
   - The URL you want to scrape
