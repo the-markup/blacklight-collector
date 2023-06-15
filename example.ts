@@ -10,7 +10,7 @@ import { join } from 'path';
     const config: CollectorOptions = {
         numPages: 3,
         headless: false,
-        //emulateDevice: KnownDevices[EMULATE_DEVICE],
+        emulateDevice: KnownDevices[EMULATE_DEVICE],
         // Uncomment to run with desktop/laptop browser
         // emulateDevice: {
         //     viewport: {height: 1440, width: 800}, 
