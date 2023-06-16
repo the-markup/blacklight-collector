@@ -34,6 +34,7 @@
     "@cliqz/adblocker-puppeteer": "^1.23.8",
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
+    "mqtt": "^4.3.7",
     "puppeteer": "^19.7.5",
     "puppeteer-har": "^1.1.1",
     "stacktrace-js": "^2.0.1",
