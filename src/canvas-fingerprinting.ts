@@ -1,12 +1,10 @@
 import { BlacklightEvent, JsInstrumentEvent } from './types';
+import { getScriptUrl, serializeCanvasCallMap } from './utils';
 
 /**
  *  @fileOverview Utility functions for canvas finerprinting analysis.
  *  Implemented following the Princeton study's methodology.
  */
-
-import { parse } from 'url';
-import { getScriptUrl, serializeCanvasCallMap } from './utils';
 
 const MIN_CANVAS_IMAGE_WIDTH = 16;
 const MIN_CANVAS_IMAGE_HEIGHT = 16;
@@ -68,7 +66,7 @@ export const sortCanvasCalls = (canvasCalls: BlacklightEvent[]) => {
     const cStyles = new Map() as CanvasCallMap;
     for (const item of canvasCalls) {
         const { url, data } = item as JsInstrumentEvent;
-        const url_host = parse(url).hostname;
+        const url_host = new URL(url).hostname;
         const script_url = getScriptUrl(item);
         const { symbol, operation, value } = data;
         if (typeof script_url === 'undefined' || script_url.indexOf('http:') < -1 || script_url.indexOf('https:') < -1) {

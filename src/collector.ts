@@ -5,7 +5,6 @@ import { join } from 'path';
 import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
 import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
-import url from 'url';
 import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './cookie-collector';
 import { setupBlacklightInspector } from './inspector';
 import { setupKeyLoggingInspector } from './key-logging';
@@ -63,7 +62,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         uri_dest: null,
         uri_redirects: null,
         secure_connection: {},
-        host: url.parse(inUrl).hostname,
+        host: new URL(inUrl).hostname,
         config: {
             cleareCache: args.clearCache,
             captureHar: args.captureHar,
