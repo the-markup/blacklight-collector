@@ -59,9 +59,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
     const output: any = {
         args: args.title,
-        uri_ins: inUrl,
-        uri_dest: null,
-        uri_redirects: null,
+        url_ins: inUrl,
+        url_dest: null,
+        url_redirects: null,
         secure_connection: {},
         host: url.parse(inUrl).hostname,
         config: {
@@ -80,7 +80,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             },
             node_version: process.version
         },
-        start_time: new Date(),
+        start_time: new Date().toISOString(),
         end_time: null
     };
 
@@ -199,16 +199,16 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
         return { status: 'failed', page_response };
     }
-    output.uri_redirects = page_response
+    output.url_redirects = page_response
         .request()
         .redirectChain()
         .map(req => {
             return req.url();
         });
 
-    output.uri_dest = page.url();
+    output.url_dest = page.url();
     duplicatedLinks = await getLinks(page);
-    REDIRECTED_FIRST_PARTY = parse(output.uri_dest);
+    REDIRECTED_FIRST_PARTY = parse(output.url_dest);
     for (const link of dedupLinks(duplicatedLinks)) {
         const l = parse(link.href);
 
@@ -225,15 +225,15 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     await fillForms(page);
 
     let subDomainLinks = [];
-    if (getSubdomain(output.uri_dest) !== 'www') {
+    if (getSubdomain(output.url_dest) !== 'www') {
         subDomainLinks = outputLinks.first_party.filter(f => {
-            return getSubdomain(f.href) === getSubdomain(output.uri_dest);
+            return getSubdomain(f.href) === getSubdomain(output.url_dest);
         });
     } else {
         subDomainLinks = outputLinks.first_party;
     }
     const browse_links = sampleSize(subDomainLinks, args.numPages);
-    output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
+    output.browsing_history = [output.url_dest].concat(browse_links.map(l => l.href));
 
     for (const link of output.browsing_history.slice(1)) {
         logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
