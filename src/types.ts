@@ -85,7 +85,8 @@ export const SESSION_RECORDERS_LIST = [
     'salemove.com',
     'd10lpsik1i8c69.cloudfront.net',
     'luckyorange.com',
-    'vwo.com'
+    'vwo.com',
+    'clarity.ms'
 ];
 export const BEHAVIOUR_TRACKING_EVENTS = {
     KEYBOARD: ['keydown', 'keypress', 'keyup', 'input'],
