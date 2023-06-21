@@ -80,7 +80,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             },
             node_version: process.version
         },
-        start_time: new Date().toISOString(),
+        start_time: new Date(),
         end_time: null
     };
 
