@@ -3,6 +3,7 @@ import fs from 'fs';
 import { join } from 'path';
 import { getDomain, getPublicSuffix } from 'tldts';
 import { BlacklightEvent } from './types';
+
 export const getFirstPartyPs = firstPartyUri => {
     return getPublicSuffix(firstPartyUri);
 };
@@ -116,6 +117,7 @@ export const getStackType = (stack, firstPartyDomain) => {
         return 'mixed';
     }
 };
+
 export const isBase64 = str => {
     if (str === '' || str.trim() === '') {
         return false;
@@ -127,12 +129,12 @@ export const isBase64 = str => {
     }
 };
 
-export const getStringHash = (algorithm, str) => {
-    return crypto.createHash(algorithm).update(str).digest('hex');
-};
-export const getHashedValues = (algorithm, object) => {
-    return Object.entries(object).reduce((acc, cur: any) => {
-        acc[cur[0]] = algorithm === 'base64' ? Buffer.from(cur[1]).toString('base64') : getStringHash(algorithm, cur[1]);
-        return acc;
-    }, {});
-};
+export function getHashedArray(algorithm: string, array: string[]): string[] {
+    return array.map(element => {
+        if(algorithm === 'base64') {
+            return btoa(element);
+        }
+
+        return crypto.createHash(algorithm).update(element).digest('hex');
+    });
+}

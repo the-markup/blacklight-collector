@@ -1,4 +1,8 @@
-import { LinkObject } from '../types';
+type LinkObject = {
+    href: string,
+    innerHtml: string,
+    innerText: string
+}
 
 export const getLinks = async (page): Promise<LinkObject[]> => {
     return page.evaluate(() => {

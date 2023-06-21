@@ -3,7 +3,7 @@ const { collect } = require('./build/index');
 const { join } = require('path');
 
 (async () => {
-    const URL = 'example.com';
+    const URL = 'digg.com';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
     const config = {
