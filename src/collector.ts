@@ -5,10 +5,9 @@ import { join } from 'path';
 import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
 import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
-import url from 'url';
 import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './cookie-collector';
 import { setupBlacklightInspector } from './inspector';
-import { setupKeyLoggingInspector } from './key-logging';
+import { setUpKeyLoggingInspector } from './key-logging';
 import { getLogger } from './logger';
 import { generateReport } from './parser';
 import { defaultPuppeteerBrowserOptions, savePageContent } from './pptr-utils/default';
@@ -63,7 +62,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         uri_dest: null,
         uri_redirects: null,
         secure_connection: {},
-        host: url.parse(inUrl).hostname,
+        host: new URL(inUrl).hostname,
         config: {
             cleareCache: args.clearCache,
             captureHar: args.captureHar,
@@ -157,7 +156,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
     // Init blacklight instruments on page
     await setupBlacklightInspector(page, logger.warn);
-    await setupKeyLoggingInspector(page, logger.warn);
+    await setUpKeyLoggingInspector(page, logger.warn);
     await setupHttpCookieCapture(page, logger.warn);
     await setupSessionRecordingInspector(page, logger.warn);
     await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock);

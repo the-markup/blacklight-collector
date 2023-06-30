@@ -2,21 +2,23 @@ export interface Global {
     __DEV_SERVER__: string;
 }
 
-export type BlacklightEvent = JsInstrumentEvent | KeyLoggingEvent | BlacklightErrorEvent | TrackingRequestEvent | SessionRecordingEvent;
-
-export interface KeyLoggingEvent {
-    type: 'KeyLogging';
+export interface BlacklightEvent {
+    type: string;
     url: string;
     stack: any[];
+}
+
+export interface KeyLoggingEvent extends BlacklightEvent {
+    type: 'KeyLogging';
     data: {
+        filter: string[],
         post_request_url: string;
         post_data: string;
         match_type: string[];
-        filter: string[];
     };
 }
 
-export interface JsInstrumentEvent {
+export interface JsInstrumentEvent extends BlacklightEvent {
     type:
         | 'JsInstrument'
         | 'JsInstrument.Debug'
@@ -24,8 +26,6 @@ export interface JsInstrumentEvent {
         | 'JsInstrument.Function'
         | 'JsInstrument.FunctionProxy'
         | 'JsInstrument.ObjectProperty';
-    url: string;
-    stack: any[];
     data: {
         symbol: string;
         value: string;
@@ -35,22 +35,22 @@ export interface JsInstrumentEvent {
     };
 }
 
-export interface SessionRecordingEvent {
+export interface SessionRecordingEvent extends BlacklightEvent {
     type: 'SessionRecording';
-    url: string;
     matches: string[];
-    stack: any[];
 }
-export interface TrackingRequestEvent {
+
+export interface TrackingRequestEvent extends BlacklightEvent {
     type: 'TrackingRequest';
-    url: string;
-    stack: any[];
-    data: { query?: any; filter: string; listName: string };
+    data: {
+        query?: any;
+        filter: string;
+        listName: string;
+    };
 }
-export interface BlacklightErrorEvent {
+
+export interface BlacklightErrorEvent extends BlacklightEvent {
     type: 'Error' | 'Error.BlacklightInspector' | 'Error.KeyLogging' | 'Error.JsInstrument';
-    url: string;
-    stack: any[];
     data: {
         message: any;
         objectName?: string;
@@ -59,11 +59,6 @@ export interface BlacklightErrorEvent {
     };
 }
 
-export interface LinkObject {
-    href: string;
-    innerHtml: string;
-    innerText: string;
-}
 export const SESSION_RECORDERS_LIST = [
     'mc.yandex.ru/metrika/watch.js',
     'mc.yandex.ru/metrika/tag.js',
@@ -85,8 +80,10 @@ export const SESSION_RECORDERS_LIST = [
     'salemove.com',
     'd10lpsik1i8c69.cloudfront.net',
     'luckyorange.com',
-    'vwo.com'
+    'vwo.com',
+    'clarity.ms'
 ];
+
 export const BEHAVIOUR_TRACKING_EVENTS = {
     KEYBOARD: ['keydown', 'keypress', 'keyup', 'input'],
     MOUSE: ['click', 'mousedown', 'mouseup', 'mousemove', 'select', 'dblclick', 'scroll'],

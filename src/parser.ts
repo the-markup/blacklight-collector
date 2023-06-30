@@ -2,15 +2,7 @@ import { getDomain } from 'tldts';
 import { getCanvasFontFp, getCanvasFp } from './canvas-fingerprinting';
 import { loadBrowserCookies, matchCookiesToEvents } from './cookie-collector';
 import { FB_ADVANCED_MATCHING_PARAMETERS, FB_STANDARD_EVENTS } from './fb-pixel-lookup';
-import {
-    BEHAVIOUR_TRACKING_EVENTS,
-    BlacklightEvent,
-    FINGERPRINTABLE_WINDOW_APIS,
-    JsInstrumentEvent,
-    KeyLoggingEvent,
-    SessionRecordingEvent,
-    TrackingRequestEvent
-} from './types';
+import { BEHAVIOUR_TRACKING_EVENTS, BlacklightEvent, FINGERPRINTABLE_WINDOW_APIS, JsInstrumentEvent, KeyLoggingEvent, SessionRecordingEvent, TrackingRequestEvent } from './types';
 import { getScriptUrl, groupBy, loadJSONSafely } from './utils';
 
 export const generateReport = (reportType, messages, dataDir, url) => {
@@ -42,6 +34,7 @@ export const generateReport = (reportType, messages, dataDir, url) => {
 const filterByEvent = (messages, typePattern) => {
     return messages.filter(m => m.message.type.includes(typePattern) && !m.message.type.includes('Error'));
 };
+
 const getEventData = (reportType, messages): BlacklightEvent[] => {
     let filtered = [];
     switch (reportType) {
@@ -78,6 +71,7 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
     }
     return filtered.map(m => m.message);
 };
+
 const reportSessionRecorders = (eventData: BlacklightEvent[]) => {
     const report = {};
     eventData.forEach((event: SessionRecordingEvent) => {
@@ -265,6 +259,7 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
         };
     });
 };
+
 const getDomainSafely = (message: KeyLoggingEvent) => {
     try {
         if (message.data.post_request_url) {

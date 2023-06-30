@@ -2,8 +2,8 @@
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { fillForms } from "../src/pptr-utils/interaction-utils";
 import puppeteer, { Browser } from "puppeteer";
-import { setupKeyLoggingInspector } from "../src/key-logging";
-import { Global } from "../src/types";
+import { setUpKeyLoggingInspector } from "../src/key-logging";
+import { Global, KeyLoggingEvent } from "../src/types";
 
 declare var global: Global;
 
@@ -695,12 +695,12 @@ describe("KeyLogging", () => {
     const page = await browser.newPage();
     const testUrl = `${global.__DEV_SERVER__}/session_recorder.html`;
     // const testUrl = "https://www.veteransunited.com/";
-    const rows = [];
+    const rows: KeyLoggingEvent[] = [];
     const eventHandler = event => {
       rows.push(event);
     };
 
-    await setupKeyLoggingInspector(page, eventHandler);
+    await setUpKeyLoggingInspector(page, eventHandler);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
     await page.waitForTimeout(1000);
     await fillForms(page);
@@ -777,7 +777,7 @@ describe("KeyLogging", () => {
     const eventHandler = event => {
       rows.push(event);
     };
-    await setupKeyLoggingInspector(page, eventHandler);
+    await setUpKeyLoggingInspector(page, eventHandler);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
     await page.waitForTimeout(1000);
     await fillForms(page);
