@@ -346,16 +346,15 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             clearDir(args.outDir, false);
         }
 
-        throw new Error('Browser disconnected');
         return { status: 'success', ...output, reports };
     } catch (error) {
-        console.error(error);
-        console.log('An error occurred:');
+        // return error
         return {
             status: 'failed',
             page_response: 'Run failed, please try again'
         };
     } finally {
+        // close browser and clear tmp dir
         if (browser && !didBrowserDisconnect) {
             await browser.close();
         }
