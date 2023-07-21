@@ -45,10 +45,10 @@ const DEFAULT_OPTIONS = {
         'session_recorders',
         'third_party_trackers'
     ],
-    puppeteerExecutablePath: null as string|null,
+    puppeteerExecutablePath: null as string | null,
     extraChromiumArgs: [] as string[],
     extraPuppeteerOptions: {} as Partial<PuppeteerLaunchOptions>
-}
+};
 
 export const collect = async (inUrl: string, args: CollectorOptions) => {
     args = { ...DEFAULT_OPTIONS, ...args };
@@ -175,12 +175,36 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         };
     }
     // Go to the url
-    page_response = await page.goto(inUrl, {
-        timeout: args.defaultTimeout,
+    console.log('Going to URL');
+    const pageLoadPromise = page.goto(inUrl, {
+        timeout: args.defaultTimeout + 5000, // Increase Puppeteer's timeout to 35 seconds
         waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent
     });
-    await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
-    pageIndex++;
+
+    const timeoutPromise = new Promise(resolve => {
+        setTimeout(() => {
+            resolve(null); // Resolve the promise after 30 seconds
+        }, args.defaultTimeout);
+    });
+
+    // Race the page load and timeout promises
+    page_response = await Promise.race([pageLoadPromise, timeoutPromise]);
+
+    // If page_response is null, the page didn't finish loading
+    if (page_response === null) {
+        logger.warn('Page load timed out after 30 seconds');
+    } else {
+        await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
+        pageIndex++;
+    }
+
+    // If page_response is null, the page didn't finish loading
+    if (page_response === null) {
+        logger.warn('Page load timed out after 30 seconds');
+    } else {
+        await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
+        pageIndex++;
+    }
 
     let duplicatedLinks = [];
     const outputLinks = {

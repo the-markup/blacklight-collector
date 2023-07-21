@@ -4,7 +4,8 @@ import { CollectorOptions, collect } from "./src";
 import { join } from 'path';
 
 (async () => {
-    const URL = 'example.com';
+    // const URL = 'example.com';
+    const URL = 'cnn.com';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
     const config: CollectorOptions = {
