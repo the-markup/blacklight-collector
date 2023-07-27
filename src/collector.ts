@@ -30,7 +30,7 @@ const DEFAULT_OPTIONS = {
     clearCache: true,
     quiet: true,
     headless: true,
-    defaultTimeout: 30000,
+    defaultTimeout: 35000,
     numPages: 3,
     defaultWaitUntil: 'networkidle2' as PuppeteerLifeCycleEvent,
     saveBrowserProfile: false,
@@ -174,37 +174,32 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             page_response: 'Chrome crashed'
         };
     }
+
+    // Function to navigate to a page with a timeout guard
+    const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
+        let timeoutHandle: NodeJS.Timeout;
+        const navigationPromise = page.goto(url, { timeout, waitUntil }).catch(() => {
+            console.log('Page loading was aborted, but continuing with the collected data...');
+        });
+
+        // Force stop page loading after 30 seconds
+        timeoutHandle = setTimeout(() => {
+            console.log('30 seconds passed, aborting page load...');
+            page.goto('about:blank'); // Navigate to a blank page to stop all network requests
+        }, 30000);
+
+        await navigationPromise;
+
+        // Clear the timeout now that navigation has completed
+        clearTimeout(timeoutHandle);
+    };
+
     // Go to the url
-    console.log('Going to URL');
-    const pageLoadPromise = page.goto(inUrl, {
-        timeout: args.defaultTimeout + 5000, // Increase Puppeteer's timeout to 35 seconds
-        waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent
-    });
+    await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+    page_response = await page.goto(inUrl, { timeout: 0, waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent }).catch(() => null);
 
-    const timeoutPromise = new Promise(resolve => {
-        setTimeout(() => {
-            resolve(null); // Resolve the promise after 30 seconds
-        }, args.defaultTimeout);
-    });
-
-    // Race the page load and timeout promises
-    page_response = await Promise.race([pageLoadPromise, timeoutPromise]);
-
-    // If page_response is null, the page didn't finish loading
-    if (page_response === null) {
-        logger.warn('Page load timed out after 30 seconds');
-    } else {
-        await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
-        pageIndex++;
-    }
-
-    // If page_response is null, the page didn't finish loading
-    if (page_response === null) {
-        logger.warn('Page load timed out after 30 seconds');
-    } else {
-        await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
-        pageIndex++;
-    }
+    await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
+    pageIndex++;
 
     let duplicatedLinks = [];
     const outputLinks = {
@@ -267,10 +262,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 page_response: 'Chrome crashed'
             };
         }
-        await page.goto(link, {
-            timeout: args.defaultTimeout,
-            waitUntil: 'networkidle2'
-        });
+        console.log(`Browsing now to ${link}`)
+        await navigateWithTimeout(page, link, args.defaultTimeout, 'networkidle2');
 
         await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
         await fillForms(page);
