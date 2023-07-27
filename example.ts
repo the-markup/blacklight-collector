@@ -5,13 +5,13 @@ import { join } from 'path';
 
 (async () => {
     // const URL = 'example.com';
-    const URL = 'cnn.com';
+    const URL = 'wired.com';
     // const URL = 'npr.org';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
     const config: CollectorOptions = {
         numPages: 3,
-        headless: true,
+        headless: false,
         emulateDevice: KnownDevices[EMULATE_DEVICE],
         // Uncomment to run with desktop/laptop browser
         // emulateDevice: {

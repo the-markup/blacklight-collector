@@ -30,7 +30,7 @@ const DEFAULT_OPTIONS = {
     clearCache: true,
     quiet: true,
     headless: true,
-    defaultTimeout: 35000,
+    defaultTimeout: 1000000,
     numPages: 3,
     defaultWaitUntil: 'networkidle2' as PuppeteerLifeCycleEvent,
     saveBrowserProfile: false,
@@ -178,9 +178,16 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     // Function to navigate to a page with a timeout guard
     const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
         let timeoutHandle: NodeJS.Timeout;
-        const navigationPromise = page.goto(url, { timeout, waitUntil }).catch(() => {
-            console.log('Page loading was aborted, but continuing with the collected data...');
-        });
+        let page_response = null;
+
+        const navigationPromise = page
+            .goto(url, { timeout, waitUntil })
+            .then(response => {
+                page_response = response; // Save the response
+            })
+            .catch(() => {
+                console.log('Page loading was aborted, but continuing with the collected data...');
+            });
 
         // Force stop page loading after 30 seconds
         timeoutHandle = setTimeout(() => {
@@ -192,11 +199,12 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
         // Clear the timeout now that navigation has completed
         clearTimeout(timeoutHandle);
+
+        return page_response;
     };
 
     // Go to the url
-    await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
-    page_response = await page.goto(inUrl, { timeout: 0, waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent }).catch(() => null);
+    page_response = await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
     await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
     pageIndex++;
@@ -262,8 +270,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 page_response: 'Chrome crashed'
             };
         }
-        console.log(`Browsing now to ${link}`)
-        await navigateWithTimeout(page, link, args.defaultTimeout, 'networkidle2');
+        console.log(`Browsing now to ${link}`);
+        page_response = await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+
 
         await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
         await fillForms(page);
