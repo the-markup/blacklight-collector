@@ -1,4 +1,3 @@
-
 import { KnownDevices } from "puppeteer";
 import { CollectorOptions, collect } from "./src";
 import { join } from 'path';
@@ -21,7 +20,11 @@ import { join } from 'path';
 
     console.log(`Beginning scan of ${URL}`);
 
-    await collect(`http://${URL}`, config);
+    const result = await collect(`http://${URL}`, config);
 
-    console.log(`Scan complete: ${config.outDir}`);
+    if (result.status === 'success') {
+        console.log(`Scan successful: ${config.outDir}`);
+    } else {
+        console.error(`Scan failed: ${result.page_response}`);
+    }
 })();
