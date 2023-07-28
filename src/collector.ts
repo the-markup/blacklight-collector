@@ -30,7 +30,7 @@ const DEFAULT_OPTIONS = {
     clearCache: true,
     quiet: true,
     headless: true,
-    defaultTimeout: 1000000,
+    defaultTimeout: 35000,
     numPages: 3,
     defaultWaitUntil: 'networkidle2' as PuppeteerLifeCycleEvent,
     saveBrowserProfile: false,
@@ -178,36 +178,50 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     // Function to navigate to a page with a timeout guard
     const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
         let timeoutHandle: NodeJS.Timeout;
-        let page_response = null;
 
-        const navigationPromise = page
-            .goto(url, { timeout, waitUntil })
-            .then(response => {
-                page_response = response; // Save the response
-            })
-            .catch(() => {
-                console.log('Page loading was aborted, but continuing with the collected data...');
-            });
+        const navigationPromise = new Promise((resolve, reject) => {
+            page.goto(url, { timeout, waitUntil })
+                .then(response => {
+                    page_response = response; // Save the response
+                    resolve(response);
+                })
+                .catch(() => {
+                    console.log('Page loading was aborted, but continuing with the collected data...');
+                    resolve(null);
+                });
 
-        // Force stop page loading after 30 seconds
-        timeoutHandle = setTimeout(() => {
-            console.log('30 seconds passed, aborting page load...');
-            page.goto('about:blank'); // Navigate to a blank page to stop all network requests
-        }, 30000);
+            // Force stop page loading after 30 seconds
+            timeoutHandle = setTimeout(() => {
+                console.log('30 seconds passed, aborting page load...');
+                page.goto('about:blank'); // Navigate to a blank page to stop all network requests
+                reject(new Error('Page load timeout'));
+            }, 30000);
+        });
 
-        await navigationPromise;
+        try {
+            await navigationPromise;
+        } catch (error) {
+            console.log(error.message);
+        }
 
         // Clear the timeout now that navigation has completed
         clearTimeout(timeoutHandle);
-
-        return page_response;
     };
 
     // Go to the url
-    page_response = await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+    await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
     await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
     pageIndex++;
+
+    // Log the status and URL of the response, if it exists
+    if (page_response) {
+        console.log(`Page loaded successfully! Status: ${page_response.status()}, URL: ${page_response.url()}`);
+    } else {
+        console.log('Page did not load, aborting...');
+        await browser.close();
+        return { status: 'failed', page_response: 'Page did not load. Please try again' };
+    }
 
     let duplicatedLinks = [];
     const outputLinks = {
@@ -270,13 +284,23 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 page_response: 'Chrome crashed'
             };
         }
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
         console.log(`Browsing now to ${link}`);
-        page_response = await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+        await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
+        // Log the status and URL of the response, if it exists
+        if (page_response) {
+            console.log(`Page loaded successfully! Status: ${page_response.status()}, URL: ${page_response.url()}`);
+        } else {
+            console.log('Page did not load, aborting...');
+            await browser.close();
+            return { status: 'failed', page_response: 'Page did not load. Please try again' };
+        }
 
         await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
         await fillForms(page);
-        await page.waitForTimeout(800);
+        await new Promise(resolve => setTimeout(resolve, 800)); // Wait for 1 second
+
         pageIndex++;
         duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
         await autoScroll(page);
