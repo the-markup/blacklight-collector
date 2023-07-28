@@ -177,7 +177,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
     // Function to navigate to a page with a timeout guard
     const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
-        let timeoutHandle: NodeJS.Timeout;
+        let timeoutHandle: ReturnType<typeof setTimeout>;
 
         const navigationPromise = new Promise((resolve, reject) => {
             page.goto(url, { timeout, waitUntil })
