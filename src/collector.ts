@@ -185,15 +185,22 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
         try {
             await navigationPromise;
-            console.log(`Page loaded successfully! Status: ${page_response.status()}, URL: ${page_response.url()}`);
+            console.log(`Page loaded successfully!`);
         } catch (error) {
-            if (error.message.includes('Navigation timeout')) {                
+            if (error.message.includes('Navigation timeout')) { 
+
                 await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
                 pageIndex++;
+                
+                try {
+                    const client = await page.target().createCDPSession();
+                    await client.send('Page.stopLoading');
+                    console.log('Page.stopLoading succeeded');
+                } catch (error) {
+                    console.log('Page.stopLoading failed');
+                    console.log(error.message);
+                }
                 console.log('Navigation timeout occurred, but continuing with the collected data...');
-
-                await browser.close();
-                console.log('Closing browser');
             } else {
                 loadError = true;
                 console.log('Navigation failed');
@@ -204,11 +211,37 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
     // Go to the first url
     console.log('Going to the first url');
+    try {
+        page_response = await page.goto(inUrl, {
+            timeout: args.defaultTimeout,
+            waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent
+        });
+        throw new Error('test');
+    } catch (error) {
+        // If the first page fails to load, try again with waitUntil: domcontentloaded
+        // await page.evaluate(() => {
+        //     console.log('window.stop succeeded');
+        //     window.stop();
+        // }).catch(error => {
+        //     console.log('window.stop failed');
+        //     console.log(error.message);
+        // });
 
-    page_response = await page.goto(inUrl, {
-        timeout: args.defaultTimeout,
-        waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent
-    });
+        try {
+            const client = await page.target().createCDPSession();
+            await client.send('Page.stopLoading');
+            console.log('Page.stopLoading succeeded');
+        } catch (error) {
+            console.log('Page.stopLoading failed');
+            console.log(error.message);
+        }
+
+        console.log('First attempt failed, trying with domcontentloaded');
+        page_response = await page.goto(inUrl, {
+            timeout: args.defaultTimeout,
+            waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
+        });
+    }
     await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
     pageIndex++;
     console.log('Saving first page response');

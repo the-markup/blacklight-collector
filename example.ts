@@ -10,7 +10,7 @@ import { join } from 'path';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
     const config: CollectorOptions = {
-        numPages: 1,
+        numPages: 4,
         headless: true,
         emulateDevice: KnownDevices[EMULATE_DEVICE],
         // Uncomment to run with desktop/laptop browser
