@@ -46,10 +46,8 @@ const DEFAULT_OPTIONS = {
         'third_party_trackers'
     ],
     puppeteerExecutablePath: null as string | null,
-    puppeteerExecutablePath: null as string | null,
     extraChromiumArgs: [] as string[],
     extraPuppeteerOptions: {} as Partial<PuppeteerLaunchOptions>
-};
 };
 
 export const collect = async (inUrl: string, args: CollectorOptions) => {
@@ -140,37 +138,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         };
         page.emulate(args.emulateDevice);
-        if (didBrowserDisconnect) {
-            return {
-                status: 'failed',
-                page_response: 'Chrome crashed'
-            };
-        }
-        logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
-        page = (await browser.pages())[0];
-        output.browser = {
-            name: 'Chromium',
-            version: await browser.version(),
-            user_agent: await browser.userAgent(),
-            platform: {
-                name: os.type(),
-                version: os.release()
-            }
-        };
-        page.emulate(args.emulateDevice);
 
-        // record all requested hosts
-        await page.on('request', request => {
-            const l = parse(request.url());
-            // note that hosts may appear as first and third party depending on the path
-            if (FIRST_PARTY.domain === l.domain) {
-                hosts.requests.first_party.add(l.hostname);
-            } else {
-                if (request.url().indexOf('data://') < 1 && !!l.hostname) {
-                    hosts.requests.third_party.add(l.hostname);
-                }
-            }
-        });
         // record all requested hosts
         await page.on('request', request => {
             const l = parse(request.url());
@@ -187,16 +155,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         if (args.clearCache) {
             await clearCookiesCache(page);
         }
-        if (args.clearCache) {
-            await clearCookiesCache(page);
-        }
 
-        // Init blacklight instruments on page
-        await setupBlacklightInspector(page, logger.warn);
-        await setupKeyLoggingInspector(page, logger.warn);
-        await setupHttpCookieCapture(page, logger.warn);
-        await setupSessionRecordingInspector(page, logger.warn);
-        await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock);
         // Init blacklight instruments on page
         await setupBlacklightInspector(page, logger.warn);
         await setupKeyLoggingInspector(page, logger.warn);
@@ -281,29 +240,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             first_party: [],
             third_party: []
         };
-        let duplicatedLinks = [];
-        const outputLinks = {
-            first_party: [],
-            third_party: []
-        };
 
-        // Return if the page doesnt load
-        if (loadError) {
-            await browser.close();
-            if (typeof userDataDir !== 'undefined') {
-                clearDir(userDataDir, false);
-            }
-            if (args.outDir.includes('bl-tmp')) {
-                clearDir(args.outDir, false);
-            }
-            return { status: 'failed', page_response };
-        }
-        output.uri_redirects = page_response
-            .request()
-            .redirectChain()
-            .map(req => {
-                return req.url();
-            });
         // Return if the page doesnt load
         if (loadError) {
             await browser.close();
@@ -327,11 +264,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         REDIRECTED_FIRST_PARTY = parse(output.uri_dest);
         for (const link of dedupLinks(duplicatedLinks)) {
             const l = parse(link.href);
-        output.uri_dest = page.url();
-        duplicatedLinks = await getLinks(page);
-        REDIRECTED_FIRST_PARTY = parse(output.uri_dest);
-        for (const link of dedupLinks(duplicatedLinks)) {
-            const l = parse(link.href);
 
             if (REDIRECTED_FIRST_PARTY.domain === l.domain) {
                 outputLinks.first_party.push(link);
@@ -344,28 +276,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         }
         await fillForms(page);
-            if (REDIRECTED_FIRST_PARTY.domain === l.domain) {
-                outputLinks.first_party.push(link);
-                hosts.links.first_party.add(l.hostname);
-            } else {
-                if (l.hostname && l.hostname !== 'data') {
-                    outputLinks.third_party.push(link);
-                    hosts.links.third_party.add(l.hostname);
-                }
-            }
-        }
-        await fillForms(page);
 
-        let subDomainLinks = [];
-        if (getSubdomain(output.uri_dest) !== 'www') {
-            subDomainLinks = outputLinks.first_party.filter(f => {
-                return getSubdomain(f.href) === getSubdomain(output.uri_dest);
-            });
-        } else {
-            subDomainLinks = outputLinks.first_party;
-        }
-        const browse_links = sampleSize(subDomainLinks, args.numPages);
-        output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
         let subDomainLinks = [];
         if (getSubdomain(output.uri_dest) !== 'www') {
             subDomainLinks = outputLinks.first_party.filter(f => {
@@ -404,15 +315,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
         }
-        await browser.close();
-        if (typeof userDataDir !== 'undefined') {
-            clearDir(userDataDir, false);
-        }
 
-        const links = dedupLinks(duplicatedLinks);
-        output.end_time = new Date();
-        for (const link of links) {
-            const l = parse(link.href);
         const links = dedupLinks(duplicatedLinks);
         output.end_time = new Date();
         for (const link of links) {
@@ -438,31 +341,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 third_party: tpRequests.filter(t => !incorrectTpAssignment.includes(t))
             }
         };
-            if (REDIRECTED_FIRST_PARTY.domain === l.domain) {
-                outputLinks.first_party.push(link);
-                hosts.links.first_party.add(l.hostname);
-            } else {
-                if (l.hostname && l.hostname !== 'data') {
-                    outputLinks.third_party.push(link);
-                    hosts.links.third_party.add(l.hostname);
-                }
-            }
-        }
-        // generate report
-        const fpRequests = Array.from(hosts.requests.first_party);
-        const tpRequests = Array.from(hosts.requests.third_party);
-        const incorrectTpAssignment = tpRequests.filter((f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain);
-        output.hosts = {
-            requests: {
-                first_party: fpRequests.concat(incorrectTpAssignment),
-                third_party: tpRequests.filter(t => !incorrectTpAssignment.includes(t))
-            }
-        };
 
-        if (args.captureLinks) {
-            output.links = outputLinks;
-            output.social = getSocialLinks(links);
-        }
         if (args.captureLinks) {
             output.links = outputLinks;
             output.social = getSocialLinks(links);
@@ -481,24 +360,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                         console.log(`Couldnt load event data ${JSON.stringify(err)}`);
                         return done([]);
                     }
-        const event_data_all = await new Promise(done => {
-            logger.query(
-                {
-                    start: 0,
-                    order: 'desc',
-                    limit: Infinity,
-                    fields: ['message']
-                },
-                (err, results) => {
-                    if (err) {
-                        console.log(`Couldnt load event data ${JSON.stringify(err)}`);
-                        return done([]);
-                    }
 
-                    return done(results.file);
-                }
-            );
-        });
                     return done(results.file);
                 }
             );
@@ -516,29 +378,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 page_response: 'Couldnt load event data'
             };
         }
-        if (!Array.isArray(event_data_all)) {
-            return {
-                status: 'failed',
-                page_response: 'Couldnt load event data'
-            };
-        }
-        if (event_data_all.length < 1) {
-            return {
-                status: 'failed',
-                page_response: 'Couldnt load event data'
-            };
-        }
 
-        // filter only events with type set
-        const event_data = event_data_all.filter(event => {
-            return !!event.message.type;
-        });
-        // We only consider something to be a third party tracker if:
-        // The domain is different to that of the final url (after any redirection) of the page the user requested to load.
-        const reports = args.blTests.reduce((acc, cur) => {
-            acc[cur] = generateReport(cur, event_data, args.outDir, REDIRECTED_FIRST_PARTY.domain);
-            return acc;
-        }, {});
         // filter only events with type set
         const event_data = event_data_all.filter(event => {
             return !!event.message.type;
