@@ -41,11 +41,14 @@ export const setUpThirdPartyTrackersInspector = async (
 
             isBlocked = true;
 
-            const query = new URL(request.url()).searchParams;
-            for (const param in query) {
+            const params = new URL(request.url()).searchParams;
+            const query = {};
+            for (const [key, value] of params.entries()) {
                 try {
-                    query[param] = JSON.parse(query[param]);
-                } catch {}
+                    query[key] = JSON.parse(value);
+                } catch {
+                    query[key] = value;
+                }
             }
 
             eventDataHandler({

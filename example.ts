@@ -6,7 +6,8 @@ import { join } from 'path';
 (async () => {
     // const URL = 'example.com';
     // const URL = 'npr.org';
-    const URL = 'cnn.com';
+    // const URL = 'cnn.com';
+    const URL = 'joebiden.com';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
     const config: CollectorOptions = {
