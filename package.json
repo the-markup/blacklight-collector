@@ -18,7 +18,8 @@
     "version-beta": "git stash && standard-version --prerelease beta",
     "version-major": "git stash && standard-version --release-as major",
     "version-minor": "git stash && standard-version --release-as minor",
-    "version-patch": "git stash && standard-version --release-as patch"
+    "version-patch": "git stash && standard-version --release-as patch",
+    "commit-hash": "echo \"module.exports='$(git show --format=%H | head -n 1)';\" > .commit-hash.cjs"
   },
   "repository": {
     "type": "git",
