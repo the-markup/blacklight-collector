@@ -4,12 +4,12 @@ on:
     types: [published]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: "14.x"
+          node-version: "lts/hydrogen"
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
@@ -17,10 +17,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: "14.x"
+          node-version: "lts/hydrogen"
           registry-url: https://registry.npmjs.org/
       - run: npm ci
       - run: npm publish
