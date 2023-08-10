@@ -37,7 +37,7 @@ export const fillForms = async (page: Page) => {
         console.log('Checking for inputs on the page');
         const elements = await page.$$('input');
         console.log(`Found ${elements.length} input elements`);
-        const count = 0;
+        let count = 0;
         for (const el of elements) {
             console.log(`Inspecting element ${count}`);
             if (count > 100) {
@@ -86,6 +86,7 @@ export const fillForms = async (page: Page) => {
             }
             await new Promise(resolve => setTimeout(resolve, 100));
             console.log(' .... done');
+            count += 1;
         }
     } catch (error) {
         console.log(error);
