@@ -76,7 +76,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             host: os.hostname(),
             version: {
                 npm: require('../package.json').version,
-                commit: null
+                commit: require('../.commit-hash.cjs')
             },
             node_version: process.version
         },
