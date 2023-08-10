@@ -43,6 +43,8 @@ export const fillForms = async (page: Page) => {
             if (count > 100) {
                 break;
             }
+            count += 1;
+
             const pHandle = await el.getProperty('type');
             const pValue = await pHandle.jsonValue();
             console.log(`Input is type ${pValue}`);
@@ -86,7 +88,6 @@ export const fillForms = async (page: Page) => {
             }
             await new Promise(resolve => setTimeout(resolve, 100));
             console.log(' .... done');
-            count += 1;
         }
     } catch (error) {
         console.log(error);
