@@ -275,7 +275,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 }
             }
         }
+        console.log('Fill forms');
         await fillForms(page);
+        console.log('Finished filling forms');
 
         let subDomainLinks = [];
         if (getSubdomain(output.uri_dest) !== 'www') {
@@ -287,6 +289,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
         const browse_links = sampleSize(subDomainLinks, args.numPages);
         output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
+        console.log('About to browse more links');
 
         for (const link of output.browsing_history.slice(1)) {
             logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
