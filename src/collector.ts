@@ -276,7 +276,20 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         }
         console.log('Fill forms');
-        await fillForms(page);
+        try {
+            await Promise.race([
+                fillForms(page), // Original function wrapped in a promise
+                new Promise(
+                    (_, reject) => setTimeout(() => reject(new Error('fillForms timeout')), 5000) // Rejects after 5 seconds
+                )
+            ]);
+        } catch (error) {
+            if (error.message === 'fillForms timeout') {
+                console.log('fillForms function timed out after 5 seconds.');
+            } else {
+                throw error; // If it's another error, re-throw it
+            }
+        }
         console.log('Finished filling forms');
 
         let subDomainLinks = [];
@@ -302,7 +315,20 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
             console.log(`Browsing now to ${link}`);
             await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
-            await fillForms(page);
+            try {
+                await Promise.race([
+                    fillForms(page), // Original function wrapped in a promise
+                    new Promise(
+                        (_, reject) => setTimeout(() => reject(new Error('fillForms timeout')), 5000) // Rejects after 5 seconds
+                    )
+                ]);
+            } catch (error) {
+                if (error.message === 'fillForms timeout') {
+                    console.log('fillForms function timed out after 5 seconds.');
+                } else {
+                    throw error; // If it's another error, re-throw it
+                }
+            }
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
             pageIndex++;
 
