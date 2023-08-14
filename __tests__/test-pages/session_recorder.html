@@ -1,0 +1,42 @@
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/rrweb@1.1.3/dist/record/rrweb-record.min.js"></script>
+    <script src="shared/event-listener.js"></script>
+    <script src="shared/session-recorder-utils.js"></script>
+  </head>
+  <body onload="start_test()">
+    <p>Submit a form with the given encoding type in the URL params.</p>
+    <!-- start_test will the "enc_type" attribute to the form -->
+    <form id="email_form" action="" method="post">
+      <input
+        type="email"
+        id="email"
+        name="email"
+        value="test@example.com"
+      /><br />
+      <input
+        type="text"
+        id="username"
+        name="username"
+        value="name surname"
+      /><br />
+      <input
+        type="text"
+        id="test"
+        name="test"
+        value="ПриватБанк – банк для тих, хто йде вперед"
+      /><br />
+      <textarea id="multiline_text" name="multiline_text"></textarea>
+      <br />
+      <input type="submit" value="Submit" />
+    </form>
+    <!-- <p>Automated tests uses the following URLs to submit data in different encodings</p>
+        <ul>
+            <li><a
+                    href="/post_request.html?encoding_type=application/x-www-form-urlencoded">application/x-www-form-urlencoded</a>
+            </li>
+            <li><a href="/post_request.html?encoding_type=text/plain">text/plain</a></li>
+            <li><a href="/post_request.html?encoding_type=multipart/form-data">multipart/form-data</a></li>
+        </ul> -->
+  </body>
+</html>

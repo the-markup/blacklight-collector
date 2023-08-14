@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Test page - POST request using AJAX</title>
+    <meta charset="utf-8" />
+    <script
+      src="https://code.jquery.com/jquery-3.1.1.min.js"
+      integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+      crossorigin="anonymous"
+    ></script>
+    <script type="application/javascript">
+      async function digestMessage(algorithm, message) {
+        const msgUint8 = new TextEncoder().encode(message); // encode as (utf-8) Uint8Array
+        const hashBuffer = await crypto.subtle.digest(algorithm, msgUint8); // hash the message
+        const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+        const hashHex = hashArray
+          .map(b => b.toString(16).padStart(2, "0"))
+          .join(""); // convert bytes to hex string
+        return hashHex;
+      }
+
+      function start_test(params) {
+        let events = [];
+        let count = 0;
+        const intervalId = setInterval(async () => {
+          count++;
+          if (count > 2) {
+            await saveFetch(await digestMessage("SHA-256", "IDAAAATARBELL"));
+            await saveFetch(
+              await digestMessage("SHA-512", "S3CR3T_CURRENT_PASSWORD")
+            );
+            await saveFetch("32d0d3a010782669bd974d6e64c6fdaf");
+            clearInterval(intervalId);
+          }
+        }, 500);
+        async function saveFetch(data) {
+          const params = { data };
+          var queryString = Object.keys(params)
+            .map(key => key + "=" + params[key])
+            .join("&");
+          await fetch("http://localhost:8125/bogus_submit.html", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: queryString
+          });
+        }
+      }
+    </script>
+  </head>
+
+  <body onload="start_test()">
+    <p>
+      Automated tests. This page makes a few POST requests with hashed data.
+    </p>
+  </body>
+</html>

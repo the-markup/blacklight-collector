@@ -1,0 +1,69 @@
+<html>
+  <title>Property Enumeration Test Page</title>
+  <h1>Property Enumeration Test Page</h1>
+
+  <pre id="result"></pre>
+
+  <script>
+    async function enumProps() {
+      var p = new Object();
+      var navigatorProperties = [
+        "appCodeName",
+        "appMinorVersion",
+        "appName",
+        "appVersion",
+        "cookieEnabled",
+        "cpuClass",
+        "doNotTrack",
+        "geolocation",
+        "javaEnabled",
+        "language",
+        "languages",
+        "onLine",
+        "opsProfile",
+        "platform",
+        "product",
+        "productSub",
+        "systemLanguage",
+        "userAgent",
+        "userLanguage",
+        "userProfile",
+        "vendorSub",
+        "vendor",
+      ];
+      navigatorProperties.forEach(function(property) {
+        p["navigator." + property] = eval("window.navigator." + property);
+      });
+      var screenProperties = [
+        "top",
+        "left",
+        "height",
+        "width",
+        "availTop",
+        "availLeft",
+        "availHeight",
+        "availWidth",
+        "pixelDepth",
+        "colorDepth",
+      ];
+      screenProperties.forEach(function(property) {
+        p["screen." + property] = eval("window.screen." + property);
+      });
+      // Replace nulls since they are skipped by JSON.stringify
+
+      for (var key in p) {
+        if (p.hasOwnProperty(key) && p[key] == null) {
+          p[key] = "NULL";
+        }
+      }
+      p[
+        "window.navigator.mediaDevices.eumerateDevices"
+      ] = await navigator.mediaDevices.enumerateDevices();
+      return p;
+    }
+    enumProps().then((result) => {
+      pre = document.getElementById("result");
+      pre.innerHTML = JSON.stringify(result, null, 2);
+    });
+  </script>
+</html>

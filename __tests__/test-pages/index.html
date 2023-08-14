@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Page A</title>
+    <script type="application/javascript">
+      function set_cookie() {
+        document.cookie =
+          "test_cookie=Test-Page-A; expires=Tue, 31 Dec 2030 00:00:00 UTC; path=/";
+        console.log(window.navigator.userAgent);
+      }
+    </script>
+  </head>
+  <body onload="set_cookie()">
+    <a href="http://localtest.me:8000/test_pages/simple_c.html">Click me!</a>
+    <a href="simple_d.html">Click me also!</a>
+    <a href="javascript:alert(1)">Click me for a JS alert!</a>
+    <a href="https://www.example.com">Go to example.com</a>
+    <a href="http://example.com/test.html?localtest.me">Go to example.com</a>
+    <a href="http://localhost:8125/keyLogging.html">An HTML PAGE IN INDEX!</a>
+  </body>
+</html>

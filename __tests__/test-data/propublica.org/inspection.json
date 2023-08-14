@@ -1,0 +1,1522 @@
+{
+  "title": "Blacklight Inspection",
+  "uri_ins": "https://propublica.org",
+  "uri_dest": "https://www.propublica.org/",
+  "uri_redirects": [
+    "https://propublica.org/"
+  ],
+  "secure_connection": {},
+  "host": "propublica.org",
+  "config": {
+    "captureHar": true,
+    "captureLinks": false,
+    "enableAdBlock": false,
+    "emulateDevice": "iPhone X",
+    "numPages": 1,
+    "saveBrowserProfile": false
+  },
+  "script": {
+    "host": "shakaal",
+    "node_version": "v10.16.3"
+  },
+  "browser": {
+    "name": "Chromium",
+    "version": "Chrome/79.0.3945.0",
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.0 Safari/537.36",
+    "platform": {
+      "name": "Linux",
+      "version": "4.15.0-70-generic"
+    }
+  },
+  "start_time": "2019-12-16T19:32:40.834Z",
+  "end_time": "2019-12-16T19:32:49.303Z",
+  "deviceEmulated": {
+    "name": "iPhone X",
+    "userAgent": "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1",
+    "viewport": {
+      "width": 375,
+      "height": 812,
+      "deviceScaleFactor": 3,
+      "isMobile": true,
+      "hasTouch": true,
+      "isLandscape": false
+    }
+  },
+  "browsing_history": [
+    "https://www.propublica.org/",
+    "https://www.propublica.org/advertising/"
+  ],
+  "hosts": {
+    "requests": {
+      "first_party": [
+        "propublica.org",
+        "www.propublica.org",
+        "assets.propublica.org",
+        "go.propublica.org"
+      ],
+      "third_party": [
+        "htlbid.com",
+        "connect.facebook.net",
+        "www.google.com",
+        "securepubads.g.doubleclick.net",
+        "c.amazon-adsystem.com",
+        "www.googletagmanager.com",
+        "data",
+        "www.gstatic.com",
+        "adservice.google.com",
+        "staticxx.facebook.com",
+        "www.facebook.com",
+        "www.google-analytics.com",
+        "stats.g.doubleclick.net",
+        "static.chartbeat.com",
+        "pi.pardot.com",
+        "ping.chartbeat.net"
+      ]
+    }
+  },
+  "reports": {
+    "behaviour_event_listeners": {
+      "MOUSE": {
+        "https://static.chartbeat.com/js/chartbeat.js": [
+          "scroll"
+        ],
+        "https://www.google-analytics.com/analytics.js": [
+          "mousedown"
+        ],
+        "https://connect.facebook.net/signals/config/132868157351935?v=2.9.15&r=stable": [
+          "click"
+        ],
+        "https://www.googletagmanager.com/gtm.js?id=GTM-M4BNWZ": [
+          "click"
+        ],
+        "https://www.propublica.org/js/public/assets/all.js": [
+          "mousemove",
+          "click"
+        ]
+      },
+      "KEYBOARD": {
+        "https://www.google-analytics.com/analytics.js": [
+          "keyup"
+        ],
+        "https://www.propublica.org/js/public/assets/all.js": [
+          "keyup"
+        ]
+      },
+      "TOUCH": {
+        "https://www.propublica.org/js/public/assets/all.js": [
+          "touchstart"
+        ]
+      }
+    },
+    "data_exfiltration": {},
+    "canvas_fingerprinters": {
+      "fingerprinters": [],
+      "texts": {},
+      "styles": {}
+    },
+    "canvas_font_fingerprinters": {
+      "textMeasure": {},
+      "canvasFont": {}
+    },
+    "fingerprintable_api_calls": {
+      "NAVIGATOR": {
+        "https://www.google-analytics.com/analytics.js": [
+          "window.navigator.language",
+          "window.navigator.userAgent"
+        ],
+        "https://connect.facebook.net/en_US/fbevents.js": [
+          "window.navigator.userAgent",
+          "window.navigator.vendor"
+        ],
+        "https://static.chartbeat.com/js/chartbeat.js": [
+          "window.navigator.userAgent",
+          "window.navigator.platform"
+        ],
+        "https://securepubads.g.doubleclick.net/tag/js/gpt.js": [
+          "window.navigator.userAgent"
+        ],
+        "https://securepubads.g.doubleclick.net/gpt/pubads_impl_2019121002.js": [
+          "window.navigator.userAgent"
+        ],
+        "https://connect.facebook.net/en_US/all.js?hash=8a8713ff5ab444cca3aea960a411139e": [
+          "window.navigator.userAgent"
+        ],
+        "https://www.gstatic.com/recaptcha/releases/mhgGrlTs_PbFQOW4ejlxlxZn/recaptcha__en.js": [
+          "window.navigator.userAgent"
+        ],
+        "https://connect.facebook.net/en_US/all.js": [
+          "window.navigator.userAgent"
+        ],
+        "https://www.propublica.org/js/public/assets/all.js": [
+          "window.navigator.userAgent"
+        ],
+        "https://htlbid.com/v3/propublica.org/htlbid.js": [
+          "window.navigator.userAgent"
+        ]
+      },
+      "SCREEN": {
+        "https://www.google-analytics.com/analytics.js": [
+          "window.screen.colorDepth"
+        ],
+        "https://static.chartbeat.com/js/chartbeat.js": [
+          "window.screen.colorDepth"
+        ]
+      }
+    },
+    "web_beacons": [
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=564722587",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 564722587
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=2031527483",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 2031527483
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=453318485",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 453318485
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=1365251636",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1365251636
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=1086780811",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1086780811
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=278686912",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 278686912
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=newsletter&ea=view&el=Daily%20-%20Site-Wide%20Footer%20%2F%20newsletter-signup-footer&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=529372867",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "newsletter",
+            "ea": "view",
+            "el": "Daily - Site-Wide Footer / newsletter-signup-footer",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 529372867
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=newsletter&ea=view&el=BigStory%20-%20Right%20Rail%20%2F%20newsletter-signup-follow-main&_u=SCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=2093968207",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "newsletter",
+            "ea": "view",
+            "el": "BigStory - Right Rail / newsletter-signup-follow-main",
+            "_u": "SCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 2093968207
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://pi.pardot.com/analytics?ver=3&visitor_id=404342407&pi_opt_in=&campaign_id=1035&account_id=126411&title=Advertising%20%E2%80%94%20ProPublica&url=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&referrer=",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter .com/analytics?"
+          }
+        ],
+        "data": {
+          "query": {
+            "ver": 3,
+            "visitor_id": 404342407,
+            "pi_opt_in": "",
+            "campaign_id": 1035,
+            "account_id": 126411,
+            "title": "Advertising — ProPublica",
+            "url": "https://www.propublica.org/advertising/",
+            "referrer": ""
+          },
+          "filter": ".com/analytics?",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=timing&_s=2&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&plt=770&pdt=4&dns=0&rrt=0&srt=258&tcp=0&dit=406&clt=406&_gst=523&_gbt=725&_cst=355&_cbt=495&_u=QCCAiEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&cd1=&cd2=&cd3=&cd4=&cd5=True&cd8=&cd9=%27site%27&z=1049800992",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "timing",
+            "_s": 2,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "plt": 770,
+            "pdt": 4,
+            "dns": 0,
+            "rrt": 0,
+            "srt": 258,
+            "tcp": 0,
+            "dit": 406,
+            "clt": 406,
+            "_gst": 523,
+            "_gbt": 725,
+            "_cst": 355,
+            "_cbt": 495,
+            "_u": "QCCAiEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "cd1": "",
+            "cd2": "",
+            "cd3": "",
+            "cd4": "",
+            "cd5": "True",
+            "cd8": "",
+            "cd9": "'site'",
+            "z": 1049800992
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://ping.chartbeat.net/ping?h=propublica.org&p=%2Fadvertising%2F&u=BNXU7jDTTTbgBL4T7D&d=propublica.org&g=1577&g0=No%20Section&g1=No%20Author&n=1&f=00001&c=0&x=0&m=0&y=3709&o=375&w=812&j=45&R=1&W=0&I=0&E=0&e=0&r=&b=770&t=bSyTZBSLNStCHkH27DBw6okBowLYh&V=118&z=t%3DUcMBtyjqcLBOa8BbDRa2elBe4DcD%26E%3D1%26x%3D6744%26c%3D0.05%26y%3D7600%26w%3D812&i=Advertising%20%E2%80%94%20ProPublica&tz=300&sn=1&sv=ByeGumH6oEI6ab2fCCDHY1CorRjy&sd=2&im=067b2fff&_",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter /ping?h="
+          }
+        ],
+        "data": {
+          "query": {
+            "h": "propublica.org",
+            "p": "/advertising/",
+            "u": "BNXU7jDTTTbgBL4T7D",
+            "d": "propublica.org",
+            "g": 1577,
+            "g0": "No Section",
+            "g1": "No Author",
+            "n": 1,
+            "f": "00001",
+            "c": 0,
+            "x": 0,
+            "m": 0,
+            "y": 3709,
+            "o": 375,
+            "w": 812,
+            "j": 45,
+            "R": 1,
+            "W": 0,
+            "I": 0,
+            "E": 0,
+            "e": 0,
+            "r": "",
+            "b": 770,
+            "t": "bSyTZBSLNStCHkH27DBw6okBowLYh",
+            "V": 118,
+            "z": "t=UcMBtyjqcLBOa8BbDRa2elBe4DcD&E=1&x=6744&c=0.05&y=7600&w=812",
+            "i": "Advertising — ProPublica",
+            "tz": 300,
+            "sn": 1,
+            "sv": "ByeGumH6oEI6ab2fCCDHY1CorRjy",
+            "sd": 2,
+            "im": "067b2fff",
+            "_": null
+          },
+          "filter": "/ping?h=",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://pi.pardot.com/pd.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||pardot.com/pd.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "||pardot.com/pd.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://static.chartbeat.com/js/chartbeat.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter /chartbeat.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "/chartbeat.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=action-nav&_u=QCCACEABB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=2084329140",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "action-nav",
+            "_u": "QCCACEABB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 2084329140
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=1202951447&t=pageview&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&ul=en-us&de=UTF-8&dt=Advertising%20%E2%80%94%20ProPublica&sd=24-bit&sr=375x812&vp=375x812&je=0&_u=QCCAgAAB~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&cd1=&cd2=&cd3=&cd4=&cd5=True&cd8=&cd9=%27site%27&z=919188943",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 1202951447,
+            "t": "pageview",
+            "_s": 1,
+            "dl": "https://www.propublica.org/advertising/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "Advertising — ProPublica",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "_u": "QCCAgAAB~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "cd1": "",
+            "cd2": "",
+            "cd3": "",
+            "cd4": "",
+            "cd5": "True",
+            "cd8": "",
+            "cd9": "'site'",
+            "z": 919188943
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.facebook.com/tr/?id=132868157351935&ev=PageView&dl=https%3A%2F%2Fwww.propublica.org%2Fadvertising%2F&rl=&if=false&ts=1576524765737&sw=375&sh=812&v=2.9.15&r=stable&ec=0&o=30&fbp=fb.1.1576524762082.897128703&it=1576524765571&coo=false&rqm=GET",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||facebook.com/tr$third-party"
+          }
+        ],
+        "data": {
+          "query": {
+            "id": 132868157351935,
+            "ev": "PageView",
+            "dl": "https://www.propublica.org/advertising/",
+            "rl": "",
+            "if": false,
+            "ts": 1576524765737,
+            "sw": 375,
+            "sh": 812,
+            "v": "2.9.15",
+            "r": "stable",
+            "ec": 0,
+            "o": 30,
+            "fbp": "fb.1.1576524762082.897128703",
+            "it": 1576524765571,
+            "coo": false,
+            "rqm": "GET"
+          },
+          "filter": "||facebook.com/tr$third-party",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/analytics.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||google-analytics.com/analytics.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "||google-analytics.com/analytics.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://connect.facebook.net/signals/config/132868157351935?v=2.9.15&r=stable",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter ||connect.facebook.net/signals/$third-party"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": "2.9.15",
+            "r": "stable"
+          },
+          "filter": "||connect.facebook.net/signals/$third-party",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.googletagmanager.com/gtm.js?id=GTM-M4BNWZ",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter /gtm.js"
+          }
+        ],
+        "data": {
+          "query": {
+            "id": "GTM-M4BNWZ"
+          },
+          "filter": "/gtm.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://connect.facebook.net/en_US/fbevents.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/advertising/",
+            "source": "requested from https://www.propublica.org/advertising/ and matched with easyprivacy.txt filter /fbevents.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "/fbevents.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=aGDACEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=440095372",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "aGDACEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 440095372
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=aGDACEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=141708821",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "aGDACEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 141708821
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=aGDACEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=1985377381",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "aGDACEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1985377381
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=aGDACEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=1151264182",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "aGDACEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1151264182
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=aGDACEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=1662154805",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "aGDACEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1662154805
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=footer-links&_u=aGDACEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=1449639285",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "footer-links",
+            "_u": "aGDACEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1449639285
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=newsletter&ea=view&el=Daily%20-%20Site-Wide%20Footer%20%2F%20newsletter-signup-footer&_u=aGDACEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&z=1525434672",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "newsletter",
+            "ea": "view",
+            "el": "Daily - Site-Wide Footer / newsletter-signup-footer",
+            "_u": "aGDACEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1525434672
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://ping.chartbeat.net/ping?h=propublica.org&p=%2F&u=BNXU7jDTTTbgBL4T7D&d=propublica.org&g=1577&g0=Zero%20Tolerance&g1=No%20Author&n=1&f=00001&c=0&x=0&m=0&y=7633&o=375&w=812&j=45&R=1&W=0&I=0&E=0&e=0&r=&b=1433&t=UcMBtyjqcLBOa8BbDRa2elBe4DcD&V=118&i=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&tz=300&sn=1&sv=ByeGumH6oEI6ab2fCCDHY1CorRjy&sd=1&im=067b2fff&_",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter /ping?h="
+          }
+        ],
+        "data": {
+          "query": {
+            "h": "propublica.org",
+            "p": "/",
+            "u": "BNXU7jDTTTbgBL4T7D",
+            "d": "propublica.org",
+            "g": 1577,
+            "g0": "Zero Tolerance",
+            "g1": "No Author",
+            "n": 1,
+            "f": "00001",
+            "c": 0,
+            "x": 0,
+            "m": 0,
+            "y": 7633,
+            "o": 375,
+            "w": 812,
+            "j": 45,
+            "R": 1,
+            "W": 0,
+            "I": 0,
+            "E": 0,
+            "e": 0,
+            "r": "",
+            "b": 1433,
+            "t": "UcMBtyjqcLBOa8BbDRa2elBe4DcD",
+            "V": 118,
+            "i": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "tz": 300,
+            "sn": 1,
+            "sv": "ByeGumH6oEI6ab2fCCDHY1CorRjy",
+            "sd": 1,
+            "im": "067b2fff",
+            "_": null
+          },
+          "filter": "/ping?h=",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://pi.pardot.com/analytics?ver=3&visitor_id=&pi_opt_in=&campaign_id=1035&account_id=126411&title=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&url=https%3A%2F%2Fwww.propublica.org%2F&referrer=",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter .com/analytics?"
+          }
+        ],
+        "data": {
+          "query": {
+            "ver": 3,
+            "visitor_id": "",
+            "pi_opt_in": "",
+            "campaign_id": 1035,
+            "account_id": 126411,
+            "title": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "url": "https://www.propublica.org/",
+            "referrer": ""
+          },
+          "filter": ".com/analytics?",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=timing&_s=2&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&plt=1433&pdt=6&dns=8&rrt=196&srt=73&tcp=45&dit=813&clt=813&_gst=1042&_gbt=1202&_cst=520&_cbt=964&_u=YGDAiEABBAAAAG~&jid=&gjid=&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&cd1=&cd2=&cd3=&cd4=&cd5=True&cd8=&cd9=%27site%27&z=1866419774",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "timing",
+            "_s": 2,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "plt": 1433,
+            "pdt": 6,
+            "dns": 8,
+            "rrt": 196,
+            "srt": 73,
+            "tcp": 45,
+            "dit": 813,
+            "clt": 813,
+            "_gst": 1042,
+            "_gbt": 1202,
+            "_cst": 520,
+            "_cbt": 964,
+            "_u": "YGDAiEABBAAAAG~",
+            "jid": "",
+            "gjid": "",
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "cd1": "",
+            "cd2": "",
+            "cd3": "",
+            "cd4": "",
+            "cd5": "True",
+            "cd8": "",
+            "cd9": "'site'",
+            "z": 1866419774
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://pi.pardot.com/pd.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||pardot.com/pd.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "||pardot.com/pd.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://static.chartbeat.com/js/chartbeat.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter /chartbeat.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "/chartbeat.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j79&tid=UA-3742720-1&cid=797508017.1576524762&jid=1440615876&gjid=135175047&_gid=806222611.1576524762&_u=YGDACEABBAAAAG~&z=1341828132",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||stats.g.doubleclick.net^"
+          }
+        ],
+        "data": {
+          "query": {
+            "t": "dc",
+            "aip": 1,
+            "_r": 3,
+            "v": 1,
+            "_v": "j79",
+            "tid": "UA-3742720-1",
+            "cid": 797508017.1576525,
+            "jid": 1440615876,
+            "gjid": 135175047,
+            "_gid": 806222611.1576525,
+            "_u": "YGDACEABBAAAAG~",
+            "z": 1341828132
+          },
+          "filter": "||stats.g.doubleclick.net^",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/collect?v=1&_v=j79&a=335462937&t=pageview&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&_u=YGBAgAAB~&jid=841925430&gjid=1485321202&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&gtm=2wgc61M4BNWZ&cd1=&cd2=&cd3=&cd4=&cd5=True&cd8=&cd9=%27site%27&z=1728149062",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/collect"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "pageview",
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "_u": "YGBAgAAB~",
+            "jid": 841925430,
+            "gjid": 1485321202,
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "gtm": "2wgc61M4BNWZ",
+            "cd1": "",
+            "cd2": "",
+            "cd3": "",
+            "cd4": "",
+            "cd5": "True",
+            "cd8": "",
+            "cd9": "'site'",
+            "z": 1728149062
+          },
+          "filter": "||google-analytics.com/collect",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/j/collect?v=1&_v=j79&a=335462937&t=event&ni=1&_s=1&dl=https%3A%2F%2Fwww.propublica.org%2F&ul=en-us&de=UTF-8&dt=ProPublica%20%E2%80%94%20Investigative%20Journalism%20and%20News%20in%20the%20Public%20Interest&sd=24-bit&sr=375x812&vp=375x812&je=0&ec=donation&ea=view&el=action-nav&_u=YGDACEABBAAAAG~&jid=1440615876&gjid=135175047&cid=797508017.1576524762&tid=UA-3742720-1&_gid=806222611.1576524762&_r=1&gtm=2wgc61M4BNWZ&z=1451888746",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter /collect?*&cid="
+          }
+        ],
+        "data": {
+          "query": {
+            "v": 1,
+            "_v": "j79",
+            "a": 335462937,
+            "t": "event",
+            "ni": 1,
+            "_s": 1,
+            "dl": "https://www.propublica.org/",
+            "ul": "en-us",
+            "de": "UTF-8",
+            "dt": "ProPublica — Investigative Journalism and News in the Public Interest",
+            "sd": "24-bit",
+            "sr": "375x812",
+            "vp": "375x812",
+            "je": 0,
+            "ec": "donation",
+            "ea": "view",
+            "el": "action-nav",
+            "_u": "YGDACEABBAAAAG~",
+            "jid": 1440615876,
+            "gjid": 135175047,
+            "cid": 797508017.1576525,
+            "tid": "UA-3742720-1",
+            "_gid": 806222611.1576525,
+            "_r": 1,
+            "gtm": "2wgc61M4BNWZ",
+            "z": 1451888746
+          },
+          "filter": "/collect?*&cid=",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j79&tid=UA-3742720-1&cid=797508017.1576524762&jid=841925430&gjid=1485321202&_gid=806222611.1576524762&_u=YGBAgAABAAAAAE~&z=704194583",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||stats.g.doubleclick.net^"
+          }
+        ],
+        "data": {
+          "query": {
+            "t": "dc",
+            "aip": 1,
+            "_r": 3,
+            "v": 1,
+            "_v": "j79",
+            "tid": "UA-3742720-1",
+            "cid": 797508017.1576525,
+            "jid": 841925430,
+            "gjid": 1485321202,
+            "_gid": 806222611.1576525,
+            "_u": "YGBAgAABAAAAAE~",
+            "z": 704194583
+          },
+          "filter": "||stats.g.doubleclick.net^",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.facebook.com/tr/?id=132868157351935&ev=PageView&dl=https%3A%2F%2Fwww.propublica.org%2F&rl=&if=false&ts=1576524762085&sw=375&sh=812&v=2.9.15&r=stable&ec=0&o=30&fbp=fb.1.1576524762082.897128703&it=1576524761815&coo=false&rqm=GET",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||facebook.com/tr$third-party"
+          }
+        ],
+        "data": {
+          "query": {
+            "id": 132868157351935,
+            "ev": "PageView",
+            "dl": "https://www.propublica.org/",
+            "rl": "",
+            "if": false,
+            "ts": 1576524762085,
+            "sw": 375,
+            "sh": 812,
+            "v": "2.9.15",
+            "r": "stable",
+            "ec": 0,
+            "o": 30,
+            "fbp": "fb.1.1576524762082.897128703",
+            "it": 1576524761815,
+            "coo": false,
+            "rqm": "GET"
+          },
+          "filter": "||facebook.com/tr$third-party",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.google-analytics.com/analytics.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||google-analytics.com/analytics.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "||google-analytics.com/analytics.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://connect.facebook.net/signals/config/132868157351935?v=2.9.15&r=stable",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter ||connect.facebook.net/signals/$third-party"
+          }
+        ],
+        "data": {
+          "query": {
+            "v": "2.9.15",
+            "r": "stable"
+          },
+          "filter": "||connect.facebook.net/signals/$third-party",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://www.googletagmanager.com/gtm.js?id=GTM-M4BNWZ",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter /gtm.js"
+          }
+        ],
+        "data": {
+          "query": {
+            "id": "GTM-M4BNWZ"
+          },
+          "filter": "/gtm.js",
+          "listName": "easyprivacy.txt"
+        }
+      },
+      {
+        "type": "TrackingRequest",
+        "url": "https://connect.facebook.net/en_US/fbevents.js",
+        "stack": [
+          {
+            "fileName": "https://www.propublica.org/",
+            "source": "requested from https://www.propublica.org/ and matched with easyprivacy.txt filter /fbevents.js"
+          }
+        ],
+        "data": {
+          "query": null,
+          "filter": "/fbevents.js",
+          "listName": "easyprivacy.txt"
+        }
+      }
+    ]
+  }
+}
