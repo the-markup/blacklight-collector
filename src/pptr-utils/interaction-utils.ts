@@ -30,7 +30,7 @@ export const fillForms = async (page: Page, timeout = 6000) => {
                     if (!page.isClosed()) {
                         isInteracting = true;
 
-                        console.log(`Inspecting element ${count}`);
+                        // console.log(`Inspecting element ${count}`);
                         if (count > 100) {
                             break;
                         }
@@ -38,29 +38,29 @@ export const fillForms = async (page: Page, timeout = 6000) => {
 
                         const pHandle = await el.getProperty('type');
                         const pValue = await pHandle.jsonValue();
-                        console.log(`Input is type ${pValue}`);
+                        // console.log(`Input is type ${pValue}`);
 
                         const autoCompleteHandle = await el.getProperty('autocomplete');
                         const autoCompleteValue = (await autoCompleteHandle.jsonValue()) as string;
-                        console.log(`Autocomplete attribute is: ${autoCompleteValue}`);
+                        // console.log(`Autocomplete attribute is: ${autoCompleteValue}`);
                         let autoCompleteKeys = [];
 
-                        console.log('Checking autocomplete value');
+                        // console.log('Checking autocomplete value');
                         if (autoCompleteValue) {
                             if (autoCompleteValue.includes('cc-name')) {
-                                console.log('Autocomplete includes cc-name.');
+                                // console.log('Autocomplete includes cc-name.');
                                 autoCompleteKeys = ['cc-name'];
                             } else {
-                                console.log('Autocomplete does not include cc-name.');
+                                // console.log('Autocomplete does not include cc-name.');
                                 autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter(k => (autoCompleteValue as string).includes(k));
                             }
                         }
 
                         if (pValue === 'submit' || pValue === 'hidden') {
-                            console.log('Type is either submit or hidden.');
+                            // console.log('Type is either submit or hidden.');
                             continue;
                         } else if (autoCompleteKeys.length > 0) {
-                            console.log('Autocomplete keys > 0');
+                            // console.log('Autocomplete keys > 0');
                             await el.focus();
                             await page.keyboard.press('Tab', {
                                 delay: 100
@@ -68,14 +68,14 @@ export const fillForms = async (page: Page, timeout = 6000) => {
                             await el.press('Backspace');
                             await page.keyboard.type(DEFAULT_INPUT_VALUES[autoCompleteKeys[0] as string]);
                         } else if (Object.keys(DEFAULT_INPUT_VALUES).includes(pValue as string)) {
-                            console.log('Default input values includes pValue');
+                            // console.log('Default input values includes pValue');
                             await el.focus();
                             await page.keyboard.press('Tab', {
                                 delay: 100
                             });
                             await el.press('Backspace');
                             await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
-                            console.log(' ... done with test');
+                            // console.log(' ... done with test');
                         }
                         isInteracting = false;
                     } else {
