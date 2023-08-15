@@ -1,6 +1,35 @@
 import { Page } from 'puppeteer';
 
 export const DEFAULT_INPUT_VALUES = {
+    date: '01/01/2026',
+    email: 'blacklight-headless@themarkup.org',
+    password: 'SUPERS3CR3T_PASSWORD',
+    search: 'TheMarkup',
+    text: 'IdaaaaTarbell',
+    url: 'https://themarkup.org',
+    organization: 'The Markup',
+    'organization-title': 'Non-profit newsroom',
+    'current-password': 'S3CR3T_CURRENT_PASSWORD',
+    'new-password': 'S3CR3T_NEW_PASSWORD',
+    username: 'idaaaa_tarbell',
+    'family-name': 'Tarbell',
+    'given-name': 'Idaaaa',
+    name: 'IdaaaaTarbell',
+    'street-address': 'PO Box #1103',
+    'address-line1': 'PO Box #1103',
+    'postal-code': '10159',
+    'cc-name': 'IDAAAATARBELL',
+    'cc-given-name': 'IDAAAA',
+    'cc-family-name': 'TARBELL',
+    'cc-number': '4479846060020724',
+    'cc-exp': '01/2026', // "MM/YY" or "MM/YYYY".
+    'cc-type': 'Visa',
+    'transaction-amount': '13371337',
+    bday: '01-01-1970',
+    sex: 'Female',
+    tel: '+1971112233',
+    'tel-national': '917-111-2233',
+    impp: 'xmpp:blacklight-headless@themarkup.org'
     // ... [rest of the default input values]
 };
 
