@@ -39,10 +39,10 @@ export const fillForms = async (page: Page, timeout = 6000) => {
     const timeoutPromise = new Promise(resolve => {
         setTimeout(() => {
             if (isInteracting) {
-                console.log('Interaction ongoing. Waiting for safe exit.');
+                // console.log('Interaction ongoing. Waiting for safe exit.');
                 return;
             }
-            console.log('Timeout reached. Exiting fillForms().');
+            // console.log('Timeout reached. Exiting fillForms().');
             resolve('Timeout');
         }, timeout);
     });
