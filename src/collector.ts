@@ -177,60 +177,33 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
     // Function to navigate to a page with a timeout guard
     const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
-        const navigationPromise = page.goto(url, { timeout, waitUntil }).then(async () => {
-            await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
-            pageIndex++;
-            console.log('Navigation succeeded');
-        });
-
-        try {
-            await navigationPromise;
-            console.log(`Page loaded successfully!`);
-        } catch (error) {
-            if (error.message.includes('Navigation timeout')) {
-                await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
-                pageIndex++;
-
-                // try {
-                //     const client = await page.target().createCDPSession();
-                //     await client.send('Page.stopLoading');
-                //     console.log('Page.stopLoading succeeded');
-                // } catch (error) {
-                //     console.log('Page.stopLoading failed');
-                //     console.log(error.message);
-                // }
-                console.log('Navigation timeout occurred, but continuing with the collected data...');
-            } else {
-                loadError = true;
-                console.log('Navigation failed');
-                throw error; // Re-throw the error if it's not a timeout
-            }
-        }
+      try {
+          page_response = await Promise.race([
+              page.goto(url, {
+                  timeout: timeout,
+                  waitUntil: waitUntil
+              }),
+              new Promise((_, reject) =>
+                  setTimeout(() => {
+                      console.log('First navigation attempt timeout');
+                      reject(new Error('First navigation attempt timeout'));
+                  }, 10000)
+              )
+          ]);
+      } catch (error) {
+          console.log('First attempt failed, trying with domcontentloaded');
+          page_response = await page.goto(url, {
+              timeout: timeout,
+              waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
+          });
+      }
+      await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
     };
 
     // Go to the first url
     console.log('Going to the first url');
-    try {
-        page_response = await Promise.race([
-            page.goto(inUrl, {
-                timeout: args.defaultTimeout,
-                waitUntil: args.defaultWaitUntil as PuppeteerLifeCycleEvent
-            }),
-            new Promise((_, reject) =>
-                setTimeout(() => {
-                    console.log('First navigation attempt timeout');
-                    reject(new Error('First navigation attempt timeout'));
-                }, 10000)
-            )
-        ]);
-    } catch (error) {
-        console.log('First attempt failed, trying with domcontentloaded');
-        page_response = await page.goto(inUrl, {
-            timeout: args.defaultTimeout,
-            waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
-        });
-    }
-    await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
+    await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+
     pageIndex++;
     console.log('Saving first page response');
 
@@ -275,6 +248,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
     }
     await fillForms(page);
+    // console.log('... done with fillForms');
+    await autoScroll(page);
+    // console.log('... done with autoScroll');
 
     let subDomainLinks = [];
     if (getSubdomain(output.uri_dest) !== 'www') {
@@ -302,19 +278,28 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
         await fillForms(page);
+        // console.log('... done with fillForms (2)');
 
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
         pageIndex++;
 
         duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
         await autoScroll(page);
-    }
-    await captureBrowserCookies(page, args.outDir);
-    if (args.captureHar) {
-        await har.stop();
+        // console.log('... done with autoScroll (2)');
     }
 
+    // console.log('saving cookies');
+    await captureBrowserCookies(page, args.outDir);
+    // console.log('... done saving cookies');
+    if (args.captureHar) {
+        // console.log('saving har');
+        await har.stop();
+        // console.log('... done saving har');
+    }
+
+    // console.log('closing browser');
     await browser.close();
+    // console.log('... done closing browser');
     if (typeof userDataDir !== 'undefined') {
         clearDir(userDataDir, false);
     }
@@ -335,6 +320,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
     }
     // generate report
+    // console.log('generating report');
     const fpRequests = Array.from(hosts.requests.first_party);
     const tpRequests = Array.from(hosts.requests.third_party);
     const incorrectTpAssignment = tpRequests.filter((f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain);
@@ -393,6 +379,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         return acc;
     }, {});
 
+    // console.log('writing inspection.json');
     const json_dump = JSON.stringify({ ...output, reports }, null, 2);
     writeFileSync(join(args.outDir, 'inspection.json'), json_dump);
     if (args.outDir.includes('bl-tmp')) {
