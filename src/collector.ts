@@ -178,6 +178,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     // Function to navigate to a page with a timeout guard
     const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
       try {
+          console.log(`Going to ${url}`);
           page_response = await Promise.race([
               page.goto(url, {
                   timeout: timeout,
@@ -185,27 +186,23 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
               }),
               new Promise((_, reject) =>
                   setTimeout(() => {
-                      console.log('First navigation attempt timeout');
-                      reject(new Error('First navigation attempt timeout'));
+                      console.log(`Failed loading with ${waitUntil}`);
+                      reject(new Error(`Failed loading with ${waitUntil}`));
                   }, 10000)
               )
           ]);
       } catch (error) {
-          console.log('First attempt failed, trying with domcontentloaded');
+          console.log('Trying with domcontentloaded');
           page_response = await page.goto(url, {
               timeout: timeout,
-              waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
+              waitUntil: 'domcontentloaded'
           });
       }
-      await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
     };
 
     // Go to the first url
-    console.log('Going to the first url');
     await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
-
-    pageIndex++;
-    console.log('Saving first page response');
+    await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
 
     let duplicatedLinks = [];
     const outputLinks = {
@@ -247,10 +244,13 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         }
     }
-    await fillForms(page);
-    // console.log('... done with fillForms');
-    await autoScroll(page);
-    // console.log('... done with autoScroll');
+
+    console.log(`Interacting with page ${pageIndex}`);
+    await Promise.all([
+        autoScroll(page),
+        fillForms(page)
+    ]);
+    console.log(`Done interacting with page ${pageIndex}`);
 
     let subDomainLinks = [];
     if (getSubdomain(output.uri_dest) !== 'www') {
@@ -264,8 +264,12 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
     console.log('About to browse more links');
 
+    pageIndex++;
+
     // try {
-    for (const link of output.browsing_history.slice(1)) {
+    for (let link of output.browsing_history.slice(1)) {
+        // link = 'https://www.npr.org/sections/food/';
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
         logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
         if (didBrowserDisconnect) {
             return {
@@ -274,30 +278,30 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             };
         }
 
-        console.log(`Browsing now to ${link}`);
         await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+        await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
 
-        await fillForms(page);
-        // console.log('... done with fillForms (2)');
+        console.log(`Interacting with page ${pageIndex}`);
+        await Promise.all([
+            autoScroll(page),
+            fillForms(page)
+        ]);
+        console.log(`Done interacting with page ${pageIndex}`);
 
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
         pageIndex++;
-
         duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
-        await autoScroll(page);
-        // console.log('... done with autoScroll (2)');
     }
 
-    // console.log('saving cookies');
+    console.log('Saving cookies');
     await captureBrowserCookies(page, args.outDir);
     // console.log('... done saving cookies');
     if (args.captureHar) {
-        // console.log('saving har');
+        console.log('Saving har');
         await har.stop();
         // console.log('... done saving har');
     }
 
-    // console.log('closing browser');
+    console.log('Closing browser');
     await browser.close();
     // console.log('... done closing browser');
     if (typeof userDataDir !== 'undefined') {
@@ -320,7 +324,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
     }
     // generate report
-    // console.log('generating report');
+    console.log('Generating report');
     const fpRequests = Array.from(hosts.requests.first_party);
     const tpRequests = Array.from(hosts.requests.third_party);
     const incorrectTpAssignment = tpRequests.filter((f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain);
@@ -379,7 +383,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         return acc;
     }, {});
 
-    // console.log('writing inspection.json');
+    console.log('Writing inspection.json');
     const json_dump = JSON.stringify({ ...output, reports }, null, 2);
     writeFileSync(join(args.outDir, 'inspection.json'), json_dump);
     if (args.outDir.includes('bl-tmp')) {

@@ -6,10 +6,12 @@ const writeFile = promisify(fs.writeFile);
 
 export const savePageContent = async (index, outDir, page: Page, screenshot = true) => {
     try {
+        console.log(`Saving ${index}.html`);
         const html = await page.content();
         const outPath = path.join(outDir, `${index}.html`);
         await writeFile(outPath, html);
         if (screenshot) {
+            console.log(`Saving ${index}.jpeg`);
             const outPathImg = path.join(outDir, `${index}.jpeg`);
             await page.screenshot({ path: outPathImg, type: 'jpeg', quality: 50 });
         }
