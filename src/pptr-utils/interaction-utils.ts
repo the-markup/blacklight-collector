@@ -119,7 +119,7 @@ export const fillForms = async (page: Page, timeout = 6000) => {
             if (error.message.includes('Execution context was destroyed')) {
                 console.log('Page navigated away while interacting. Continuing...');
             } else {
-                console.error('Error in fillForms:', error);
+                console.error(`Error in fillForms: ${error.message}`);
             }
         } finally {
             console.log('Done with fillForms');
