@@ -1,10 +1,8 @@
-# **Puppeteer Page Load Event Options Analysis**
+# **Analysis of Puppeteer's `page.goto()` WaitUntil Options**
 
-While investigating timeout issues in the Blacklight tool, we explored tweaking Puppeteer's `waitUntil` option for when to consider a page done loading. Different values result in tradeoffs between speed, completeness, and reliability.
+While investigating timeout issues in the Blacklight tool, we specifically explored tweaking the `waitUntil` option in Puppeteer's `page.goto()` method. This option determines when the navigation is considered complete.
 
-To evaluate the options, we created the following comparison table summarizing the advantages and disadvantages of each setting based on our testing:
-
-The key options we evaluated were:
+The `page.goto()` method is used to navigate the page to a URL. The `waitUntil` option controls when Puppeteer considers the navigation successful:
 
 - `'load'` - Wait for full page load
 - `'domcontentloaded'` - Wait for DOM only
@@ -13,9 +11,7 @@ The key options we evaluated were:
 
 In the end, no single option solved the timeout issues completely. However, these notes capture our analysis of the tradeoffs between the different strategies.
 
-We ultimately combined multiple approaches for the optimal solution. But this table represents a piece of the investigative journey to better understand Puppeteer page load behavior.
-
-Now here is the comparison table:
+We ultimately combined multiple approaches for the optimal solution. But this table represents a piece of the investigative journey to better understand Puppeteer page load behavior:
 
 | Options            	| Advantages                                                                                                                                                       	| Disadvantages                                                                                                                                                                                                                                              	|
 |--------------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------	|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------	|
