@@ -2,7 +2,7 @@ import { writeFileSync } from 'fs';
 import sampleSize from 'lodash.samplesize';
 import os from 'os';
 import { join } from 'path';
-import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
+import puppeteer, { Browser, Page, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
 import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
 import url from 'url';
@@ -30,9 +30,7 @@ const DEFAULT_OPTIONS = {
     clearCache: true,
     quiet: true,
     headless: true,
-    defaultTimeout: 35000,
     numPages: 3,
-    defaultWaitUntil: 'networkidle2' as PuppeteerLifeCycleEvent,
     saveBrowserProfile: false,
     saveScreenshots: true,
     blTests: [
@@ -100,6 +98,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     let page: Page;
     let pageIndex = 1;
     let har = {} as any;
+    let page_url = null;
+    let page_request = null;
     let page_response = null;
     let loadError = false;
     const userDataDir = args.saveBrowserProfile ? join(args.outDir, 'browser-profile') : undefined;
@@ -139,7 +139,13 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     page.emulate(args.emulateDevice);
 
     // record all requested hosts
-    await page.on('request', request => {
+    page.on('request', request => {
+        const redirects = request.redirectChain();
+        if (redirects.length == 0 && request.url() == page_url ||
+            redirects.length > 0 && redirects[0].url() == page_url) {
+            console.log(`Assigning page_request: ${request.url()}`);
+            page_request = request;
+        }
         const l = parse(request.url());
         // note that hosts may appear as first and third party depending on the path
         if (FIRST_PARTY.domain === l.domain) {
@@ -176,33 +182,33 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     }
 
     // Function to navigate to a page with a timeout guard
-    const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
+    const navigateWithTimeout = async (page: Page, navigateUrl: string) => {
       try {
-          console.log(`Going to ${url}`);
+          page_url = url.parse(navigateUrl).href; // normalize URL
+          console.log(`Going to ${page_url}`);
           page_response = await Promise.race([
-              page.goto(url, {
-                  timeout: timeout,
-                  waitUntil: waitUntil
+              page.goto(page_url, {
+                  timeout: 0,
+                  waitUntil: ['networkidle2', 'domcontentloaded']
               }),
               new Promise((_, reject) =>
                   setTimeout(() => {
-                      console.log(`Failed loading with ${waitUntil}`);
-                      reject(new Error(`Failed loading with ${waitUntil}`));
-                  }, 10000)
+                      reject(new Error('Done waiting for navigation'));
+                  }, 15000)
               )
           ]);
       } catch (error) {
-          console.log('Trying with domcontentloaded');
-          page_response = await page.goto(url, {
-              timeout: timeout,
-              waitUntil: 'domcontentloaded'
-          });
+          if (error.message != 'Done waiting for navigation') {
+              loadError = true;
+          }
+          console.log(error.message);
       }
     };
 
     // Go to the first url
-    await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+    await navigateWithTimeout(page, inUrl);
     await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
+    console.log('Done saving page');
 
     let duplicatedLinks = [];
     const outputLinks = {
@@ -221,8 +227,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
         return { status: 'failed', page_response };
     }
-    output.uri_redirects = page_response
-        .request()
+    output.uri_redirects = page_request
         .redirectChain()
         .map(req => {
             return req.url();
@@ -278,7 +283,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             };
         }
 
-        await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+        await navigateWithTimeout(page, link);
         await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
 
         console.log(`Interacting with page ${pageIndex}`);

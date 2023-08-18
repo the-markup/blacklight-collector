@@ -13,10 +13,12 @@ export const savePageContent = async (index, outDir, page: Page, screenshot = tr
         if (screenshot) {
             console.log(`Saving ${index}.jpeg`);
             const outPathImg = path.join(outDir, `${index}.jpeg`);
+            console.log('About to screenshot');
             await page.screenshot({ path: outPathImg, type: 'jpeg', quality: 50 });
+            console.log('done with screenshot');
         }
     } catch (error) {
-        console.log(`couldnt save page content: ${JSON.stringify(error)}`);
+        console.log(`couldnt save page content: ${error.message}`);
     }
 };
 /**
