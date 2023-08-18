@@ -268,33 +268,36 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     const browse_links = sampleSize(subDomainLinks, args.numPages);
     output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
     console.log('About to browse more links');
+    page_request.abort();
 
     pageIndex++;
 
-    // try {
-    for (let link of output.browsing_history.slice(1)) {
-        // link = 'https://www.npr.org/sections/food/';
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-        logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
-        if (didBrowserDisconnect) {
-            return {
-                status: 'failed',
-                page_response: 'Chrome crashed'
-            };
+    try {
+        for (let link of output.browsing_history.slice(1)) {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+            logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
+            if (didBrowserDisconnect) {
+                return {
+                    status: 'failed',
+                    page_response: 'Chrome crashed'
+                };
+            }
+
+            await navigateWithTimeout(page, link);
+            await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
+
+            console.log(`Interacting with page ${pageIndex}`);
+            await Promise.all([
+                autoScroll(page),
+                fillForms(page)
+            ]);
+            console.log(`Done interacting with page ${pageIndex}`);
+
+            pageIndex++;
+            duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
         }
-
-        await navigateWithTimeout(page, link);
-        await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
-
-        console.log(`Interacting with page ${pageIndex}`);
-        await Promise.all([
-            autoScroll(page),
-            fillForms(page)
-        ]);
-        console.log(`Done interacting with page ${pageIndex}`);
-
-        pageIndex++;
-        duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
+    } catch(error) {
+        console.log(`Error loading additional pages: ${error.message}`);
     }
 
     console.log('Saving cookies');
