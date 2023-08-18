@@ -8,7 +8,7 @@ import { join } from 'path';
 
     const config: CollectorOptions = {
         numPages: 1,
-        headless: true,
+        headless: false,
         emulateDevice: KnownDevices[EMULATE_DEVICE],
         // Uncomment to run with desktop/laptop browser
         // emulateDevice: {
