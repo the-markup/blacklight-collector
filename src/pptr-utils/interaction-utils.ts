@@ -33,84 +33,93 @@ export const DEFAULT_INPUT_VALUES = {
     // ... [rest of the default input values]
 };
 
-export const fillForms = async (page: Page, timeout = 30000) => {
-    console.log('Filling out forms');
-    let isDone = false;
+export const fillForms = async (page: Page, timeout = 6000) => {
+    let isInteracting = false;
 
     const timeoutPromise = new Promise(resolve => {
         setTimeout(() => {
-            isDone = true;
-            console.log('Timeout reached. Exiting fillForms().');
+            if (isInteracting) {
+                // console.log('Interaction ongoing. Waiting for safe exit.');
+                return;
+            }
+            // console.log('Timeout reached. Exiting fillForms().');
             resolve('Timeout');
         }, timeout);
     });
 
     const fillPromise = async () => {
+        console.log('Entering fillPromise.');
         try {
-            console.log('Checking for inputs on the page');
-            if (isDone) {
-                return;
-            }
-            const elements = await page.$$('input');
-            console.log(`Found ${elements.length} input elements`);
-            let count = 0;
-            for (const el of elements) {
-                if (isDone) {
-                    return;
-                }
-                if (count > 100) {
-                    break;
-                }
-                count += 1;
-                const pHandle = await el.getProperty('type');
-                const pValue = await pHandle.jsonValue();
-                // console.log(`Input is type ${pValue}`);
+            if (!page.isClosed()) {
+                console.log('Checking for inputs on the page');
+                const elements = await page.$$('input');
+                console.log(`Found ${elements.length} input elements`);
+                let count = 0;
+                for (const el of elements) {
+                    if (!page.isClosed()) {
+                        isInteracting = true;
 
-                const autoCompleteHandle = await el.getProperty('autocomplete');
-                const autoCompleteValue = (await autoCompleteHandle.jsonValue()) as string;
-                // console.log(`Autocomplete attribute is: ${autoCompleteValue}`);
-                let autoCompleteKeys = [];
+                        // console.log(`Inspecting element ${count}`);
+                        if (count > 100) {
+                            break;
+                        }
+                        count += 1;
 
-                // console.log('Checking autocomplete value');
-                if (autoCompleteValue) {
-                    if (autoCompleteValue.includes('cc-name')) {
-                        // console.log('Autocomplete includes cc-name.');
-                        autoCompleteKeys = ['cc-name'];
+                        const pHandle = await el.getProperty('type');
+                        const pValue = await pHandle.jsonValue();
+                        // console.log(`Input is type ${pValue}`);
+
+                        const autoCompleteHandle = await el.getProperty('autocomplete');
+                        const autoCompleteValue = (await autoCompleteHandle.jsonValue()) as string;
+                        // console.log(`Autocomplete attribute is: ${autoCompleteValue}`);
+                        let autoCompleteKeys = [];
+
+                        // console.log('Checking autocomplete value');
+                        if (autoCompleteValue) {
+                            if (autoCompleteValue.includes('cc-name')) {
+                                // console.log('Autocomplete includes cc-name.');
+                                autoCompleteKeys = ['cc-name'];
+                            } else {
+                                // console.log('Autocomplete does not include cc-name.');
+                                autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter(k => (autoCompleteValue as string).includes(k));
+                            }
+                        }
+
+                        if (pValue === 'submit' || pValue === 'hidden') {
+                            // console.log('Type is either submit or hidden.');
+                            continue;
+                        } else if (autoCompleteKeys.length > 0) {
+                            // console.log('Autocomplete keys > 0');
+                            await el.focus();
+                            await page.keyboard.press('Tab', {
+                                delay: 100
+                            });
+                            await el.press('Backspace');
+                            await page.keyboard.type(DEFAULT_INPUT_VALUES[autoCompleteKeys[0] as string]);
+                        } else if (Object.keys(DEFAULT_INPUT_VALUES).includes(pValue as string)) {
+                            // console.log('Default input values includes pValue');
+                            await el.focus();
+                            await page.keyboard.press('Tab', {
+                                delay: 100
+                            });
+                            await el.press('Backspace');
+                            await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
+                            // console.log(' ... done with test');
+                        }
+                        isInteracting = false;
                     } else {
-                        // console.log('Autocomplete does not include cc-name.');
-                        autoCompleteKeys = Object.keys(DEFAULT_INPUT_VALUES).filter(k => (autoCompleteValue as string).includes(k));
+                        console.log('Page is closed. Exiting loop.');
+                        break;
                     }
                 }
-
-                if (isDone) {
-                    return;
-                } else if (pValue === 'submit' || pValue === 'hidden') {
-                    // console.log('Type is either submit or hidden.');
-                    continue;
-                } else if (autoCompleteKeys.length > 0) {
-                    // console.log('Autocomplete keys > 0');
-                    await el.focus();
-                    await page.keyboard.press('Tab', {
-                        delay: 100
-                    });
-                    await el.press('Backspace');
-                    await page.keyboard.type(DEFAULT_INPUT_VALUES[autoCompleteKeys[0] as string]);
-                } else if (Object.keys(DEFAULT_INPUT_VALUES).includes(pValue as string)) {
-                    // console.log('Default input values includes pValue');
-                    await el.focus();
-                    await page.keyboard.press('Tab', {
-                        delay: 100
-                    });
-                    await el.press('Backspace');
-                    await page.keyboard.type(DEFAULT_INPUT_VALUES[pValue as string]);
-                    // console.log(' ... done with test');
-                }
+            } else {
+                console.log('Page is closed. Exiting fillForms.');
             }
         } catch (error) {
             if (error.message.includes('Execution context was destroyed')) {
                 console.log('Page navigated away while interacting. Continuing...');
             } else {
-                console.log(`Error in fillForms: ${error.message}`);
+                console.error(`Error in fillForms: ${error.message}`);
             }
         } finally {
             console.log('Done with fillForms');
@@ -121,7 +130,6 @@ export const fillForms = async (page: Page, timeout = 30000) => {
 };
 
 export const autoScroll = async page => {
-    console.log('Scrolling the page');
     await page.evaluate(async () => {
         return new Promise((resolve, reject) => {
             try {
@@ -136,12 +144,10 @@ export const autoScroll = async page => {
                     count += 1;
                     if (totalHeight >= scrollHeight || count > COUNT_MAX) {
                         clearInterval(timer);
-                        console.log('Done scrolling the page');
                         resolve(undefined);
                     }
                 }, 100);
             } catch (error) {
-                console.log(`Error scrolling: ${error.message}`);
                 reject(error);
             }
         });
