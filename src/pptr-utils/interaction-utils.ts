@@ -40,7 +40,7 @@ export const fillForms = async (page: Page, timeout = 30000) => {
     const timeoutPromise = new Promise(resolve => {
         setTimeout(() => {
             isDone = true;
-            // console.log('Timeout reached. Exiting fillForms().');
+            console.log('Timeout reached. Exiting fillForms().');
             resolve('Timeout');
         }, timeout);
     });
