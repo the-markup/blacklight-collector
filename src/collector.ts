@@ -194,7 +194,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
               new Promise((_, reject) =>
                   setTimeout(() => {
                       reject(new Error('Done waiting for navigation'));
-                  }, 15000)
+                  }, 30000)
               )
           ]);
       } catch (error) {
