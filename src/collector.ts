@@ -166,7 +166,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         if (args.captureHar) {
             har = new PuppeteerHar(page);
             await har.start({
-                path: args.outDir ? join(args.outDir, 'requests.har') : undefined
+                path: args.outDir ? join(args.outDir, 'requests.har') : undefined,
+                saveResponse: true,
             });
         }
         if (didBrowserDisconnect) {

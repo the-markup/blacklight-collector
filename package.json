@@ -37,7 +37,7 @@
     "lodash.samplesize": "^4.2.0",
     "npm": "^10.5.2",
     "puppeteer": "^19.7.5",
-    "puppeteer-har": "^1.1.1",
+    "puppeteer-har": "git+https://github.com/jonapgar/puppeteer-har.git",
     "run": "^1.4.0",
     "stacktrace-js": "^2.0.1",
     "tldts": "^6.0.2",
