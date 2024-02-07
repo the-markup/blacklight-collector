@@ -96,20 +96,26 @@ export const getJsCookies = (events, url) => {
         )
         .map(d => {
             const data = parseCookie(d.data.value, url);
+            const hasOwnDomain = d.hasOwnProperty('domain') && d.domain !== null && d.domain !== undefined;
+            const hasOwnName = data && data.hasOwnProperty('key') && data.key !== null && data.key !== undefined;
+            const hasOwnPath = data && data.hasOwnProperty('path') && data.path !== null && data.path !== undefined;
+            const hasOwnValue = data && data.hasOwnProperty('value') && data.value !== null && data.value !== undefined;
             const script = getScriptUrl(d);
+
             return {
-                domain: d.hasOwnProperty('domain') ? d.domain : getDomain(url),
-                name: data && data.hasOwnProperty('key') ? data.key : '',
-                path: data && data.hasOwnProperty('path') ? data.path : '',
+                domain: hasOwnDomain ? d.domain : getDomain(url),
+                name: hasOwnName ? data.key : '',
+                path: hasOwnPath ? data.path : '',
                 script,
                 type: d.type,
-                value: data && data.hasOwnProperty('value') ? data.value : ''
+                value: hasOwnValue ? data.value : ''
             };
         });
 };
 export const matchCookiesToEvents = (cookies, events, url) => {
     const jsCookies = getJsCookies(events, url);
     const httpCookie = getHTTPCookies(events, url);
+
     if (cookies.length < 1) {
         const js = jsCookies
             .map(j => ({
@@ -134,7 +140,6 @@ export const matchCookiesToEvents = (cookies, events, url) => {
             .filter(
                 (thing, index, self) => index === self.findIndex(t => t.name === thing.name && t.domain === thing.domain && t.value === thing.value)
             );
-
         return [...js, ...http];
     }
     const final = cookies.map(b => {
