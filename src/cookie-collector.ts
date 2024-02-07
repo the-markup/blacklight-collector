@@ -96,17 +96,19 @@ export const getJsCookies = (events, url) => {
         )
         .map(d => {
             const data = parseCookie(d.data.value, url);
+            const hasOwnDomain = d.hasOwnProperty('domain') && d.domain !== null && d.domain !== undefined;
             const hasOwnName = data && data.hasOwnProperty('key') && data.key !== null && data.key !== undefined;
             const hasOwnPath = data && data.hasOwnProperty('path') && data.path !== null && data.path !== undefined;
-            
+            const hasOwnValue = data && data.hasOwnProperty('value') && data.value !== null && data.value !== undefined;
             const script = getScriptUrl(d);
+
             return {
-                domain: d.hasOwnProperty('domain') ? d.domain : getDomain(url),
+                domain: hasOwnDomain ? d.domain : getDomain(url),
                 name: hasOwnName ? data.key : '',
                 path: hasOwnPath ? data.path : '',
                 script,
                 type: d.type,
-                value: data && data.hasOwnProperty('value') ? data.value : ''
+                value: hasOwnValue ? data.value : ''
             };
         });
 };
