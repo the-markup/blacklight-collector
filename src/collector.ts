@@ -111,11 +111,13 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         headless: args.headless,
         userDataDir
     };
+    console.log(options.args);
     if (args.puppeteerExecutablePath) {
         options['executablePath'] = args.puppeteerExecutablePath;
     }
     browser = await puppeteer.launch(options);
     browser.on('disconnected', () => {
+        console.log('browser disconnected');
         didBrowserDisconnect = true;
     });
 
