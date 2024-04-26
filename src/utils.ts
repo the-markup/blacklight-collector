@@ -29,7 +29,7 @@ const deleteFolderRecursive = path => {
 
 export const clearDir = (outDir, mkNewDir = true) => {
     if (fs.existsSync(outDir)) {
-        deleteFolderRecursive(outDir);
+        fs.rmSync(outDir, { recursive: true, force: true });
     }
     if (mkNewDir) {
         fs.mkdirSync(outDir);
