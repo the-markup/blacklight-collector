@@ -21,7 +21,19 @@ export const savePageContent = async (index, outDir, page: Page, screenshot = tr
  * Default Puppeteer options for dev
  */
 export const defaultPuppeteerBrowserOptions = {
-    args: ['--no-sandbox', '--disable-dev-shm-usage', '--ignore-certificate-errors', '--autoplay-policy=no-user-gesture-required'],
+    args: [
+        '--no-sandbox', 
+        '--disable-dev-shm-usage', 
+        '--ignore-certificate-errors', 
+        '--autoplay-policy=no-user-gesture-required',
+        '--aggressive-cache-discard',
+        '--disable-cache',
+        '--disable-application-cache',
+        '--disable-offline-load-stale-cache',
+        '--disable-gpu-shader-disk-cache',
+        '--media-cache-size=0',
+        '--disk-cache-size=0',
+    ],
     defaultViewport: null,
     headless: true
 };
