@@ -114,6 +114,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     if (args.puppeteerExecutablePath) {
         options['executablePath'] = args.puppeteerExecutablePath;
     }
+    try {
     browser = await puppeteer.launch(options);
     browser.on('disconnected', () => {
         didBrowserDisconnect = true;
@@ -387,22 +388,23 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         clearDir(args.outDir, false);
     }
     return { status: 'success', ...output, reports };
+    }
     // } catch (error) {
     //     // return error
     //     return {
     //         status: 'failed',
     //         page_response: 'Run failed, please try again'
     //     };
-    // } finally {
-    //     // close browser and clear tmp dir
-    //     if (browser && !didBrowserDisconnect) {
-    //         await browser.close();
-    //     }
-    //     if (typeof userDataDir !== 'undefined') {
-    //         clearDir(userDataDir, false);
-    //     }
-    //     if (args.outDir.includes('bl-tmp')) {
-    //         clearDir(args.outDir, false);
-    //     }
-    // }
+     finally {
+        // close browser and clear tmp dir
+        if (browser && !didBrowserDisconnect) {
+            await browser.close();
+        }
+        // if (typeof userDataDir !== 'undefined') {
+        //     clearDir(userDataDir, false);
+        // }
+        // if (args.outDir.includes('bl-tmp')) {
+        //     clearDir(args.outDir, false);
+        // }
+    }
 };
