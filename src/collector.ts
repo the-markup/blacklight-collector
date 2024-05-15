@@ -297,7 +297,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         // console.log('... done saving har');
     }
 
-    // console.log('closing browser');
+    console.log('closing browser');
     await browser.close();
     // console.log('... done closing browser');
     if (typeof userDataDir !== 'undefined') {
