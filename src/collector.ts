@@ -215,6 +215,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
     // Return if the page doesnt load
     if (loadError) {
+        console.log("browser close 1");
         await browser.close();
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
