@@ -397,7 +397,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     //     };
      finally {
         // close browser and clear tmp dir
+        console.log(browser, didBrowserDisconnect);
         if (browser && !didBrowserDisconnect) {
+            console.log("closing browser");
             await browser.close();
         }
         // if (typeof userDataDir !== 'undefined') {
