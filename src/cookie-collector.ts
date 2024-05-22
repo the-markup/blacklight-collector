@@ -168,10 +168,13 @@ export const matchCookiesToEvents = (cookies, events, url) => {
     return final.sort((a, b) => b.expires - a.expires);
 };
 
-// NOTE: There is a bug in chrome that prevents us from catching all the cookies being set using its instrumentation
-// https://blog.ermer.de/2018/06/11/chrome-67-provisional-headers-are-shown/
-// The following call using the dev tools protocol ensures we get all the cookies even if we cant trace the source for each call
-export const captureBrowserCookies = async (page, outDir, filename = 'browser-cookies.json') => {
+// NOTE: There is a bug in chrome that prevents us from catching all
+// the cookies being set using its instrumentation:
+// https://web.archive.org/web/20180611230219/https://blog.ermer.de/2018/06/11/chrome-67-provisional-headers-are-shown/
+//
+// The following call using the dev tools protocol ensures we get all
+// the cookies even if we can't trace the source for each call
+export const captureBrowserCookies = async (page: Page, outDir: string, filename = 'browser-cookies.json') => {
     const client = await page.target().createCDPSession();
     const browser_cookies = (await client.send('Network.getAllCookies')).cookies.map(cookie => {
         if (cookie.expires > -1) {
