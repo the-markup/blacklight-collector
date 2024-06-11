@@ -1,7 +1,7 @@
-const { setup } = require("jest-dev-server");
+const { setup: setupDevServer } = require("jest-dev-server");
 
 module.exports = async function globalSetup() {
-  await setup({
+  globalThis.servers = await setupDevServer({
     debug: true,
     command: `npm run test-server`,
     port: 8125,
