@@ -35,6 +35,7 @@ const DEFAULT_OPTIONS = {
     defaultWaitUntil: 'networkidle2' as PuppeteerLifeCycleEvent,
     saveBrowserProfile: false,
     saveScreenshots: true,
+    addRequestHeaders: {},
     blTests: [
         'behaviour_event_listeners',
         'canvas_fingerprinters',
@@ -139,6 +140,10 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         };
         page.emulate(args.emulateDevice);
 
+        if (Object.keys(args.addRequestHeaders).length > 0) {
+            page.setExtraHTTPHeaders(args.addRequestHeaders);
+        }
+
         // record all requested hosts
         await page.on('request', request => {
             const l = parse(request.url());
@@ -150,6 +155,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                     hosts.requests.third_party.add(l.hostname);
                 }
             }
+            const headers = request.headers();
+            console.log(headers);
         });
 
         if (args.clearCache) {
