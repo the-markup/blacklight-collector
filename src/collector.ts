@@ -155,8 +155,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                     hosts.requests.third_party.add(l.hostname);
                 }
             }
-            const headers = request.headers();
-            console.log(headers);
         });
 
         if (args.clearCache) {
