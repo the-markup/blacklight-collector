@@ -35,6 +35,7 @@ const DEFAULT_OPTIONS = {
     defaultWaitUntil: 'networkidle2' as PuppeteerLifeCycleEvent,
     saveBrowserProfile: false,
     saveScreenshots: true,
+    headers: {},
     blTests: [
         'behaviour_event_listeners',
         'canvas_fingerprinters',
@@ -138,6 +139,10 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         };
         page.emulate(args.emulateDevice);
+
+        if (Object.keys(args.headers).length > 0) {
+            page.setExtraHTTPHeaders(args.headers);
+        }
 
         // record all requested hosts
         await page.on('request', request => {

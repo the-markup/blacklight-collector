@@ -73,6 +73,8 @@ Results are stored in `demo-dir` by default
   - default: 'Blacklight Inspection'
 - `saveScreenshots`
   - default: true
+- `headers`
+  - default: `{}` (expects `{ "[HTTP header]": "[value]", ... }`)
 - `defaultTimeout`
   - default: 30000
   - amount of time the page will wait to load
