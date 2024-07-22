@@ -14,6 +14,8 @@ If you are interested in running it locally you can clone this repository and fo
 
 ## Build
 
+`nvm use`
+
 `npm install`
 
 `npm run build`
@@ -119,7 +121,6 @@ Results are stored in `demo-dir` by default
   - HTTP archive of all the network requests.
   - _TIP:_ Firefox lets you import a HAR file and visualize it using the network tab in the developer tools.
   - You can also view it [here](https://toolbox.googleapps.com/apps/har_analyzer/).
-
 
 Blacklight would not be possible without the work of [OpenWPM](https://github.com/mozilla/OpenWPM)
 and the EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/website-evidence-collector)
