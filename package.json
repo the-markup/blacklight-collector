@@ -36,7 +36,7 @@
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
     "npm": "^10.5.2",
-    "puppeteer": "^19.7.5",
+    "puppeteer": "^22.13.1",
     "puppeteer-har": "^1.1.1",
     "run": "^1.4.0",
     "stacktrace-js": "^2.0.1",
