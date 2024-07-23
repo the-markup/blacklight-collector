@@ -221,7 +221,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
         // Return if the page doesnt load
         if (loadError) {
-            console.log("browser close 1");
             await closeBrowser(browser);
             if (typeof userDataDir !== 'undefined') {
                 clearDir(userDataDir, false);
@@ -304,10 +303,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             // console.log('... done saving har');
         }
 
-        console.log('closing browser 1');
-        console.log(browser);
         await closeBrowser(browser);
-        console.log('... done closing browser 1');
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
         }
@@ -404,9 +400,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     finally {
         // close browser and clear tmp dir
         if (browser && !didBrowserDisconnect) {
-            console.log("closing browser 2");
-            await browser.close();
-            console.log("done closing browser 2");
+            await closeBrowser(browser);
         }
         // if (typeof userDataDir !== 'undefined') {
         //     clearDir(userDataDir, false);

@@ -28,14 +28,12 @@ const deleteFolderRecursive = path => {
 };
 
 export const closeBrowser = async (browser) => {
-    const childProcess = browser.process();
-    if (childProcess) {
-        console.log("killing child process, ", childProcess);
-        childProcess.kill(9);
-    }
     console.log("closing browser");
+    const pages = await browser.pages();
+    for (let i = 0; i < pages.length; i++) {
+      await pages[i].close();
+    }
     await browser.close();
-    console.log("done closing browser");
 };
 
 export const clearDir = (outDir, mkNewDir = true) => {
