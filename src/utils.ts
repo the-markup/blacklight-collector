@@ -27,6 +27,17 @@ const deleteFolderRecursive = path => {
     }
 };
 
+export const closeBrowser = async (browser) => {
+    const childProcess = browser.process();
+    if (childProcess) {
+        console.log("killing child process, ", childProcess);
+        childProcess.kill(9);
+    }
+    console.log("closing browser");
+    await browser.close();
+    console.log("done closing browser");
+};
+
 export const clearDir = (outDir, mkNewDir = true) => {
     if (fs.existsSync(outDir)) {
         deleteFolderRecursive(outDir);
