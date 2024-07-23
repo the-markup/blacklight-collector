@@ -306,7 +306,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
         console.log('closing browser');
         await browser.close();
-        // console.log('... done closing browser');
+        console.log('... done closing browser');
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
         }
@@ -405,6 +405,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         if (browser && !didBrowserDisconnect) {
             console.log("closing browser");
             await browser.close();
+            console.log("done closing browser 2");
         }
         // if (typeof userDataDir !== 'undefined') {
         //     clearDir(userDataDir, false);
