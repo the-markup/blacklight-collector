@@ -35,7 +35,10 @@ export const closeBrowser = async (browser) => {
       await pages[i].close();
       console.log('closed page');
     }
-
+    const childProcess = browser.process()
+    if (childProcess) {
+        childProcess.kill(9)
+    }
     console.log("before closing browser");
     await browser.close();
     console.log("after closing browser");
