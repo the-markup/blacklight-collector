@@ -30,11 +30,12 @@ const deleteFolderRecursive = path => {
 export const closeBrowser = async (browser) => {
     console.log("closing browser");
     const pages = await browser.pages();
-    console.log(`closing ${pages.count} pages`);
+    console.log(`closing ${pages.length} pages`);
     for (let i = 0; i < pages.length; i++) {
       await pages[i].close();
       console.log('closed page');
     }
+
     console.log("before closing browser");
     await browser.close();
     console.log("after closing browser");
