@@ -27,6 +27,9 @@ const deleteFolderRecursive = path => {
     }
 };
 
+// This is an annoying hack to get around an issue in Puppeteer
+// where the browser.close method hangs indefinitely
+// See https://github.com/Sparticuz/chromium/issues/85#issuecomment-1527692751
 export const closeBrowser = async (browser) => {
     console.log("closing browser");
     const pages = await browser.pages();
