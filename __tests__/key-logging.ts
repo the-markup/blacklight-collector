@@ -7,6 +7,8 @@ import { Global } from "../src/types";
 
 declare var global: Global;
 
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
 const INPUT_VALUES_RESULT = [
   { type: "email", value: "blacklight-headless@themarkup.org", name: "email" },
   {
@@ -673,7 +675,7 @@ describe("KeyLogging", () => {
     const testUrl = `${global.__DEV_SERVER__}/input-form.html`;
     await page.goto(testUrl, { timeout: 10000 });
     await fillForms(page);
-    await page.waitForTimeout(2000);
+    await sleep(2000);
 
     const inputValues: any = await page.evaluate(async () => {
       return new Promise((res, rej) => {
@@ -702,9 +704,9 @@ describe("KeyLogging", () => {
 
     await setupKeyLoggingInspector(page, eventHandler);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
-    await page.waitForTimeout(1000);
+    await sleep(1000);
     await fillForms(page);
-    await page.waitForTimeout(100);
+    await sleep(100);
     await page.close();
     // console.log(rows);
     expect(rows.filter(r => r.type === "KeyLogging").sort()).toEqual(
@@ -779,9 +781,9 @@ describe("KeyLogging", () => {
     };
     await setupKeyLoggingInspector(page, eventHandler);
     await page.goto(testUrl, { waitUntil: "networkidle2" });
-    await page.waitForTimeout(1000);
+    await sleep(1000);
     await fillForms(page);
-    await page.waitForTimeout(100);
+    await sleep(100);
     await page.close();
     expect(rows.filter(r => r.type === "KeyLogging").sort()).toEqual(
       DATA_EXFILTRATION_MIXED.sort()
