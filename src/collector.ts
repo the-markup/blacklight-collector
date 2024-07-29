@@ -16,7 +16,7 @@ import { dedupLinks, getLinks, getSocialLinks } from './pptr-utils/get-links';
 import { autoScroll, fillForms } from './pptr-utils/interaction-utils';
 import { setupSessionRecordingInspector } from './session-recording';
 import { setUpThirdPartyTrackersInspector } from './third-party-trackers';
-import { clearDir } from './utils';
+import { clearDir, closeBrowser } from './utils';
 
 export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS>;
 
@@ -221,8 +221,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
         // Return if the page doesnt load
         if (loadError) {
-            console.log("browser close 1");
-            await browser.close();
+            await closeBrowser(browser);
             if (typeof userDataDir !== 'undefined') {
                 clearDir(userDataDir, false);
             }
@@ -304,9 +303,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             // console.log('... done saving har');
         }
 
-        console.log('closing browser');
-        await browser.close();
-        // console.log('... done closing browser');
+        await closeBrowser(browser);
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
         }
@@ -403,8 +400,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     finally {
         // close browser and clear tmp dir
         if (browser && !didBrowserDisconnect) {
-            console.log("closing browser");
-            await browser.close();
+            await closeBrowser(browser);
         }
         // if (typeof userDataDir !== 'undefined') {
         //     clearDir(userDataDir, false);
