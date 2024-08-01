@@ -128,7 +128,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             };
         }
         logger.info(`Started Puppeteer with pid ${browser.process().pid}`);
-        page = (await browser.pages())[0];
+        const customUA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36';
+        page = await browser.newPage();
         output.browser = {
             name: 'Chromium',
             version: await browser.version(),
@@ -184,6 +185,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         // Function to navigate to a page with a timeout guard
         const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
             try {
+                await page.setUserAgent( customUA);
+
                 page_response = await Promise.race([
                     page.goto(url, {
                         timeout: timeout,
@@ -198,6 +201,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 ]);
             } catch (error) {
                 console.log('First attempt failed, trying with domcontentloaded');
+                await page.setUserAgent( customUA);
+
                 page_response = await page.goto(url, {
                     timeout: timeout,
                     waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
