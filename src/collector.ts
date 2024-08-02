@@ -198,6 +198,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 ]);
             } catch (error) {
                 console.log('First attempt failed, trying with domcontentloaded');
+
                 page_response = await page.goto(url, {
                     timeout: timeout,
                     waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent

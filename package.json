@@ -32,11 +32,11 @@
   },
   "homepage": "https://github.com/the-markup/blacklight-collector#readme",
   "dependencies": {
-    "@cliqz/adblocker-puppeteer": "^1.30.0",
+    "@cliqz/adblocker-puppeteer": "^1.31.1",
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
     "npm": "^10.5.2",
-    "puppeteer": "^22.13.1",
+    "puppeteer": "^22.15.0",
     "puppeteer-har": "^1.1.2",
     "run": "^1.5.0",
     "stacktrace-js": "^2.0.2",
