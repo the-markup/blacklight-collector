@@ -391,14 +391,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             clearDir(args.outDir, false);
         }
         return { status: 'success', ...output, reports };
-    }
-    // } catch (error) {
-    //     // return error
-    //     return {
-    //         status: 'failed',
-    //         page_response: 'Run failed, please try again'
-    //     };
-    finally {
+    } finally {
         // close browser and clear tmp dir
         if (browser && !didBrowserDisconnect) {
             await closeBrowser(browser);
