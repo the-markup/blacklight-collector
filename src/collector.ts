@@ -390,7 +390,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         if (args.outDir.includes('bl-tmp')) {
             clearDir(args.outDir, false);
         }
-        return { status: 'success', ...output, reports };
+        return { status: 'success', ...output, reports, dp: "test" };
     } finally {
         // close browser and clear tmp dir
         if (browser && !didBrowserDisconnect) {
