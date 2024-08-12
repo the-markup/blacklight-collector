@@ -3,6 +3,10 @@
   "version": "3.2.1",
   "description": "A real-time website privacy inspector.",
   "main": "build/index.js",
+  "funding": {
+    "type": "individual",
+    "url": "https://themarkup.org/donate"
+  },
   "scripts": {
     "clean": "rimraf build *.log",
     "commit": "npx git-cz",
