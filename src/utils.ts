@@ -1,15 +1,8 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import { join } from 'path';
-import { getDomain, getPublicSuffix } from 'tldts';
+import { getDomain } from 'tldts';
 import { BlacklightEvent } from './types';
-export const getFirstPartyPs = firstPartyUri => {
-    return getPublicSuffix(firstPartyUri);
-};
-
-export const isFirstParty = (firstPartyPs, testUri) => {
-    return firstPartyPs === testUri;
-};
 
 const deleteFolderRecursive = path => {
     if (fs.existsSync(path)) {
@@ -76,15 +69,7 @@ export const serializeCanvasCallMap = inputMap => {
 
     return obj;
 };
-export const mapToObj = inputMap => {
-    const obj = {};
 
-    inputMap.forEach((value, key) => {
-        obj[key] = value;
-    });
-
-    return obj;
-};
 // Go through the stack trace and get the first filename.
 // If no fileName is found return the source of the last function in
 // the trace
@@ -132,20 +117,11 @@ export const getStackType = (stack, firstPartyDomain) => {
         return 'mixed';
     }
 };
-export const isBase64 = str => {
-    if (str === '' || str.trim() === '') {
-        return false;
-    }
-    try {
-        return btoa(atob(str)) === str;
-    } catch (err) {
-        return false;
-    }
-};
 
 export const getStringHash = (algorithm, str) => {
     return crypto.createHash(algorithm).update(str).digest('hex');
 };
+
 export const getHashedValues = (algorithm, object) => {
     return Object.entries(object).reduce((acc, cur: any) => {
         acc[cur[0]] = algorithm === 'base64' ? Buffer.from(cur[1]).toString('base64') : getStringHash(algorithm, cur[1]);
