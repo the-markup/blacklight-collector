@@ -77,7 +77,7 @@ export const getScriptUrl = (item: BlacklightEvent) => {
     const { stack } = item;
 
     for (let i = 0; i < stack.length; i++) {
-        if (stack[i].hasOwnProperty('fileName')) {
+        if (Object.prototype.hasOwnProperty.call(stack[i], 'fileName')) {
             return stack[i].fileName;
         } else {
             if (i === stack.length - 1) {
@@ -95,12 +95,13 @@ export const loadEventData = (dir, filename = 'inspection-log.ndjson') => {
         .map(m => loadJSONSafely(m))
         .filter(m => m.level === 'warn');
 };
+
 // Not using this atm but leaving it in because it might be useful in the future
 export const getStackType = (stack, firstPartyDomain) => {
     let hasFirstParty = false;
     let hasThirdParty = false;
     stack.forEach(s => {
-        if (s.hasOwnProperty('fileName')) {
+        if (Object.prototype.hasOwnProperty.call(s, 'fileName')) {
             const scriptDomain = getDomain(s.fileName);
             if (scriptDomain === firstPartyDomain) {
                 hasFirstParty = true;
