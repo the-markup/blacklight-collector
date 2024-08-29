@@ -6,13 +6,14 @@ import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, Puppet
 import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
 import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './cookie-collector';
-import { setupBlacklightInspector } from './inspector';
-import { setupKeyLoggingInspector } from './key-logging';
+
 import { getLogger } from './logger';
 import { generateReport } from './parser';
 import { defaultPuppeteerBrowserOptions, savePageContent } from './pptr-utils/default';
 import { dedupLinks, getLinks, getSocialLinks } from './pptr-utils/get-links';
 import { autoScroll, fillForms } from './pptr-utils/interaction-utils';
+import { setupBlacklightInspector } from './inspector';
+import { setupKeyLoggingInspector } from './key-logging';
 import { setupSessionRecordingInspector } from './session-recording';
 import { setUpThirdPartyTrackersInspector } from './third-party-trackers';
 import { clearDir, closeBrowser } from './utils';
@@ -182,7 +183,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         // Function to navigate to a page with a timeout guard
         const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
             try {
-                console.log(page);
                 page_response = await Promise.race([
                     page.goto(url, {
                         timeout: timeout,
@@ -197,7 +197,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 ]);
             } catch (error) {
                 console.log('First attempt failed, trying with domcontentloaded');
-                console.log(page);
                 page_response = await page.goto(url, {
                     timeout: timeout,
                     waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
@@ -260,8 +259,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         console.log('About to browse more links');
 
         // try {
-        console.log(output.browsing_history);
-        // console.log(output.browsing_history.slice(1));
         for (const link of output.browsing_history.slice(1)) {
             logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
             if (didBrowserDisconnect) {
@@ -270,8 +267,11 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                     page_response: 'Chrome crashed'
                 };
             }
-
+            if (args.clearCache) {
+                await clearCookiesCache(page);
+            }
             console.log(`Browsing now to ${link}`);
+            
             await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
             await fillForms(page);
