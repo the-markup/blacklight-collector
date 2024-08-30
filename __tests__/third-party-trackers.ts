@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
-import { setUpThirdPartyTrackersInspector } from "../src/third-party-trackers";
+import { setUpThirdPartyTrackersInspector } from "../src/inspectors/third-party-trackers";
 import { generateReport } from "../src/parser";
 import { getDomain } from "tldts";
 

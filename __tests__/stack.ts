@@ -2,7 +2,7 @@ import puppeteer from "puppeteer";
 
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { Global, BlacklightEvent } from "../src/types";
-import { setupBlacklightInspector } from "../src/inspector";
+import { setupBlacklightInspector } from "../src/inspectors/inspector";
 import { getDomain } from "tldts";
 import { getStackType, getScriptUrl } from "../src/utils";
 declare var global: Global;

@@ -1,7 +1,8 @@
 import { HTTPRequest, Page } from 'puppeteer';
-import { DEFAULT_INPUT_VALUES } from './pptr-utils/interaction-utils';
-import { BlacklightEvent } from './types';
-import { getHashedValues } from './utils';
+import { DEFAULT_INPUT_VALUES } from '../pptr-utils/interaction-utils';
+import { BlacklightEvent } from '../types';
+import { getHashedValues } from '../utils';
+
 const ts = [
     ...Object.values(DEFAULT_INPUT_VALUES),
     ...Object.values(getHashedValues('base64', DEFAULT_INPUT_VALUES)),
@@ -17,6 +18,7 @@ const hashesMap = {
     sha256: Object.values(getHashedValues('sha256', DEFAULT_INPUT_VALUES)),
     sha512: Object.values(getHashedValues('sha512', DEFAULT_INPUT_VALUES))
 };
+
 export const setupKeyLoggingInspector = async (page: Page, eventDataHandler: (event: BlacklightEvent) => void) => {
     page.on('request', (request: HTTPRequest) => {
         const stack = [

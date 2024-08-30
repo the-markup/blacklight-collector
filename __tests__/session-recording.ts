@@ -1,6 +1,6 @@
 import { launch, KnownDevices } from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
-import { setupSessionRecordingInspector } from "../src/session-recording";
+import { setupSessionRecordingInspector } from "../src/inspectors/session-recording";
 import { autoScroll } from "../src/pptr-utils/interaction-utils";
 import { BlacklightEvent } from "../src/types";
 
