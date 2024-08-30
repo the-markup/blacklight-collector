@@ -12,10 +12,10 @@ import { generateReport } from './parser';
 import { defaultPuppeteerBrowserOptions, savePageContent } from './pptr-utils/default';
 import { dedupLinks, getLinks, getSocialLinks } from './pptr-utils/get-links';
 import { autoScroll, fillForms } from './pptr-utils/interaction-utils';
-import { setupBlacklightInspector } from './inspector';
-import { setupKeyLoggingInspector } from './key-logging';
-import { setupSessionRecordingInspector } from './session-recording';
-import { setUpThirdPartyTrackersInspector } from './third-party-trackers';
+import { setupBlacklightInspector } from './inspectors/inspector';
+import { setupKeyLoggingInspector } from './inspectors/key-logging';
+import { setupSessionRecordingInspector } from './inspectors/session-recording';
+import { setUpThirdPartyTrackersInspector } from './inspectors/third-party-trackers';
 import { clearDir, closeBrowser } from './utils';
 
 export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS>;
@@ -275,14 +275,13 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
             await fillForms(page);
-            // console.log('... done with fillForms (2)');
 
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-            pageIndex++;
 
             duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
             await autoScroll(page);
-            // console.log('... done with autoScroll (2)');
+
+            pageIndex++;
         }
 
         // console.log('saving cookies');
