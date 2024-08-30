@@ -4,6 +4,11 @@ import { join } from 'path';
 import { getDomain } from 'tldts';
 import { BlacklightEvent } from './types';
 
+
+export const hasOwnProperty = (object:object, property:string) => {
+    return Object.prototype.hasOwnProperty.call(object, property);
+};
+
 const deleteFolderRecursive = path => {
     if (fs.existsSync(path)) {
         fs.readdirSync(path).forEach(file => {
@@ -77,7 +82,7 @@ export const getScriptUrl = (item: BlacklightEvent) => {
     const { stack } = item;
 
     for (let i = 0; i < stack.length; i++) {
-        if (Object.prototype.hasOwnProperty.call(stack[i], 'fileName')) {
+        if (hasOwnProperty(stack[i], 'fileName')) {
             return stack[i].fileName;
         } else {
             if (i === stack.length - 1) {
@@ -101,7 +106,7 @@ export const getStackType = (stack, firstPartyDomain) => {
     let hasFirstParty = false;
     let hasThirdParty = false;
     stack.forEach(s => {
-        if (Object.prototype.hasOwnProperty.call(s, 'fileName')) {
+        if (hasOwnProperty(s, 'fileName')) {
             const scriptDomain = getDomain(s.fileName);
             if (scriptDomain === firstPartyDomain) {
                 hasFirstParty = true;

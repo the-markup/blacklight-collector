@@ -4,7 +4,8 @@ import { join } from 'path';
 import { Page } from 'puppeteer';
 import { getDomain, getHostname } from 'tldts';
 import { Cookie } from 'tough-cookie';
-import { getScriptUrl } from './utils';
+import { getScriptUrl, hasOwnProperty } from './utils';
+
 const parseCookie = (cookieStr, fpUrl) => {
     const cookie = Cookie.parse(cookieStr);
     try {
@@ -73,7 +74,7 @@ export const getHTTPCookies = (events, url): any[] => {
                 m.data
                     .filter(c => c)
                     .map(d => ({
-                        domain: d.hasOwnProperty('domain') ? d.domain : getHostname(url),
+                        domain: hasOwnProperty(d, 'domain') ? d.domain : getHostname(url),
                         name: d.key,
                         path: d.path,
                         script: getScriptUrl(m),
@@ -96,10 +97,21 @@ export const getJsCookies = (events, url) => {
         )
         .map(d => {
             const data = parseCookie(d.data.value, url);
-            const hasOwnDomain = d.hasOwnProperty('domain') && d.domain !== null && d.domain !== undefined;
-            const hasOwnName = data && data.hasOwnProperty('key') && data.key !== null && data.key !== undefined;
-            const hasOwnPath = data && data.hasOwnProperty('path') && data.path !== null && data.path !== undefined;
-            const hasOwnValue = data && data.hasOwnProperty('value') && data.value !== null && data.value !== undefined;
+            const hasOwnDomain = hasOwnProperty(d, 'domain') && 
+                                 d.domain !== null && 
+                                 d.domain !== undefined;
+            const hasOwnName  = data && 
+                                hasOwnProperty(data, 'key') && 
+                                data.key !== null && 
+                                data.key !== undefined;
+            const hasOwnPath  = data && 
+                                hasOwnProperty(data, 'path') && 
+                                data.path !== null && 
+                                data.path !== undefined;
+            const hasOwnValue = data && 
+                                hasOwnProperty(data, 'value') && 
+                                data.value !== null && 
+                                data.value !== undefined;
             const script = getScriptUrl(d);
 
             return {
@@ -112,6 +124,7 @@ export const getJsCookies = (events, url) => {
             };
         });
 };
+
 export const matchCookiesToEvents = (cookies, events, url) => {
     const jsCookies = getJsCookies(events, url);
     const httpCookie = getHTTPCookies(events, url);

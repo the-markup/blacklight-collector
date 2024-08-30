@@ -1,4 +1,5 @@
 import { LinkObject } from '../types';
+import { hasOwnProperty } from '../utils';
 
 export const getLinks = async (page): Promise<LinkObject[]> => {
     return page.evaluate(() => {
@@ -11,8 +12,12 @@ export const getLinks = async (page): Promise<LinkObject[]> => {
                         inner_text: a.innerText
                     };
                 })
-                .filter(link => {
-                    return link.href.startsWith('http') && !link.href.endsWith('.pdf') && !link.href.endsWith('.zip');
+                .filter((link:LinkObject) => {
+                    return (
+                        link.href.startsWith('http') && 
+                        !link.href.endsWith('.pdf') && 
+                        !link.href.endsWith('.zip')
+                    );
                 });
         } catch (error) {
             return [];
@@ -22,10 +27,15 @@ export const getLinks = async (page): Promise<LinkObject[]> => {
 
 // https://dev.to/vuevixens/removing-duplicates-in-an-array-of-objects-in-js-with-sets-3fep
 export const dedupLinks = (links_with_duplicates: LinkObject[]) => {
-    const links = Array.from(new Set(links_with_duplicates.filter(f => f && f.hasOwnProperty('href')).map(link => link.href))).map(href => {
-        return links_with_duplicates.find(link => link.href === href);
-    });
-
+    const sanitizedLinks = links_with_duplicates.filter(f => f && hasOwnProperty(f, 'href'));
+    const dedupedLinkArray = Array.from(new Set(sanitizedLinks));
+    // I don't think the bellow modification actually does anything,
+    // but I'm gonna write tests for this function before pulling the plug
+    const links = dedupedLinkArray
+                    .map((link:LinkObject) => link.href)
+                    .map(href => {
+                        return links_with_duplicates.find(link => link.href === href);
+                    });
     return links;
 };
 
