@@ -15,6 +15,7 @@ export const FB_ADVANCED_MATCHING_PARAMETERS = {
     'ud[country]': 'Country',
     'ud[external_id]': 'An ID from another database.'
 };
+
 // https://web.archive.org/web/20200519201636/https://developers.facebook.com/docs/facebook-pixel/reference
 export const FB_STANDARD_EVENTS = [
     {
@@ -98,4 +99,3 @@ export const FB_STANDARD_EVENTS = [
         eventName: 'ViewContent'
     }
 ];
-// const parseFacebookPixesParamete

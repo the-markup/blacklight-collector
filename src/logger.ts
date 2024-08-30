@@ -7,8 +7,6 @@ import { createLogger, format, transports } from 'winston';
 
 export const getLogger = ({ outDir = '', quiet = false }) => {
     const log_transports = [];
-    let filename;
-
     log_transports.push(
         new transports.Console({
             level: 'info',
@@ -16,7 +14,7 @@ export const getLogger = ({ outDir = '', quiet = false }) => {
         })
     );
 
-    filename = outDir ? path.join(outDir, 'inspection-log.ndjson') : tmpNameSync({ postfix: '-log.ndjson' });
+    const filename = outDir ? path.join(outDir, 'inspection-log.ndjson') : tmpNameSync({ postfix: '-log.ndjson' });
 
     log_transports.push(
         new transports.File({
