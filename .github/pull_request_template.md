@@ -12,7 +12,6 @@
 ***(optional: add explanation between parentheses)***
 
 * [ ] Tested manually
-* [ ] Checked for accessibility regressions? *( )*
 * [ ] Checked for performance implications? *( )*
 * [ ] Checked for security vulnerabilities? *( )*
 * [ ] Added/updated documentation? *( )*
