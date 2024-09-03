@@ -64,6 +64,7 @@ export interface LinkObject {
     innerHtml: string;
     innerText: string;
 }
+
 export const SESSION_RECORDERS_LIST = [
     'mc.yandex.ru/metrika/watch.js',
     'mc.yandex.ru/metrika/tag.js',

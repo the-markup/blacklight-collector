@@ -1,14 +1,12 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import { join } from 'path';
-import { getDomain, getPublicSuffix } from 'tldts';
+import { getDomain } from 'tldts';
 import { BlacklightEvent } from './types';
-export const getFirstPartyPs = firstPartyUri => {
-    return getPublicSuffix(firstPartyUri);
-};
 
-export const isFirstParty = (firstPartyPs, testUri) => {
-    return firstPartyPs === testUri;
+
+export const hasOwnProperty = (object:object, property:string) => {
+    return Object.prototype.hasOwnProperty.call(object, property);
 };
 
 const deleteFolderRecursive = path => {
@@ -76,15 +74,7 @@ export const serializeCanvasCallMap = inputMap => {
 
     return obj;
 };
-export const mapToObj = inputMap => {
-    const obj = {};
 
-    inputMap.forEach((value, key) => {
-        obj[key] = value;
-    });
-
-    return obj;
-};
 // Go through the stack trace and get the first filename.
 // If no fileName is found return the source of the last function in
 // the trace
@@ -92,7 +82,7 @@ export const getScriptUrl = (item: BlacklightEvent) => {
     const { stack } = item;
 
     for (let i = 0; i < stack.length; i++) {
-        if (stack[i].hasOwnProperty('fileName')) {
+        if (hasOwnProperty(stack[i], 'fileName')) {
             return stack[i].fileName;
         } else {
             if (i === stack.length - 1) {
@@ -110,12 +100,13 @@ export const loadEventData = (dir, filename = 'inspection-log.ndjson') => {
         .map(m => loadJSONSafely(m))
         .filter(m => m.level === 'warn');
 };
+
 // Not using this atm but leaving it in because it might be useful in the future
 export const getStackType = (stack, firstPartyDomain) => {
     let hasFirstParty = false;
     let hasThirdParty = false;
     stack.forEach(s => {
-        if (s.hasOwnProperty('fileName')) {
+        if (hasOwnProperty(s, 'fileName')) {
             const scriptDomain = getDomain(s.fileName);
             if (scriptDomain === firstPartyDomain) {
                 hasFirstParty = true;
@@ -132,20 +123,11 @@ export const getStackType = (stack, firstPartyDomain) => {
         return 'mixed';
     }
 };
-export const isBase64 = str => {
-    if (str === '' || str.trim() === '') {
-        return false;
-    }
-    try {
-        return btoa(atob(str)) === str;
-    } catch (err) {
-        return false;
-    }
-};
 
 export const getStringHash = (algorithm, str) => {
     return crypto.createHash(algorithm).update(str).digest('hex');
 };
+
 export const getHashedValues = (algorithm, object) => {
     return Object.entries(object).reduce((acc, cur: any) => {
         acc[cur[0]] = algorithm === 'base64' ? Buffer.from(cur[1]).toString('base64') : getStringHash(algorithm, cur[1]);

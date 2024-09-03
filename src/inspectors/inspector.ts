@@ -1,10 +1,10 @@
 import { readFileSync } from 'fs';
 import { Page } from 'puppeteer';
-import { instrumentAddEventListener } from './plugins/add-event-listener';
-import { instrumentFingerprintingApis } from './plugins/fingerprinting-apis';
-import { jsInstruments } from './plugins/js-instrument';
-import { injectPlugins } from './pptr-utils/eval-scripts';
-import { BlacklightEvent } from './types';
+import { instrumentAddEventListener } from '../plugins/add-event-listener';
+import { instrumentFingerprintingApis } from '../plugins/fingerprinting-apis';
+import { jsInstruments } from '../plugins/js-instrument';
+import { injectPlugins } from '../pptr-utils/eval-scripts';
+import { BlacklightEvent } from '../types';
 
 function getPageScriptAsString(observers, testing = false) {
     let observersString = '';

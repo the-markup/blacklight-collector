@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { Page } from 'puppeteer';
 import { promisify } from 'util';
+
 const writeFile = promisify(fs.writeFile);
 
 export const savePageContent = async (index, outDir, page: Page, screenshot = true) => {
@@ -17,6 +18,7 @@ export const savePageContent = async (index, outDir, page: Page, screenshot = tr
         console.log(`couldnt save page content: ${JSON.stringify(error)}`);
     }
 };
+
 /**
  * Default Puppeteer options for dev
  */

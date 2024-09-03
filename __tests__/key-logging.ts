@@ -2,7 +2,7 @@
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { fillForms } from "../src/pptr-utils/interaction-utils";
 import puppeteer, { Browser } from "puppeteer";
-import { setupKeyLoggingInspector } from "../src/key-logging";
+import { setupKeyLoggingInspector } from "../src/inspectors/key-logging";
 import { Global } from "../src/types";
 
 declare var global: Global;

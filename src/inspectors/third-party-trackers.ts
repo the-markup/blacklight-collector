@@ -2,7 +2,7 @@ import { fromPuppeteerDetails, PuppeteerBlocker } from '@cliqz/adblocker-puppete
 import fs from 'fs';
 import path from 'path';
 import { Page } from 'puppeteer';
-import { TrackingRequestEvent } from './types';
+import { TrackingRequestEvent } from '../types';
 
 /**
  * @fileoverview
@@ -16,8 +16,8 @@ const blockerOptions = {
 };
 
 const blockers = {
-    'easyprivacy.txt': PuppeteerBlocker.parse(fs.readFileSync(path.join(__dirname, '../data/blocklists/easyprivacy.txt'), 'utf8'), blockerOptions),
-    'easylist.txt': PuppeteerBlocker.parse(fs.readFileSync(path.join(__dirname, '../data/blocklists/easylist.txt'), 'utf8'), blockerOptions)
+    'easyprivacy.txt': PuppeteerBlocker.parse(fs.readFileSync(path.join(__dirname, '../../data/blocklists/easyprivacy.txt'), 'utf8'), blockerOptions),
+    'easylist.txt': PuppeteerBlocker.parse(fs.readFileSync(path.join(__dirname, '../../data/blocklists/easylist.txt'), 'utf8'), blockerOptions)
 };
 
 export const setUpThirdPartyTrackersInspector = async (

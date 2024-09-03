@@ -4,8 +4,8 @@ import { loadEventData } from "../src/utils";
 import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { Global } from "../src/types";
-import { setUpThirdPartyTrackersInspector } from "../src/third-party-trackers";
-import { setupBlacklightInspector } from "../src/inspector";
+import { setUpThirdPartyTrackersInspector } from "../src/inspectors/third-party-trackers";
+import { setupBlacklightInspector } from "../src/inspectors/inspector";
 declare var global: Global;
 it("can parse AddEventlistener events", async () => {
   const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);

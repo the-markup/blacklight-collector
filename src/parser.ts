@@ -9,9 +9,14 @@ import {
     JsInstrumentEvent,
     KeyLoggingEvent,
     SessionRecordingEvent,
-    TrackingRequestEvent
+    TrackingRequestEvent,
 } from './types';
-import { getScriptUrl, groupBy, loadJSONSafely } from './utils';
+import { 
+    getScriptUrl, 
+    groupBy, 
+    loadJSONSafely, 
+    hasOwnProperty, 
+} from './utils';
 
 export const generateReport = (reportType, messages, dataDir, url) => {
     const eventData = getEventData(reportType, messages);
@@ -42,6 +47,7 @@ export const generateReport = (reportType, messages, dataDir, url) => {
 const filterByEvent = (messages, typePattern) => {
     return messages.filter(m => m.message.type.includes(typePattern) && !m.message.type.includes('Error'));
 };
+
 const getEventData = (reportType, messages): BlacklightEvent[] => {
     let filtered = [];
     switch (reportType) {
@@ -78,6 +84,7 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
     }
     return filtered.map(m => m.message);
 };
+
 const reportSessionRecorders = (eventData: BlacklightEvent[]) => {
     const report = {};
     eventData.forEach((event: SessionRecordingEvent) => {
@@ -118,9 +125,8 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
             return acc;
         }
 
-        if (acc.hasOwnProperty(data.event_group)) {
-            // console.log(data.event_group, script, cur.symbol);
-            if (acc[data.event_group].hasOwnProperty(script)) {
+        if (hasOwnProperty(acc, data.event_group)) {
+            if (hasOwnProperty(acc[data.event_group], script)) {
                 acc[data.event_group][script].add(data.name);
             } else {
                 acc[data.event_group][script] = new Set([data.name]);
@@ -184,9 +190,8 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
             return acc;
         }
 
-        if (acc.hasOwnProperty(cur.api_group)) {
-            // console.log(cur.api_group, script, cur.symbol);
-            if (acc[cur.api_group].hasOwnProperty(script)) {
+        if (hasOwnProperty(acc, cur.api_group)) {
+            if (hasOwnProperty(acc[cur.api_group], script)) {
                 acc[cur.api_group][script].add(cur.symbol);
             } else {
                 acc[cur.api_group][script] = new Set([cur.symbol]);

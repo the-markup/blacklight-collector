@@ -5,17 +5,17 @@ import { join } from 'path';
 import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
 import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
-import url from 'url';
 import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './cookie-collector';
-import { setupBlacklightInspector } from './inspector';
-import { setupKeyLoggingInspector } from './key-logging';
+
 import { getLogger } from './logger';
 import { generateReport } from './parser';
 import { defaultPuppeteerBrowserOptions, savePageContent } from './pptr-utils/default';
 import { dedupLinks, getLinks, getSocialLinks } from './pptr-utils/get-links';
 import { autoScroll, fillForms } from './pptr-utils/interaction-utils';
-import { setupSessionRecordingInspector } from './session-recording';
-import { setUpThirdPartyTrackersInspector } from './third-party-trackers';
+import { setupBlacklightInspector } from './inspectors/inspector';
+import { setupKeyLoggingInspector } from './inspectors/key-logging';
+import { setupSessionRecordingInspector } from './inspectors/session-recording';
+import { setUpThirdPartyTrackersInspector } from './inspectors/third-party-trackers';
 import { clearDir, closeBrowser } from './utils';
 
 export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS>;
@@ -64,7 +64,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         uri_dest: null,
         uri_redirects: null,
         secure_connection: {},
-        host: url.parse(inUrl).hostname,
+        host: new URL(inUrl).hostname,
         config: {
             cleareCache: args.clearCache,
             captureHar: args.captureHar,
@@ -102,7 +102,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     let pageIndex = 1;
     let har = {} as any;
     let page_response = null;
-    let loadError = false;
     const userDataDir = args.saveBrowserProfile ? join(args.outDir, 'browser-profile') : undefined;
     let didBrowserDisconnect = false;
 
@@ -198,7 +197,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 ]);
             } catch (error) {
                 console.log('First attempt failed, trying with domcontentloaded');
-
                 page_response = await page.goto(url, {
                     timeout: timeout,
                     waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
@@ -208,7 +206,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         };
 
         // Go to the first url
-        console.log('Going to the first url');
+        console.log('Going to the first url', inUrl);
         await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
         pageIndex++;
@@ -220,17 +218,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             third_party: []
         };
 
-        // Return if the page doesnt load
-        if (loadError) {
-            await closeBrowser(browser);
-            if (typeof userDataDir !== 'undefined') {
-                clearDir(userDataDir, false);
-            }
-            if (args.outDir.includes('bl-tmp')) {
-                clearDir(args.outDir, false);
-            }
-            return { status: 'failed', page_response };
-        }
         output.uri_redirects = page_response
             .request()
             .redirectChain()
@@ -280,19 +267,21 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                     page_response: 'Chrome crashed'
                 };
             }
-
+            if (args.clearCache) {
+                await clearCookiesCache(page);
+            }
             console.log(`Browsing now to ${link}`);
+            
             await navigateWithTimeout(page, link, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
 
             await fillForms(page);
-            // console.log('... done with fillForms (2)');
 
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-            pageIndex++;
 
             duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
             await autoScroll(page);
-            // console.log('... done with autoScroll (2)');
+
+            pageIndex++;
         }
 
         // console.log('saving cookies');
