@@ -1,5 +1,6 @@
 import { LinkObject } from '../types';
 import { hasOwnProperty } from '../utils';
+import { SOCIAL_URLS } from './default';
 
 export const getLinks = async (page): Promise<LinkObject[]> => {
     return page.evaluate(() => {
@@ -25,44 +26,18 @@ export const getLinks = async (page): Promise<LinkObject[]> => {
     });
 };
 
-// https://dev.to/vuevixens/removing-duplicates-in-an-array-of-objects-in-js-with-sets-3fep
-export const dedupLinks = (links_with_duplicates: LinkObject[]) => {
-    const sanitizedLinks = links_with_duplicates.filter(f => f && hasOwnProperty(f, 'href'));
-    const dedupedLinkArray = Array.from(new Set(sanitizedLinks));
-    // I don't think the bellow modification actually does anything,
-    // but I'm gonna write tests for this function before pulling the plug
-    const links = dedupedLinkArray
-                    .map((link:LinkObject) => link.href)
-                    .map(href => {
-                        return links_with_duplicates.find(link => link.href === href);
-                    });
-    return links;
-};
+// Uses Set to remove duplicates by reducing LinkObjects to their href property, deduping via Set,
+// then reconstituting an array of full LinkObjects
+export const dedupLinks = (links_with_duplicates: LinkObject[]):LinkObject[] => {
+    const sanitized_links = links_with_duplicates.filter(f => f && hasOwnProperty(f, 'href')).map(link => link.href);
+    const deduped_href_array = Array.from(new Set(sanitized_links));
 
-const SOCIAL_URLS = [
-    'facebook.com',
-    'linkedin.com',
-    'twitter.com',
-    'youtube.com',
-    'instagram.com',
-    'flickr.com',
-    'tumblr.com',
-    'snapchat.com',
-    'whatsapp.com',
-    'docs.google.com',
-    'goo.gl',
-    'pinterest.com',
-    'bit.ly',
-    'plus.google.com',
-    'evernote.com',
-    'eventbrite.com',
-    'dropbox.com',
-    'slideshare.net',
-    'vimeo.com'
-];
+    return deduped_href_array.map(href => links_with_duplicates.find(link => link.href === href));
+};
 
 export const getSocialLinks = (links: LinkObject[]): LinkObject[] => {
     const spRegex = new RegExp(`\\b(${SOCIAL_URLS.join('|')})\\b`, 'i');
+    console.log(spRegex);
     return links.filter(link => {
         return link.href.match(spRegex);
     });
