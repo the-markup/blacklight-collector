@@ -59,18 +59,26 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     const logger = getLogger({ outDir: args.outDir, quiet: args.quiet });
 
     const output: any = {
-        args: args.title,
+        title: args.title,
         uri_ins: inUrl,
         uri_dest: null,
         uri_redirects: null,
         secure_connection: {},
         host: new URL(inUrl).hostname,
         config: {
+            emulateDevice: args.emulateDevice,
             cleareCache: args.clearCache,
             captureHar: args.captureHar,
             captureLinks: args.captureLinks,
             enableAdBlock: args.enableAdBlock,
-            numPages: args.numPages
+            saveBrowserProfile: args.saveBrowserProfile,
+            numPages: args.numPages,
+            defaultTimeout: args.defaultTimeout,
+            defaultWaitUntil: args.defaultWaitUntil,
+            headless: args.headless,
+            headers: args.headers,
+            extraChromiumArgs: args.extraChromiumArgs,
+            extraPuppeteerOptions: args.extraPuppeteerOptions,
         },
         browser: null,
         script: {
