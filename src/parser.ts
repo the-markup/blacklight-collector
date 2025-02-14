@@ -1,8 +1,12 @@
 import { getDomain } from 'tldts';
 import { getCanvasFontFp, getCanvasFp } from './canvas-fingerprinting';
 import { loadBrowserCookies, matchCookiesToEvents } from './cookie-collector';
-import { FB_ADVANCED_MATCHING_PARAMETERS, FB_STANDARD_EVENTS } from './fb-pixel-lookup';
-import { BEHAVIOUR_TRACKING_EVENTS, FINGERPRINTABLE_WINDOW_APIS } from './helpers/statics';
+import { 
+    BEHAVIOUR_TRACKING_EVENTS, 
+    FINGERPRINTABLE_WINDOW_APIS, 
+    FB_ADVANCED_MATCHING_PARAMETERS, 
+    FB_STANDARD_EVENTS,
+} from './helpers/statics';
 import {
     BlacklightEvent,
     JsInstrumentEvent,
