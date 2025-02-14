@@ -64,3 +64,7 @@ export interface LinkObject {
     innerHtml: string;
     innerText: string;
 }
+
+type ScriptUrl = string;
+type CanvasCallValue = string;
+export type CanvasCallMap = Map<ScriptUrl, Set<CanvasCallValue>>;
