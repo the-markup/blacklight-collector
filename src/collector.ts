@@ -7,7 +7,7 @@ import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
 import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './cookie-collector';
 
-import { getLogger } from './logger';
+import { getLogger } from './helpers/logger';
 import { generateReport } from './parser';
 import { defaultPuppeteerBrowserOptions, savePageContent } from './pptr-utils/default';
 import { dedupLinks, getLinks, getSocialLinks } from './pptr-utils/get-links';
