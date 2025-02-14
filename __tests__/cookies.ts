@@ -10,7 +10,7 @@ import {
   setupHttpCookieCapture,
   getJsCookies,
   matchCookiesToEvents,
-} from "../src/cookie-collector";
+} from "../src/inspectors/cookies";
 import { existsSync } from "fs";
 import { getLogger } from "../src/helpers/logger";
 jest.setTimeout(20000);
