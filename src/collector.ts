@@ -152,7 +152,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
 
         // record all requested hosts
-        await page.on('request', request => {
+        page.on('request', request => {
             const l = parse(request.url());
             // note that hosts may appear as first and third party depending on the path
             if (FIRST_PARTY.domain === l.domain) {
@@ -249,10 +249,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 }
             }
         }
+
         await fillForms(page);
-        // console.log('... done with fillForms');
         await autoScroll(page);
-        // console.log('... done with autoScroll');
 
         let subDomainLinks = [];
         if (getSubdomain(output.uri_dest) !== 'www') {
@@ -266,7 +265,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
         console.log('About to browse more links');
 
-        // try {
         for (const link of output.browsing_history.slice(1)) {
             logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
             if (didBrowserDisconnect) {
@@ -292,13 +290,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             pageIndex++;
         }
 
-        // console.log('saving cookies');
         await captureBrowserCookies(page, args.outDir);
-        // console.log('... done saving cookies');
         if (args.captureHar) {
-            // console.log('saving har');
             await har.stop();
-            // console.log('... done saving har');
         }
 
         await closeBrowser(browser);
@@ -321,8 +315,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 }
             }
         }
+
         // generate report
-        // console.log('generating report');
         const fpRequests = Array.from(hosts.requests.first_party);
         const tpRequests = Array.from(hosts.requests.third_party);
         const incorrectTpAssignment = tpRequests.filter((f: string) => getDomain(f) === REDIRECTED_FIRST_PARTY.domain);
@@ -381,23 +375,19 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             return acc;
         }, {});
 
-        // console.log('writing inspection.json');
         const json_dump = JSON.stringify({ ...output, reports }, null, 2);
         writeFileSync(join(args.outDir, 'inspection.json'), json_dump);
         if (args.outDir.includes('bl-tmp')) {
             clearDir(args.outDir, false);
         }
-        return { status: 'success', ...output, reports };
+        return { 
+            status: 'success', 
+            ...output, 
+            reports,
+        };
     } finally {
-        // close browser and clear tmp dir
         if (browser && !didBrowserDisconnect) {
             await closeBrowser(browser);
         }
-        // if (typeof userDataDir !== 'undefined') {
-        //     clearDir(userDataDir, false);
-        // }
-        // if (args.outDir.includes('bl-tmp')) {
-        //     clearDir(args.outDir, false);
-        // }
     }
 };
