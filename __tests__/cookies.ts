@@ -12,7 +12,7 @@ import {
   matchCookiesToEvents,
 } from "../src/cookie-collector";
 import { existsSync } from "fs";
-import { getLogger } from "../src/logger";
+import { getLogger } from "../src/helpers/logger";
 jest.setTimeout(20000);
 
 const PP_TEST_RESULT = [
