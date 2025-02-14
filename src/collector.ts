@@ -5,7 +5,7 @@ import { join } from 'path';
 import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
 import PuppeteerHar from 'puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
-import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './cookie-collector';
+import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './inspectors/cookies';
 
 import { getLogger } from './helpers/logger';
 import { generateReport } from './parser';

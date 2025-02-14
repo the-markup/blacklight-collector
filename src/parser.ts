@@ -1,6 +1,6 @@
 import { getDomain } from 'tldts';
 import { getCanvasFontFingerprinters, getCanvasFingerprinters } from './canvas-fingerprinting';
-import { loadBrowserCookies, matchCookiesToEvents } from './cookie-collector';
+import { loadBrowserCookies, matchCookiesToEvents } from './inspectors/cookies';
 import { 
     BEHAVIOUR_TRACKING_EVENTS, 
     FINGERPRINTABLE_WINDOW_APIS, 
