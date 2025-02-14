@@ -1,5 +1,5 @@
 import { getDomain } from 'tldts';
-import { getCanvasFontFp, getCanvasFp } from './canvas-fingerprinting';
+import { getCanvasFontFingerprinters, getCanvasFingerprinters } from './canvas-fingerprinting';
 import { loadBrowserCookies, matchCookiesToEvents } from './cookie-collector';
 import { 
     BEHAVIOUR_TRACKING_EVENTS, 
@@ -151,11 +151,11 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
 };
 
 export const reportCanvasFingerprinters = (eventData: BlacklightEvent[]) => {
-    return getCanvasFp(eventData);
+    return getCanvasFingerprinters(eventData);
 };
 
 export const reportCanvasFontFingerprinters = (eventData: BlacklightEvent[]) => {
-    return getCanvasFontFp(eventData);
+    return getCanvasFontFingerprinters(eventData);
 };
 
 export const reportCookieEvents = (eventData: BlacklightEvent[], dataDir, url) => {
