@@ -1,5 +1,5 @@
 import { dedupLinks, getSocialLinks } from '../src/pptr-utils/get-links';
-import { SOCIAL_URLS } from '../src/pptr-utils/default';
+import { SOCIAL_URLS } from '../src/helpers/statics';
 import { LinkObject } from '../src/types';
 
 describe('get-links', () => {

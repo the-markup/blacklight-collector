@@ -190,3 +190,36 @@ export const FB_STANDARD_EVENTS = [
         eventName: 'ViewContent'
     }
 ];
+
+export const SOCIAL_URLS = [
+    'facebook.com',
+    'linkedin.com',
+    'twitter.com',
+    'youtube.com',
+    'instagram.com',
+    'flickr.com',
+    'tumblr.com',
+    'snapchat.com',
+    'whatsapp.com',
+    'docs.google.com',
+    'goo.gl',
+    'pinterest.com',
+    'bit.ly',
+    'evernote.com',
+    'eventbrite.com',
+    'dropbox.com',
+    'slideshare.net',
+    'vimeo.com',
+    'x.com',
+    'bsky.app',
+    'tiktok.com',
+    'mastodon.social',
+    'threads.net',
+    'wechat.com',
+    'messenger.com',
+    'telegram.org',
+    'douyin.com',
+    'kuaishou.com',
+    'weibo.com',
+    'im.qq.com',
+];
