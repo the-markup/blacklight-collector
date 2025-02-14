@@ -1,5 +1,6 @@
 import { Page } from 'puppeteer';
-import { BlacklightEvent, SESSION_RECORDERS_LIST } from '../types';
+import { BlacklightEvent } from '../types';
+import { SESSION_RECORDERS_LIST } from '../helpers/statics';
 
 export const setupSessionRecordingInspector = async (page: Page, eventDataHandler: (event: BlacklightEvent) => void) => {
     page.on('request', async request => {
