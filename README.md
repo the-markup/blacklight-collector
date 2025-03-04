@@ -124,3 +124,7 @@ Results are stored in `demo-dir` by default
 
 Blacklight would not be possible without the work of [OpenWPM](https://github.com/mozilla/OpenWPM)
 and the EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/website-evidence-collector)
+
+### Special Thanks
+
+- [JeffreyHung](https://github.com/Jeffreyhung) for contributions related to best-practice chromium configs
