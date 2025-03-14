@@ -1,5 +1,5 @@
 import { LinkObject } from '../types';
-import { hasOwnProperty } from '../utils';
+import { hasOwnProperty } from '../helpers/utils';
 import { SOCIAL_URLS } from '../helpers/statics';
 
 export const getLinks = async (page): Promise<LinkObject[]> => {

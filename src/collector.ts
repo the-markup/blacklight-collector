@@ -16,7 +16,7 @@ import { setupBlacklightInspector } from './inspectors/inspector';
 import { setupKeyLoggingInspector } from './inspectors/key-logging';
 import { setupSessionRecordingInspector } from './inspectors/session-recording';
 import { setUpThirdPartyTrackersInspector } from './inspectors/third-party-trackers';
-import { clearDir, closeBrowser } from './utils';
+import { clearDir, closeBrowser } from './helpers/utils';
 
 export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS>;
 

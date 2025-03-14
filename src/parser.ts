@@ -19,7 +19,7 @@ import {
     groupBy, 
     loadJSONSafely, 
     hasOwnProperty, 
-} from './utils';
+} from './helpers/utils';
 
 export const generateReport = (reportType, messages, dataDir, url) => {
     const eventData = getEventData(reportType, messages);

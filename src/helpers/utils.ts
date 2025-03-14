@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import { join } from 'path';
-import { BlacklightEvent } from './types';
+import { BlacklightEvent } from '../types';
 
 export const hasOwnProperty = (object:object, property:string) => {
     return Object.prototype.hasOwnProperty.call(object, property);
@@ -48,7 +48,7 @@ export const clearDir = (outDir, mkNewDir = true) => {
     }
 };
 
-export const loadJSONSafely = str => {
+export const loadJSONSafely = (str:string) => {
     try {
         return JSON.parse(str);
     } catch (error) {

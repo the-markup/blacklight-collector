@@ -3,7 +3,7 @@
  *  Implemented following the Princeton study's methodology.
  */
 import { BlacklightEvent, JsInstrumentEvent, CanvasCallMap } from './types';
-import { getScriptUrl, serializeCanvasCallMap } from './utils';
+import { getScriptUrl, serializeCanvasCallMap } from './helpers/utils';
 
 const MIN_CANVAS_IMAGE_WIDTH = 16;
 const MIN_CANVAS_IMAGE_HEIGHT = 16;

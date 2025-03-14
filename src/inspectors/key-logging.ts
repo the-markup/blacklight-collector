@@ -1,7 +1,7 @@
 import { HTTPRequest, Page } from 'puppeteer';
 import { DEFAULT_INPUT_VALUES } from '../pptr-utils/interaction-utils';
 import { BlacklightEvent } from '../types';
-import { getHashedValues } from '../utils';
+import { getHashedValues } from '../helpers/utils';
 
 const ts = [
     ...Object.values(DEFAULT_INPUT_VALUES),

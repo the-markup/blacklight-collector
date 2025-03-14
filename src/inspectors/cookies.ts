@@ -4,7 +4,7 @@ import { join } from 'path';
 import { Page } from 'puppeteer';
 import { getDomain, getHostname } from 'tldts';
 import { Cookie } from 'tough-cookie';
-import { getScriptUrl, hasOwnProperty } from '../utils';
+import { getScriptUrl, hasOwnProperty } from '../helpers/utils';
 
 const parseCookie = (cookieStr:string, url:string) => {
     const cookie = Cookie.parse(cookieStr);
