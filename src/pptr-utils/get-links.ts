@@ -36,8 +36,8 @@ export const dedupLinks = (links_with_duplicates: LinkObject[]):LinkObject[] => 
 };
 
 export const getSocialLinks = (links: LinkObject[]): LinkObject[] => {
-    const spRegex = new RegExp(`\\b(${SOCIAL_URLS.join('|')})\\b`, 'i');
+    const socialsRegex = new RegExp(`\\b(${SOCIAL_URLS.join('|')})\\b`, 'i');
     return links.filter(link => {
-        return link.href.match(spRegex);
+        return link.href.match(socialsRegex);
     });
 };
