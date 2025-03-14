@@ -69,17 +69,17 @@ export const clearCookiesCache = async (page: Page) => {
 const getHTTPCookies = (events, url): any[] => {
     return flatten(
         events
-            .filter(m => m.type && m.type.includes('Cookie.HTTP'))
-            .map(m =>
-                m.data
+            .filter(event => event.type && event.type.includes('Cookie.HTTP'))
+            .map(event =>
+                event.data
                     .filter(c => c)
-                    .map(d => ({
-                        domain: hasOwnProperty(d, 'domain') ? d.domain : getHostname(url),
-                        name: d.key,
-                        path: d.path,
-                        script: getScriptUrl(m),
+                    .map(data => ({
+                        domain: hasOwnProperty(data, 'domain') ? data.domain : getHostname(url),
+                        name: data.key,
+                        path: data.path,
+                        script: getScriptUrl(event),
                         type: 'Cookie.HTTP',
-                        value: d.value
+                        value: data.value
                     }))
             )
     );
@@ -157,23 +157,23 @@ export const matchCookiesToEvents = (cookies, events, url) => {
             );
         return [...js, ...http];
     }
-    const final = cookies.map(b => {
-        const h = httpCookie.find((c: any) => b.name === c.name && b.domain === c.domain && b.value === c.value);
-        const j = jsCookies.find((c: any) => b.name === c.name && b.domain === c.domain && b.value === c.value);
+    const final = cookies.map(cookie => {
+        const isHttpCookie = httpCookie.find((c: any) => cookie.name === c.name && cookie.domain === c.domain && cookie.value === c.value);
+        const isJsCookie = jsCookies.find((c: any) => cookie.name === c.name && cookie.domain === c.domain && cookie.value === c.value);
 
         let type = '';
-        if (typeof h !== 'undefined' && typeof j !== 'undefined') {
+        if (typeof isHttpCookie !== 'undefined' && typeof isJsCookie !== 'undefined') {
             type = 'both';
-        } else if (typeof h !== 'undefined') {
+        } else if (typeof isHttpCookie !== 'undefined') {
             type = 'http';
-        } else if (typeof j !== 'undefined') {
+        } else if (typeof isJsCookie !== 'undefined') {
             type = 'js';
         } else {
             type = 'unknown';
         }
 
-        const third_party = getDomain(url) === getDomain(`cookie://${b.domain}${b.path}`) ? false : true;
-        return { ...b, type, third_party };
+        const third_party = getDomain(url) === getDomain(`cookie://${cookie.domain}${cookie.path}`) ? false : true;
+        return { ...cookie, type, third_party };
     });
     return final.sort((a, b) => b.expires - a.expires);
 };
