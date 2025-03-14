@@ -4,7 +4,7 @@ import {
   getCanvasFingerprinters,
   getCanvasFontFingerprinters,
 } from "../src/canvas-fingerprinting";
-import { loadEventData } from "../src/utils";
+import { loadEventData } from "../src/helpers/utils";
 import { BlacklightEvent } from "../src/types";
 
 const TEST_DATA_DIR = join(__dirname, "test-data", "canvas-fingerprinting");

@@ -3,7 +3,7 @@ import puppeteer, { Page } from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { reportCookieEvents } from "../src/parser";
 import { setupBlacklightInspector } from "../src/inspectors/inspector";
-import { loadEventData } from "../src/utils";
+import { loadEventData } from "../src/helpers/utils";
 import { join } from "path";
 import {
   captureBrowserCookies,

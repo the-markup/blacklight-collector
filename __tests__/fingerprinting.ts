@@ -2,7 +2,7 @@ import puppeteer, { Browser } from "puppeteer";
 import { Global, JsInstrumentEvent } from "../src/types";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { setupBlacklightInspector } from "../src/inspectors/inspector";
-import { getScriptUrl } from "../src/utils";
+import { getScriptUrl } from "../src/helpers/utils";
 declare var global: Global;
 let browser = {} as Browser;
 

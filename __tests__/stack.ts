@@ -4,7 +4,7 @@ import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { Global, BlacklightEvent } from "../src/types";
 import { setupBlacklightInspector } from "../src/inspectors/inspector";
 import { getDomain } from "tldts";
-import { getScriptUrl } from "../src/utils";
+import { getScriptUrl } from "../src/helpers/utils";
 declare var global: Global;
 
 const JS_STACK_TEST_SCRIPT_URL = `${global.__DEV_SERVER__}/stack.js`;
