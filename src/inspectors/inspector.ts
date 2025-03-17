@@ -9,9 +9,10 @@ import { BlacklightEvent } from '../types';
 function getPageScriptAsString(observers, testing = false) {
     let observersString = '';
     let observersNameString = '';
-    observers.forEach(o => {
-        observersString += `${o}\n`;
-        observersNameString += `${o.name},`;
+
+    observers.forEach(obsv => {
+        observersString += `${obsv}\n`;
+        observersNameString += `${obsv.name},`;
     });
     return `${jsInstruments}\n${observersString}(${injectPlugins}(jsInstruments,[${observersNameString}],StackTrace,${testing ? 'true' : 'false'}))`;
 }

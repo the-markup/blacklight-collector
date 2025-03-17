@@ -1,6 +1,6 @@
 import { join } from "path";
 import { generateReport } from "../src/parser";
-import { loadEventData } from "../src/utils";
+import { loadEventData } from "../src/helpers/utils";
 import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { Global } from "../src/types";

@@ -1,9 +1,10 @@
 import path from 'path';
 import { setGracefulCleanup, tmpNameSync } from 'tmp';
-setGracefulCleanup();
 
 // https://stackoverflow.com/a/45211015/1407622
 import { createLogger, format, transports } from 'winston';
+
+setGracefulCleanup();
 
 export const getLogger = ({ outDir = '', quiet = false }) => {
     const log_transports = [];

@@ -3,16 +3,16 @@ import puppeteer, { Page } from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import { reportCookieEvents } from "../src/parser";
 import { setupBlacklightInspector } from "../src/inspectors/inspector";
-import { loadEventData } from "../src/utils";
+import { loadEventData } from "../src/helpers/utils";
 import { join } from "path";
 import {
   captureBrowserCookies,
   setupHttpCookieCapture,
   getJsCookies,
   matchCookiesToEvents,
-} from "../src/cookie-collector";
+} from "../src/inspectors/cookies";
 import { existsSync } from "fs";
-import { getLogger } from "../src/logger";
+import { getLogger } from "../src/helpers/logger";
 jest.setTimeout(20000);
 
 const PP_TEST_RESULT = [

@@ -1,3 +1,94 @@
+export const BEHAVIOUR_TRACKING_EVENTS = {
+    KEYBOARD: ['keydown', 'keypress', 'keyup', 'input'],
+    MOUSE: ['click', 'mousedown', 'mouseup', 'mousemove', 'select', 'dblclick', 'scroll'],
+    SENSOR: ['devicemotion', 'deviceorientation', 'orientationchange'],
+    TOUCH: ['touchmove', 'touchstart', 'touchend', 'touchcancel']
+};
+
+export const FINGERPRINTABLE_WINDOW_APIS = {
+    AUDIO: [
+        'AudioContext.createOscillator',
+        'AudioContext.createAnalyser',
+        'AudioContext.createBiquadFilter',
+        'AudioContext.createBuffer',
+        'AudioContext.createGain',
+        'AudioContext.createScriptProcessor',
+        'AudioContext.destination',
+        'AnalyserNode.connect',
+        'AnalyserNode.disconnect',
+        'AnalyserNode.frequencyBinCount',
+        'AnalyserNode.getFloatFrequencyData',
+        'GainNode.connect',
+        'GainNode.gain',
+        'GainNode.disconnect',
+        'OscillatorNode.type',
+        'OscillatorNode.connect',
+        'OscillatorNode.stop',
+        'OscillatorNode.start',
+        'ScriptProcessorNode.connect',
+        'ScriptProcessorNode.onaudioprocess',
+        'ScriptProcessorNode.disconnect'
+    ],
+    BATTERY: ['window.BatteryManager', 'window.navigator.getBattery'],
+    CANVAS: [
+        'CanvasRenderingContext2D.getImageData',
+        'CanvasRenderingContext2D.fillText',
+        'CanvasRenderingContext2D.strokeText',
+        'CanvasRenderingContext2D.save',
+        'HTMLCanvasElement.toDataURL',
+        'HTMLCanvasElement.addEventListener'
+    ],
+    MEDIA_DEVICES: ['window.navigator.mediaDevices.enumerateDevices'],
+    MIME: ['window.navigator.mimeTypes'],
+    NAVIGATOR: [
+        'window.navigator.appCodeName',
+        'window.navigator.appName',
+        'window.navigator.appVersion',
+        'window.navigator.clipboard',
+        'window.navigator.cookieEnabled',
+        'window.navigator.doNotTrack',
+        'window.navigator.geolocation',
+        'window.navigator.language',
+        'window.navigator.languages',
+        'window.navigator.onLine',
+        'window.navigator.platform',
+        'window.navigator.product',
+        'window.navigator.productSub',
+        'window.navigator.userAgent',
+        'window.navigator.vendorSub',
+        'window.navigator.vendor'
+    ],
+    PLUGIN: ['window.navigator.plugins'],
+    SCREEN: ['window.screen.pixelDepth', 'window.screen.colorDepth'],
+    WEBRTC: ['RTCPeerConnection']
+};
+
+export const SESSION_RECORDERS_LIST = [
+    'mc.yandex.ru/metrika/watch.js',
+    'mc.yandex.ru/metrika/tag.js',
+    'mc.yandex.ru/webvisor/',
+    'fullstory.com/s/fs.js',
+    'd2oh4tlt9mrke9.cloudfront.net/Record/js/sessioncam.recorder.js',
+    'ws.sessioncam.com/Record/record.asmx',
+    'userreplay.net',
+    'static.hotjar.com',
+    'script.hotjar.com',
+    'insights.hotjar.com/api',
+    'clicktale.net',
+    'smartlook.com',
+    'decibelinsight.net',
+    'quantummetric.com',
+    'inspectlet.com',
+    'mouseflow.com',
+    'logrocket.com',
+    'salemove.com',
+    'd10lpsik1i8c69.cloudfront.net',
+    'luckyorange.com',
+    'vwo.com'
+];
+
+// Facebook Statics
+
 // https://web.archive.org/web/20200413102542/https://developers.facebook.com/docs/facebook-pixel/advanced/advanced-matching
 export const FB_ADVANCED_MATCHING_PARAMETERS = {
     'ud[em]': 'Email',
@@ -98,4 +189,37 @@ export const FB_STANDARD_EVENTS = [
             "A visit to a web page you care about (for example, a product page or landing page). ViewContent tells you if someone visits a web page's URL, but not what they see or do on that page. For example - A person lands on a product details page",
         eventName: 'ViewContent'
     }
+];
+
+export const SOCIAL_URLS = [
+    'facebook.com',
+    'linkedin.com',
+    'twitter.com',
+    'youtube.com',
+    'instagram.com',
+    'flickr.com',
+    'tumblr.com',
+    'snapchat.com',
+    'whatsapp.com',
+    'docs.google.com',
+    'goo.gl',
+    'pinterest.com',
+    'bit.ly',
+    'evernote.com',
+    'eventbrite.com',
+    'dropbox.com',
+    'slideshare.net',
+    'vimeo.com',
+    'x.com',
+    'bsky.app',
+    'tiktok.com',
+    'mastodon.social',
+    'threads.net',
+    'wechat.com',
+    'messenger.com',
+    'telegram.org',
+    'douyin.com',
+    'kuaishou.com',
+    'weibo.com',
+    'im.qq.com',
 ];

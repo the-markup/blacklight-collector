@@ -4,16 +4,16 @@ import { join } from 'path';
 import { Page } from 'puppeteer';
 import { getDomain, getHostname } from 'tldts';
 import { Cookie } from 'tough-cookie';
-import { getScriptUrl, hasOwnProperty } from './utils';
+import { getScriptUrl, hasOwnProperty } from '../helpers/utils';
 
-const parseCookie = (cookieStr, fpUrl) => {
+const parseCookie = (cookieStr:string, url:string) => {
     const cookie = Cookie.parse(cookieStr);
     try {
         if (typeof cookie !== 'undefined') {
             if (!!cookie.domain) {
                 // what is the domain if not set explicitly?
                 // https://stackoverflow.com/a/5258477/1407622
-                cookie.domain = getHostname(fpUrl);
+                cookie.domain = getHostname(url);
             }
             return cookie;
         } else {
@@ -39,7 +39,7 @@ export const setupHttpCookieCapture = async (page, eventHandler) => {
                 ];
                 const splitCookieHeaders = cookieHTTP.split('\n');
                 const data = splitCookieHeaders.map(c => parseCookie(c, req.url()));
-                // find mainframe
+                // find main frame
                 let frame = response.frame();
                 while (frame.parentFrame()) {
                     frame = frame.parentFrame();
@@ -66,60 +66,61 @@ export const clearCookiesCache = async (page: Page) => {
     await client.detach();
 };
 
-export const getHTTPCookies = (events, url): any[] => {
+const getHTTPCookies = (events, url): any[] => {
     return flatten(
         events
-            .filter(m => m.type && m.type.includes('Cookie.HTTP'))
-            .map(m =>
-                m.data
+            .filter(event => event.type && event.type.includes('Cookie.HTTP'))
+            .map(event =>
+                event.data
                     .filter(c => c)
-                    .map(d => ({
-                        domain: hasOwnProperty(d, 'domain') ? d.domain : getHostname(url),
-                        name: d.key,
-                        path: d.path,
-                        script: getScriptUrl(m),
+                    .map(data => ({
+                        domain: hasOwnProperty(data, 'domain') ? data.domain : getHostname(url),
+                        name: data.key,
+                        path: data.path,
+                        script: getScriptUrl(event),
                         type: 'Cookie.HTTP',
-                        value: d.value
+                        value: data.value
                     }))
             )
     );
 };
+
 export const getJsCookies = (events, url) => {
     return events
         .filter(
-            m =>
-                m.type &&
-                m.type.includes('JsInstrument.ObjectProperty') &&
-                m.data.symbol.includes('cookie') &&
-                m.data.operation.startsWith('set') &&
-                typeof m.data.value !== 'undefined' &&
-                typeof Cookie.parse(m.data.value) !== 'undefined'
+            event =>
+                event.type &&
+                event.type.includes('JsInstrument.ObjectProperty') &&
+                event.data.symbol.includes('cookie') &&
+                event.data.operation.startsWith('set') &&
+                typeof event.data.value !== 'undefined' &&
+                typeof Cookie.parse(event.data.value) !== 'undefined'
         )
-        .map(d => {
-            const data = parseCookie(d.data.value, url);
-            const hasOwnDomain = hasOwnProperty(d, 'domain') && 
-                                 d.domain !== null && 
-                                 d.domain !== undefined;
-            const hasOwnName  = data && 
-                                hasOwnProperty(data, 'key') && 
-                                data.key !== null && 
-                                data.key !== undefined;
-            const hasOwnPath  = data && 
-                                hasOwnProperty(data, 'path') && 
-                                data.path !== null && 
-                                data.path !== undefined;
-            const hasOwnValue = data && 
-                                hasOwnProperty(data, 'value') && 
-                                data.value !== null && 
-                                data.value !== undefined;
-            const script = getScriptUrl(d);
+        .map(event => {
+            const data         = parseCookie(event.data.value, url);
+            const hasOwnDomain = hasOwnProperty(event, 'domain') && 
+                                 event.domain !== null && 
+                                 event.domain !== undefined;
+            const hasOwnName   = data && 
+                                 hasOwnProperty(data, 'key') && 
+                                 data.key !== null && 
+                                 data.key !== undefined;
+            const hasOwnPath   = data && 
+                                 hasOwnProperty(data, 'path') && 
+                                 data.path !== null && 
+                                 data.path !== undefined;
+            const hasOwnValue  = data && 
+                                 hasOwnProperty(data, 'value') && 
+                                 data.value !== null && 
+                                 data.value !== undefined;
+            const script       = getScriptUrl(event);
 
             return {
-                domain: hasOwnDomain ? d.domain : getDomain(url),
+                domain: hasOwnDomain ? event.domain : getDomain(url),
                 name: hasOwnName ? data.key : '',
                 path: hasOwnPath ? data.path : '',
                 script,
-                type: d.type,
+                type: event.type,
                 value: hasOwnValue ? data.value : ''
             };
         });
@@ -131,52 +132,48 @@ export const matchCookiesToEvents = (cookies, events, url) => {
 
     if (cookies.length < 1) {
         const js = jsCookies
-            .map(j => ({
-                ...j,
-                third_party: getDomain(url) !== getDomain(`cookie://${j.domain}${j.path}`),
+            .map(jsCookie => ({
+                ...jsCookie,
+                third_party: getDomain(url) !== getDomain(`cookie://${jsCookie.domain}${jsCookie.path}`),
                 type: 'js'
             }))
             .filter(
                 (thing, index, self) =>
-                    index ===
-                    self.findIndex(
+                    index === self.findIndex(
                         t => t.name === thing.name && t.domain === thing.domain
-                        // t.value === thing.value
                     )
             );
         const http = httpCookie
-            .map(j => ({
-                ...j,
-                third_party: getDomain(url) !== getDomain(`cookie://${j.domain}${j.path}`),
+            .map(httpCookie => ({
+                ...httpCookie,
+                third_party: getDomain(url) !== getDomain(`cookie://${httpCookie.domain}${httpCookie.path}`),
                 type: 'http'
             }))
             .filter(
-                (thing, index, self) => index === self.findIndex(t => t.name === thing.name && t.domain === thing.domain && t.value === thing.value)
+                (thing, index, self) => 
+                    index === self.findIndex(
+                        t => t.name === thing.name && t.domain === thing.domain && t.value === thing.value
+                    )
             );
         return [...js, ...http];
     }
-    const final = cookies.map(b => {
-        const h = httpCookie.find((c: any) => b.name === c.name && b.domain === c.domain && b.value === c.value);
-
-        const j = jsCookies.find((c: any) => b.name === c.name && b.domain === c.domain && b.value === c.value);
+    const final = cookies.map(cookie => {
+        const isHttpCookie = httpCookie.find((c: any) => cookie.name === c.name && cookie.domain === c.domain && cookie.value === c.value);
+        const isJsCookie = jsCookies.find((c: any) => cookie.name === c.name && cookie.domain === c.domain && cookie.value === c.value);
 
         let type = '';
-        if (typeof h !== 'undefined' && typeof j !== 'undefined') {
-            // console.log(`${JSON.stringify(b)} found in http and js instruments`);
+        if (typeof isHttpCookie !== 'undefined' && typeof isJsCookie !== 'undefined') {
             type = 'both';
-        } else if (typeof h !== 'undefined') {
+        } else if (typeof isHttpCookie !== 'undefined') {
             type = 'http';
-        } else if (typeof j !== 'undefined') {
+        } else if (typeof isJsCookie !== 'undefined') {
             type = 'js';
         } else {
-            // console.log(
-            //   `${JSON.stringify(b)} not found in http and js instruments    `
-            // );
             type = 'unknown';
         }
 
-        const third_party = getDomain(url) === getDomain(`cookie://${b.domain}${b.path}`) ? false : true;
-        return { ...b, type, third_party };
+        const third_party = getDomain(url) === getDomain(`cookie://${cookie.domain}${cookie.path}`) ? false : true;
+        return { ...cookie, type, third_party };
     });
     return final.sort((a, b) => b.expires - a.expires);
 };
@@ -190,9 +187,6 @@ export const captureBrowserCookies = async (page, outDir, filename = 'browser-co
         if (cookie.expires > -1) {
             // add derived attributes for convenience
             cookie.expires = new Date(cookie.expires * 1000);
-            // cookie.expiresDays =
-            //   Math.round((cookie.expiresUTC - Date.now()) / (10 * 60 * 60 * 24)) /
-            //   100;
         }
         cookie.domain = cookie.domain.replace(/^\./, ''); // normalise domain value
         return cookie;

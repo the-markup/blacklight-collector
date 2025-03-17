@@ -1,11 +1,14 @@
 import { getDomain } from 'tldts';
-import { getCanvasFontFp, getCanvasFp } from './canvas-fingerprinting';
-import { loadBrowserCookies, matchCookiesToEvents } from './cookie-collector';
-import { FB_ADVANCED_MATCHING_PARAMETERS, FB_STANDARD_EVENTS } from './fb-pixel-lookup';
+import { getCanvasFontFingerprinters, getCanvasFingerprinters } from './canvas-fingerprinting';
+import { loadBrowserCookies, matchCookiesToEvents } from './inspectors/cookies';
+import { 
+    BEHAVIOUR_TRACKING_EVENTS, 
+    FINGERPRINTABLE_WINDOW_APIS, 
+    FB_ADVANCED_MATCHING_PARAMETERS, 
+    FB_STANDARD_EVENTS,
+} from './helpers/statics';
 import {
-    BEHAVIOUR_TRACKING_EVENTS,
     BlacklightEvent,
-    FINGERPRINTABLE_WINDOW_APIS,
     JsInstrumentEvent,
     KeyLoggingEvent,
     SessionRecordingEvent,
@@ -16,7 +19,7 @@ import {
     groupBy, 
     loadJSONSafely, 
     hasOwnProperty, 
-} from './utils';
+} from './helpers/utils';
 
 export const generateReport = (reportType, messages, dataDir, url) => {
     const eventData = getEventData(reportType, messages);
@@ -148,11 +151,11 @@ const reportEventListeners = (eventData: BlacklightEvent[]) => {
 };
 
 export const reportCanvasFingerprinters = (eventData: BlacklightEvent[]) => {
-    return getCanvasFp(eventData);
+    return getCanvasFingerprinters(eventData);
 };
 
 export const reportCanvasFontFingerprinters = (eventData: BlacklightEvent[]) => {
-    return getCanvasFontFp(eventData);
+    return getCanvasFontFingerprinters(eventData);
 };
 
 export const reportCookieEvents = (eventData: BlacklightEvent[], dataDir, url) => {
