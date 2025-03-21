@@ -127,4 +127,4 @@ and the EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/websit
 
 ### Special Thanks
 
-- [JeffreyHung](https://github.com/Jeffreyhung) for contributions related to best-practice chromium configs
+- [JeffreyHung](https://github.com/Jeffreyhung) for contributions related maintenance and security best-practices
