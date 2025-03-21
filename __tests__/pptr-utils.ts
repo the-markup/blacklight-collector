@@ -146,7 +146,15 @@ describe('get-links', () => {
             expect(result).toStrictEqual(links);
         });
         it('recognizes every social link', () => {
-            const links:LinkObject[] = SOCIAL_URLS.map(url => ({ href: `www.${url}`, innerText: 'text', innerHtml: 'html'}));
+            // SOCIAL_URLS escapes the . character for regex safety. 
+            // We have to remove that escaping here, where it's interpreted as a plain string
+            const links:LinkObject[] = SOCIAL_URLS.map(url => {
+                return { 
+                    href: `www.${url.replaceAll('\\', '')}`, 
+                    innerText: 'text', 
+                    innerHtml: 'html'
+                };
+            });
             const result = getSocialLinks(links);
             expect(result).toHaveLength(links.length);
             expect(result).toStrictEqual(links);
