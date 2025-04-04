@@ -84,11 +84,14 @@ Results are stored in `demo-dir` by default
   - default: 'networkidle2'
   - [Other options](https://pptr.dev/api/puppeteer.puppeteerlifecycleevent/)
 - `puppeteerExecutablePath`
-  - Path to Chromium executable.
   - default: uses bundled puppeteer chromium
+  - Path to Chromium executable.
 - `extraChromiumArgs`
-  - Extra flags to pass to Chromium executable
   - default: ['--disable-features=TrackingProtection3pcd']
+  - Extra flags to pass to Chromium executable
+- `location`
+  - default: nonexistant
+  - Optional description of location of scan execution
 
 ## Inspection Result
 
@@ -113,6 +116,7 @@ Results are stored in `demo-dir` by default
     - `uri_ins`: The URL that was entered by the user.
     - `uri_dest`: The final url that was visited after any redirects.
     - `uri_redirects`: The redirect chain.
+    - `location`: If passed in as an argument, the description of the scan execution location.
 - **n.html**
   - Nth inspected page's html source.
 - **n.jpeg**
