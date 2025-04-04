@@ -18,7 +18,7 @@ import { setupSessionRecordingInspector } from './inspectors/session-recording';
 import { setUpThirdPartyTrackersInspector } from './inspectors/third-party-trackers';
 import { clearDir, closeBrowser } from './helpers/utils';
 
-export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS>;
+export type CollectorOptions = Partial<typeof DEFAULT_OPTIONS> & {location?: string};
 
 const DEFAULT_OPTIONS = {
     outDir: join(process.cwd(), 'bl-tmp'),
@@ -92,6 +92,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         start_time: new Date(),
         end_time: null
     };
+    if (args.location) output.location = args.location;
 
     // Log network requests and page links
     const hosts = {
