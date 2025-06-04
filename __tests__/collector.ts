@@ -1,9 +1,5 @@
-import { collector } from "../src/collector";
+import { collect } from "../src/collector";
 import { Global } from "../src/types";
-import { join } from "path";
-import fs from "fs";
-import generate from "@babel/generator";
-import { clearDir } from "../src/utils";
 import puppeteer from "puppeteer";
 import { defaultPuppeteerBrowserOptions } from "../src/pptr-utils/default";
 import {
@@ -98,7 +94,7 @@ it("can get social links", async () => {
   const browser = await puppeteer.launch(defaultPuppeteerBrowserOptions);
   const page = (await browser.pages())[0];
   await page.goto(`${global.__DEV_SERVER__}/social.html`);
-  let dupeLinks = await getLinks(page);
+  const dupeLinks = await getLinks(page);
   const links = dedupLinks(dupeLinks);
   expect(getSocialLinks(links)).toEqual(SOCIAL_LINKS);
   await browser.close();
@@ -106,7 +102,7 @@ it("can get social links", async () => {
 jest.setTimeout(15000);
 it.skip("Considers first party domains to be those from the domain requested or the domain of the page loaded after redirects", async () => {
   const URL = "https://nyt.com";
-  const response = await collector(URL, {
+  const response = await collect(URL, {
     numPages: 1,
     defaultWaitUntil: "domcontentloaded",
   });
@@ -121,7 +117,7 @@ it.skip("Considers first party domains to be those from the domain requested or 
 
 it.skip("If a user enters a url with a subdomain blacklight will only browse to other pages in that subdomain", async () => {
   const URL = "https://jobs.theguardian.com";
-  const response = await collector(URL, {
+  const response = await collect(URL, {
     numPages: 1,
     defaultWaitUntil: "domcontentloaded",
   });
@@ -137,7 +133,7 @@ it.skip("If a user enters a url with a subdomain blacklight will only browse to 
 
 it.skip("only exception to the subdomain rule is www", async () => {
   const URL = "https://www.themarkup.org";
-  const response = await collector(URL, {
+  const response = await collect(URL, {
     numPages: 1,
     defaultWaitUntil: "domcontentloaded",
   });

@@ -16,7 +16,6 @@ afterAll(async () => {
 
 // Expected Navigator and Screen properties
 // BuildId and oscpu are Firefox specific so removing them
-//
 const PROPERTIES = [
   "window.navigator.appCodeName",
   "window.navigator.appName",
