@@ -60,6 +60,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
     const output: any = {
         title: args.title,
+        page_title: '',
         uri_ins: inUrl,
         uri_dest: null,
         uri_redirects: null,
@@ -147,7 +148,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         };
         page.emulate(args.emulateDevice);
-
         if (Object.keys(args.headers).length > 0) {
             page.setExtraHTTPHeaders(args.headers);
         }
@@ -217,6 +217,10 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         // Go to the first url
         console.log('Going to the first url', inUrl);
         await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
+        
+        // Save landing page title
+        const title = await page.title();
+        output.page_title = title;
 
         pageIndex++;
         console.log('Saving first page response');
