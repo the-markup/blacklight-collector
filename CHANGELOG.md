@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.7.0](https://github.com/the-markup/blacklight-collector/compare/@themarkup/blacklight-collector@3.6.1...@themarkup/blacklight-collector@3.7.0) (2025-06-17)
+
 ### [3.6.1](https://github.com/the-markup/blacklight-collector/compare/@themarkup/blacklight-collector@3.6.0...@themarkup/blacklight-collector@3.6.1) (2025-04-07)
 
 ## [3.6.0](https://github.com/the-markup/blacklight-collector/compare/@themarkup/blacklight-collector@3.5.2...@themarkup/blacklight-collector@3.6.0) (2025-04-04)
