@@ -3,10 +3,9 @@ import sampleSize from 'lodash.samplesize';
 import os from 'os';
 import { join } from 'path';
 import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
-import PuppeteerHar from 'puppeteer-har';
+import { captureNetwork } from '@themarkup/puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
 import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './inspectors/cookies';
-
 import { getLogger } from './helpers/logger';
 import { generateReport } from './parser';
 import { defaultPuppeteerBrowserOptions, savePageContent } from './pptr-utils/default';
@@ -111,6 +110,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
     let page: Page;
     let pageIndex = 1;
     let har = {} as any;
+    const harOutputPath = args.outDir ? join(args.outDir, 'requests.har') : undefined;
     let page_response = null;
     const userDataDir = args.saveBrowserProfile ? join(args.outDir, 'browser-profile') : undefined;
     let didBrowserDisconnect = false;
@@ -177,10 +177,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock);
 
         if (args.captureHar) {
-            har = new PuppeteerHar(page);
-            await har.start({
-                path: args.outDir ? join(args.outDir, 'requests.har') : undefined
-            });
+            har = await captureNetwork(page);
         }
         if (didBrowserDisconnect) {
             return {
@@ -297,7 +294,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
         await captureBrowserCookies(page, args.outDir);
         if (args.captureHar) {
-            await har.stop();
+            await har(harOutputPath);
         }
 
         await closeBrowser(browser);
