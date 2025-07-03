@@ -141,3 +141,15 @@ it.skip("can parse FB Pixel tracking events - live capture", async () => {
   const report = generateReport("fb_pixel_events", rows, null, null);
   expect(report.map((r) => r.eventName)).toContain("PageView");
 });
+
+it("can parse Google Analytics tracking events", async () => {
+  const TEST_DIR = join(__dirname, "test-data", "veteransunited-1.0.3");
+  const rawEvents = loadEventData(TEST_DIR);
+  const pageUrls = [
+    'https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j82&tid=UA-30102-16&cid=852100309.1589758701&jid=2012734374&gjid=2113596298&_gid=1708403671.1589758701&_u=YGBAgEABAAAAIE~&z=549701973',
+    'https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j82&tid=UA-30102-16&cid=852100309.1589758701&jid=1563152953&gjid=595724329&_gid=1708403671.1589758701&_u=yDCAgEABAAAAIE~&z=176641512'
+  ];
+  const report = generateReport("google_analytics_events", rawEvents, null, null);
+  expect(report.length).toBe(2);
+  expect(report.map((r) => r.url).sort()).toEqual(pageUrls.sort());
+});
