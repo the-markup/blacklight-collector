@@ -43,6 +43,7 @@ Results are stored in `demo-dir` by default
     - "canvas_font_fingerprinters"
     - "cookies"
     - "fb_pixel_events"
+    - "google_analytics_events"
     - "key_logging"
     - "session_recorders"
     - "third_party_trackers"

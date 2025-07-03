@@ -2,7 +2,12 @@ export interface Global {
     __DEV_SERVER__: string;
 }
 
-export type BlacklightEvent = JsInstrumentEvent | KeyLoggingEvent | BlacklightErrorEvent | TrackingRequestEvent | SessionRecordingEvent;
+export type BlacklightEvent = 
+    JsInstrumentEvent | 
+    KeyLoggingEvent | 
+    BlacklightErrorEvent | 
+    TrackingRequestEvent | 
+    SessionRecordingEvent;
 
 export interface KeyLoggingEvent {
     type: 'KeyLogging';
