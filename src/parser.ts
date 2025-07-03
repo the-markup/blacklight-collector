@@ -36,6 +36,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
             return reportCanvasFontFingerprinters(eventData);
         case 'fb_pixel_events':
             return reportFbPixelEvents(eventData);
+        case 'google_analytics_events':
+            return reportGoogleAnalyticsEvents(eventData);
         case 'fingerprintable_api_calls':
             return reportFingerprintableAPIs(eventData);
         case 'session_recorders':
@@ -80,6 +82,9 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
         case 'fb_pixel_events':
+            filtered = filterByEvent(messages, 'TrackingRequest');
+            break;
+        case 'google_analytics_events':
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
         default:
@@ -215,11 +220,23 @@ const reportFingerprintableAPIs = (eventData: BlacklightEvent[]) => {
     return serializable;
 };
 
-const reportThirdPartyTrackers = (eventData: BlacklightEvent[], fpDomain) => {
+const reportThirdPartyTrackers = (eventData: BlacklightEvent[], firstPartyDomain: string) => {
     return eventData.filter(e => {
         const requestDomain = getDomain(e.url);
-        const isThirdPartyDomain = requestDomain && requestDomain !== fpDomain;
+        const isThirdPartyDomain = requestDomain && requestDomain !== firstPartyDomain;
         return isThirdPartyDomain;
+    });
+};
+
+const reportGoogleAnalyticsEvents = (eventData: BlacklightEvent[]) => {
+    return eventData.filter((event: TrackingRequestEvent) => {
+        console.log(event.url);
+        return event.url.includes('stats.g.doubleclick') 
+            && (
+                event.url.includes('UA-')
+                || event.url.includes('G-')
+                || event.url.includes('AW-')
+            );
     });
 };
 
@@ -273,6 +290,7 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
         };
     });
 };
+
 const getDomainSafely = (message: KeyLoggingEvent) => {
     try {
         if (message.data.post_request_url) {
