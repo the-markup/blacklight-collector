@@ -40,7 +40,7 @@
     "@themarkup/puppeteer-har": "^0.0.0",
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
-    "npm": "^10.5.2",
+    "npm": "^11.4.2",
     "puppeteer": "^22.15.0",
     "run": "^1.5.0",
     "stacktrace-js": "^2.0.2",
