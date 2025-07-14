@@ -229,13 +229,22 @@ const reportThirdPartyTrackers = (eventData: BlacklightEvent[], firstPartyDomain
 };
 
 const reportGoogleAnalyticsEvents = (eventData: BlacklightEvent[]) => {
-    return eventData.filter((event: TrackingRequestEvent) => {
+    const googleAnalyticsEvents = eventData.filter((event: TrackingRequestEvent) => {
         return event.url.includes('stats.g.doubleclick') 
             && (
                 event.url.includes('UA-') // old version of google ids
                 || event.url.includes('G-') // this and following are new version
                 || event.url.includes('AW-')
             );
+    });
+
+    return googleAnalyticsEvents.map((event: TrackingRequestEvent) => {
+        const url = event.url;
+        delete event.url;
+        return {
+            ...event,
+            raw: url,
+        };
     });
 };
 

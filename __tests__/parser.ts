@@ -151,5 +151,5 @@ it("can parse Google Analytics tracking events", async () => {
   ];
   const report = generateReport("google_analytics_events", rawEvents, null, null);
   expect(report.length).toBe(2);
-  expect(report.map((r) => r.url).sort()).toEqual(pageUrls.sort());
+  expect(report.map((r) => r.raw).sort()).toEqual(pageUrls.sort());
 });
