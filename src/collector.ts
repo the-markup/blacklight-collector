@@ -41,6 +41,7 @@ const DEFAULT_OPTIONS = {
         'canvas_font_fingerprinters',
         'cookies',
         'fb_pixel_events',
+        'tk_pixel_events',
         'google_analytics_events',
         'key_logging',
         'session_recorders',
@@ -52,7 +53,7 @@ const DEFAULT_OPTIONS = {
 };
 
 export const collect = async (inUrl: string, args: CollectorOptions) => {
-    args = { ...DEFAULT_OPTIONS, ...args };
+    args = { ...DEFAULT_OPTIONS, ...args }; // override defaults with user args
     clearDir(args.outDir);
     const FIRST_PARTY = parse(inUrl);
     let REDIRECTED_FIRST_PARTY = parse(inUrl);
@@ -107,6 +108,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
     };
 
+    // set up browser and page
     let browser: Browser;
     let page: Page;
     let pageIndex = 1;
@@ -126,7 +128,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         options['executablePath'] = args.puppeteerExecutablePath;
     }
     try {
-        browser = await puppeteer.launch(options);
+        browser = await puppeteer.launch(options); // launch browser
         browser.on('disconnected', () => {
             didBrowserDisconnect = true;
         });
@@ -153,7 +155,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             page.setExtraHTTPHeaders(args.headers);
         }
 
-        // record all requested hosts
+        // record all requested hosts (the nework request send from the page)
+        // distinguish between first and third party requests
         page.on('request', request => {
             const l = parse(request.url());
             // note that hosts may appear as first and third party depending on the path
@@ -166,16 +169,17 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         });
 
+        //clear cache
         if (args.clearCache) {
             await clearCookiesCache(page);
         }
 
         // Init blacklight instruments on page
-        await setupBlacklightInspector(page, logger.warn);
-        await setupKeyLoggingInspector(page, logger.warn);
-        await setupHttpCookieCapture(page, logger.warn);
-        await setupSessionRecordingInspector(page, logger.warn);
-        await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock);
+        await setupBlacklightInspector(page, logger.warn); // set up debug / event logger(what logger does)
+        await setupKeyLoggingInspector(page, logger.warn); // store get/post request data, look for whehther any keylogging(default value) is happening
+        await setupHttpCookieCapture(page, logger.warn); // get cookie information in the response header
+        await setupSessionRecordingInspector(page, logger.warn); // look for known session recording service provider url in the request url
+        await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock); // look for known third party tracker url in the request url ??
 
         if (args.captureHar) {
             har = await captureNetwork(page);
@@ -190,10 +194,10 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         // Function to navigate to a page with a timeout guard
         const navigateWithTimeout = async (page: Page, url: string, timeout: number, waitUntil: PuppeteerLifeCycleEvent) => {
             try {
-                page_response = await Promise.race([
+                page_response = await Promise.race([// this return a response object
                     page.goto(url, {
-                        timeout: timeout,
-                        waitUntil: waitUntil
+                        timeout: timeout, // condtion last for timeout ms
+                        waitUntil: waitUntil // waiting for this condtion to occur max waitUntil ms
                     }),
                     new Promise((_, reject) =>
                         setTimeout(() => {
@@ -209,10 +213,10 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                     waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
                 });
             }
-            await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
+            await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots); 
         };
 
-        // Go to the first url
+        // Go to the first url and get all the html content and screenshot
         console.log('Going to the first url', inUrl);
         await navigateWithTimeout(page, inUrl, args.defaultTimeout, args.defaultWaitUntil as PuppeteerLifeCycleEvent);
         
@@ -229,6 +233,9 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             third_party: []
         };
 
+        // deal with redirection
+
+        // get all redirection urls
         output.uri_redirects = page_response
             .request()
             .redirectChain()
@@ -236,6 +243,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                 return req.url();
             });
 
+        // get final landing url after redirection and categorise first and third party links
         output.uri_dest = page.url();
         duplicatedLinks = await getLinks(page);
         REDIRECTED_FIRST_PARTY = parse(output.uri_dest);
@@ -253,10 +261,13 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             }
         }
 
+        //simulate user interaction on the page
         await fillForms(page);
         await autoScroll(page);
 
         let subDomainLinks = [];
+        // www often indicate the main domain of the website
+        // only browse links (output link) on the same subdomain as the landing page(output page)
         if (getSubdomain(output.uri_dest) !== 'www') {
             subDomainLinks = outputLinks.first_party.filter(f => {
                 return getSubdomain(f.href) === getSubdomain(output.uri_dest);
@@ -264,10 +275,11 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         } else {
             subDomainLinks = outputLinks.first_party;
         }
-        const browse_links = sampleSize(subDomainLinks, args.numPages);
+        const browse_links = sampleSize(subDomainLinks, args.numPages); // randomly choose <args.numPages> number of links to visit
         output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
         console.log('About to browse more links');
 
+        // for all the output, non-duplicated links, visit the page(simulate user browsing)
         for (const link of output.browsing_history.slice(1)) {
             logger.log('info', `browsing now to ${link}`, { type: 'Browser' });
             if (didBrowserDisconnect) {
@@ -302,7 +314,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
         }
-
+        // after simulatying user browsing, more links may be collected, so we need to deduplicate and recategorise first and third party links
         const links = dedupLinks(duplicatedLinks);
         output.end_time = new Date();
         for (const link of links) {
@@ -335,6 +347,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             output.social = getSocialLinks(links);
         }
 
+        // this is what we will use to run test and generate report
         const event_data_all = await new Promise(done => {
             logger.query(
                 {
@@ -373,6 +386,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         });
         // We only consider something to be a third party tracker if:
         // The domain is different to that of the final url (after any redirection) of the page the user requested to load.
+        // where the test is run and gerenate report 
         const reports = args.blTests.reduce((acc, cur) => {
             acc[cur] = generateReport(cur, event_data, args.outDir, REDIRECTED_FIRST_PARTY.domain);
             return acc;

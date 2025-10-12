@@ -223,3 +223,32 @@ export const SOCIAL_URLS = [
     'weibo\\.com',
     'im\\.qq\\.com',
 ];
+
+// https://ads.tiktok.com/help/article/standard-events-parameters?lang=en
+export const TK_STANDARD_EVENTS = [
+  { description: "When a visitor adds their payment information at checkout.", eventName: "AddPaymentInfo" },
+  { description: "When a visitor adds an item to the cart.", eventName: "AddToCart" },
+  { description: "When a visitor adds an item to the wishlist.", eventName: "AddToWishlist" },
+  { description: "When an application submitted by a user is approved (e.g. loan, job, enrollment).", eventName: "ApplicationApproval" },
+  { description: "When a visitor signs up / completes registration.", eventName: "CompleteRegistration" },
+  { description: "When a visitor contacts you.", eventName: "Contact" },
+  { description: "When a visitor customizes a product.", eventName: "CustomizeProduct" },
+  { description: "When a visitor downloads something from your website.", eventName: "Download" },
+  { description: "When a visitor looks for location.", eventName: "FindLocation" },
+  { description: "When a visitor proceeds to checkout.", eventName: "InitiateCheckout" },
+  { description: "When a visitor makes a purchase.", eventName: "Purchase" },
+  { description: "When a visitor schedules an appointment.", eventName: "Schedule" },
+  { description: "When a visitor searches for something.", eventName: "Search" },
+  { description: "When a customer begins a free trial.", eventName: "StartTrial" },
+  { description: "When someone submits an application (e.g. for credit, job, admission).", eventName: "SubmitApplication" },
+  { description: "When a visitor submits a form.", eventName: "SubmitForm" },
+  { description: "When a visitor subscribes (e.g. to content or paid subscription).", eventName: "Subscribe" },
+  { description: "When a visitor views a specific content page.", eventName: "ViewContent" }
+];
+
+//https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
+export const TK_ADVANCED_MATCHING_PARAMETERS = {
+    'email': 'Email',
+    "phone_number": 'Phone Number',
+    "external_id": 'Unique ID from the advertiser'
+}

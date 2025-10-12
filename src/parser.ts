@@ -6,6 +6,8 @@ import {
     FINGERPRINTABLE_WINDOW_APIS, 
     FB_ADVANCED_MATCHING_PARAMETERS, 
     FB_STANDARD_EVENTS,
+    TK_ADVANCED_MATCHING_PARAMETERS,
+    TK_STANDARD_EVENTS
 } from './helpers/statics';
 import {
     BlacklightEvent,
@@ -20,6 +22,9 @@ import {
     loadJSONSafely, 
     hasOwnProperty, 
 } from './helpers/utils';
+
+
+
 
 export const generateReport = (reportType, messages, dataDir, url) => {
     const eventData = getEventData(reportType, messages);
@@ -44,6 +49,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
             return reportSessionRecorders(eventData);
         case 'third_party_trackers':
             return reportThirdPartyTrackers(eventData, url);
+        case 'tk_pixel_events':
+            return reportTKPixelEvents(eventData);
         default:
             return {};
     }
@@ -85,6 +92,9 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
         case 'google_analytics_events':
+            filtered = filterByEvent(messages, 'TrackingRequest');
+            break;
+        case 'tk_pixel_events':
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
         default:
@@ -249,8 +259,10 @@ const reportGoogleAnalyticsEvents = (eventData: BlacklightEvent[]) => {
 };
 
 const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
+    // filter out events that are not fb pixel events
     const events = eventData.filter(
         (e: TrackingRequestEvent) =>
+            //Microdata events are just record of page content, not user actions
             e.url.includes('facebook') && e.data.query && Object.keys(e.data.query).includes('ev') && e.data.query.ev !== 'Microdata'
     );
     const advancedMatchingParams = [];
@@ -264,6 +276,7 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
             if (key === 'dl') {
                 pageUrl = value as string;
             }
+            // facebook standard events (for "ev" parameter)
             if (key === 'ev') {
                 const standardEvent = FB_STANDARD_EVENTS.filter(f => f.eventName === value);
                 if (standardEvent.length > 0) {
@@ -275,10 +288,12 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
                 }
             }
 
+            //
             if (/cd\[.*\]/.test(key)) {
                 const cdLabel = /cd\[(.*)\]/.exec(key);
                 dataParams.push({ key, value, cleanKey: cdLabel[1] });
             }
+            // use this match users in the system, e.g. email, name
             if (/ud\[.*\]/.test(key)) {
                 const description = FB_ADVANCED_MATCHING_PARAMETERS[key];
                 if (!advancedMatchingParams.some(s => s.key === key && s.value === value)) {
@@ -287,6 +302,7 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
             }
         }
 
+        
         return {
             advancedMatchingParams,
             dataParams,
@@ -298,6 +314,86 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
         };
     });
 };
+
+const reportTKPixelEvents = (eventData: BlacklightEvent[]) => {
+    console.log('here')
+
+
+    const events = eventData.filter(
+        (e: TrackingRequestEvent) =>
+            //Microdata events are just record of page content, not user actions
+            e.url.includes('tiktok') && e.data.query && (Object.keys(e.data.query).includes('event') || Object.keys(e.data.query).includes('signal_diagnostic_labels'))
+    );
+
+    const advancedMatchingParams = [];
+    const dataParams = [];
+
+    // Regular expression to match advanced matching parameters
+    const AdvancedMatchingkeys = Object.keys(TK_ADVANCED_MATCHING_PARAMETERS);
+    const AdvancedMatchingRegex = new RegExp(`context_user_(${AdvancedMatchingkeys.join('|')})`) // matching group
+
+    return events.map((e: TrackingRequestEvent) => {
+        let eventName = '';
+        let eventDescription = '';
+        let pageUrl = '';
+        let isStandardEvent = false;
+        for (const [key, value] of Object.entries(e.data.query)) {
+            if (key === 'context_page_url') {
+                pageUrl = value as string;
+            }
+            // tiktok standard events (for "event" parameter)
+            if (key === 'event') {
+                const standardEvent = TK_STANDARD_EVENTS.filter(f => f.eventName === value);
+                if (standardEvent.length > 0) {
+                    isStandardEvent = true;
+                    eventName = standardEvent[0].eventName;
+                    eventDescription = standardEvent[0].description;
+                } else {
+                    eventName = value as string;
+                }
+            }
+
+            // data parameters for tiktok pixel
+            if (/properties_/.test(key)) {
+                const propertyLabel = /properties_(.*)/.exec(key);
+                dataParams.push({ key, value, cleanKey: propertyLabel[1] });
+            }
+            
+
+           //advanced matching parameters for tiktok
+            const match = AdvancedMatchingRegex.exec(key);
+            if (match) {
+                const description = TK_ADVANCED_MATCHING_PARAMETERS[match[1]]; // whch one in the capturing group is being mathed 
+                if (!advancedMatchingParams.some(s => s.key === key && s.value === value)) {
+                    advancedMatchingParams.push({ key, value, description });
+            }
+
+
+                
+
+            }
+        }
+
+        console.log({
+            advancedMatchingParams,
+            dataParams,
+            eventDescription,
+            eventName,
+            isStandardEvent,
+            pageUrl,
+            raw: e.url
+        })
+        return {
+            advancedMatchingParams,
+            dataParams,
+            eventDescription,
+            eventName,
+            isStandardEvent,
+            pageUrl,
+            raw: e.url
+        };
+    });
+}
 
 const getDomainSafely = (message: KeyLoggingEvent) => {
     try {

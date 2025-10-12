@@ -24,7 +24,7 @@ export const setupBlacklightInspector = async (
     plugins = [instrumentAddEventListener, instrumentFingerprintingApis]
 ) => {
     const stackTraceHelper = readFileSync(require.resolve('stacktrace-js/dist/stacktrace.js'), 'utf8');
-    await page.evaluateOnNewDocument(stackTraceHelper);
+    await page.evaluateOnNewDocument(stackTraceHelper); // inject stacktrace.js in the page context - for better stack traces/debugging
     await page.evaluateOnNewDocument(getPageScriptAsString(plugins, testing));
 
     await page.exposeFunction('reportEvent', eventData => {

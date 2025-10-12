@@ -1,5 +1,5 @@
 import { HTTPRequest, Page } from 'puppeteer';
-import { DEFAULT_INPUT_VALUES } from '../pptr-utils/interaction-utils';
+import { DEFAULT_INPUT_VALUES } from '../pptr-utils/interaction-utils'; // self defined input values
 import { BlacklightEvent } from '../types';
 import { getHashedValues } from '../helpers/utils';
 
@@ -30,17 +30,19 @@ export const setupKeyLoggingInspector = async (page: Page, eventDataHandler: (ev
         if (request.method() === 'POST') {
             try {
                 let filter = [];
-                filter = ts.filter((t: string) => request.postData().indexOf(t) > -1);
+                filter = ts.filter((t: string) => request.postData().indexOf(t) > -1); // if any of the test strings appear in the post data
                 if (filter.length > 0) {
                     let match_type = [];
-                    filter.forEach(val => {
+                    // for each matched string, check which hash type it belongs to
+                    filter.forEach(val => {     
                         const m = Object.entries(hashesMap).filter(([, hashes]) => {
                             return hashes.indexOf(val) > -1;
                         });
                         match_type = match_type.concat(m.map(e => e[0]));
                     });
                     match_type = [...new Set(match_type)];
-                    eventDataHandler({
+                    //logging the event
+                    eventDataHandler({ 
                         data: {
                             filter,
                             match_type,

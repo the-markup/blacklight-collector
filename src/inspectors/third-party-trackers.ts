@@ -33,6 +33,7 @@ export const setUpThirdPartyTrackersInspector = async (
         let isBlocked = false;
 
         for (const [listName, blocker] of Object.entries(blockers)) {
+            // if any request match the third party rules
             const { match, filter } = blocker.match(fromPuppeteerDetails(request));
 
             if (!match) {
@@ -41,6 +42,7 @@ export const setUpThirdPartyTrackersInspector = async (
 
             isBlocked = true;
 
+            //handle get methods requests
             const params = new URL(request.url()).searchParams;
             const query = {};
             for (const [key, value] of params.entries()) {
@@ -51,11 +53,24 @@ export const setUpThirdPartyTrackersInspector = async (
                 }
             }
 
+        
+            //handle post methods requests
+            const postData = request.postData();
+            if (postData) {
+            try {
+                const payload = JSON.parse(postData);
+                const extracted = flattenJson(payload);
+                Object.assign(query, extracted); // merge into query
+            } catch {
+                query["raw_post"] = postData;// fallback
+              }
+            }
+
             eventDataHandler({
                 data: {
-                    query,
-                    filter: filter.toString(),
-                    listName
+                    query, // url parameters in dictionary format
+                    filter: filter.toString(), // the match request for request
+                    listName // list name the filter belong to
                 },
                 stack: [
                     {
@@ -79,3 +94,42 @@ export const setUpThirdPartyTrackersInspector = async (
         }
     });
 };
+
+// // From titok pixel payloads, extract event and signal_diagnostic_labels(for advanced matching)
+// function extractEventAndSignalLabels(payload: Record<string, any>): Record<string, any> {
+//   const result: Record<string, any> = {};
+
+//   // top-level event key
+//   if ('event' in payload) {
+//     result.event = payload.event;
+//   }
+
+//   // Include everything inside signal_diagnostic_labels if it exists
+//   if ('signal_diagnostic_labels' in payload && typeof payload.signal_diagnostic_labels === 'object') {
+//     result.signal_diagnostic_labels = payload.signal_diagnostic_labels;
+//   }
+
+//   return result;
+// }
+
+
+export function flattenJson(obj: any, parentKey = '', result: Record<string, any> = {}): Record<string, any> {
+  for (const [key, value] of Object.entries(obj)) {
+    const newKey = parentKey ? `${parentKey}_${key}` : key;
+
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      flattenJson(value, newKey, result);
+    } else if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        if (item && typeof item === 'object') {
+          flattenJson(item, `${newKey}_${index}`, result);
+        } else {
+          result[`${newKey}_${index}`] = item;
+        }
+      });
+    } else {
+      result[newKey] = value;
+    }
+  }
+  return result;
+}
