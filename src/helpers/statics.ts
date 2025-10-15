@@ -243,7 +243,8 @@ export const TK_STANDARD_EVENTS = [
   { description: "When someone submits an application (e.g. for credit, job, admission).", eventName: "SubmitApplication" },
   { description: "When a visitor submits a form.", eventName: "SubmitForm" },
   { description: "When a visitor subscribes (e.g. to content or paid subscription).", eventName: "Subscribe" },
-  { description: "When a visitor views a specific content page.", eventName: "ViewContent" }
+  { description: "When a visitor views a specific content page.", eventName: "ViewContent" },
+  { description: 'This is the default pixel tracking page visits.', eventName: 'PageView'}
 ];
 
 //https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178

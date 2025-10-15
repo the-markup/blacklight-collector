@@ -51,6 +51,8 @@ export const generateReport = (reportType, messages, dataDir, url) => {
             return reportThirdPartyTrackers(eventData, url);
         case 'tk_pixel_events':
             return reportTKPixelEvents(eventData);
+        case 'twitter_pixel_events':
+            return reportTwitterPixel(eventData);
         default:
             return {};
     }
@@ -95,6 +97,9 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
         case 'tk_pixel_events':
+            filtered = filterByEvent(messages, 'TrackingRequest');
+            break;
+        case 'twitter_pixel_events':
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
         default:
@@ -315,10 +320,12 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
     });
 };
 
+
+
 const reportTKPixelEvents = (eventData: BlacklightEvent[]) => {
-    console.log('here')
 
-
+   
+    
     const events = eventData.filter(
         (e: TrackingRequestEvent) =>
             //Microdata events are just record of page content, not user actions
@@ -373,16 +380,6 @@ const reportTKPixelEvents = (eventData: BlacklightEvent[]) => {
 
             }
         }
-
-        console.log({
-            advancedMatchingParams,
-            dataParams,
-            eventDescription,
-            eventName,
-            isStandardEvent,
-            pageUrl,
-            raw: e.url
-        })
         return {
             advancedMatchingParams,
             dataParams,
@@ -394,6 +391,66 @@ const reportTKPixelEvents = (eventData: BlacklightEvent[]) => {
         };
     });
 }
+
+const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
+    // Filter out only relevant events
+    const events = eventData.filter((e: TrackingRequestEvent) => {
+        return e.url.includes('twitter') && e.data.query && !e.url.includes("static");
+    });
+
+    return events.map((e: TrackingRequestEvent) => {
+        const advancedMatchingParams = [];
+        const dataParams = [];
+
+        let eventName = '';
+        let eventDescription = '';
+        let pageUrl = '';
+        let isStandardEvent = false;
+
+        // Loop through query parameters
+        for (const [key, value] of Object.entries(e.data.query)) {
+            if (key === 'tw_document_href') {
+                pageUrl = value as string;
+            }
+
+            // The main "event" object often contains core info
+            if (key === 'event' && typeof value === 'object' && value !== null) {
+                for (const [eventKey, eventValue] of Object.entries(value)) {
+                if (eventKey === 'content_type') {
+                    eventName = (eventValue as string) ?? '';
+                } else {
+                    dataParams.push({
+                        key: eventKey,
+                        value: eventValue,
+                        cleanKey: eventKey,
+                    });
+                }
+                }
+            }
+
+            // Advanced matching parameters (e.g. for email or phone)
+            if (key === 'email_address' || key === 'phone_number') {
+                if (!advancedMatchingParams.some(s => s.key === key && s.value === value)) {
+                advancedMatchingParams.push({ key, value });
+                }
+            }
+        }
+
+        // Return one structured event
+        return {
+            advancedMatchingParams,
+            dataParams,
+            eventDescription,
+            eventName,
+            isStandardEvent,
+            pageUrl,
+            raw: e.url,
+        };
+    });
+};
+
+
+
 
 const getDomainSafely = (message: KeyLoggingEvent) => {
     try {

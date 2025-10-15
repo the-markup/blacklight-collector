@@ -42,10 +42,12 @@ const DEFAULT_OPTIONS = {
         'cookies',
         'fb_pixel_events',
         'tk_pixel_events',
+        'twitter_pixel_events',
         'google_analytics_events',
         'key_logging',
         'session_recorders',
         'third_party_trackers'
+
     ],
     puppeteerExecutablePath: null as string | null,
     extraChromiumArgs: ['--disable-features=TrackingProtection3pcd'] as string[],

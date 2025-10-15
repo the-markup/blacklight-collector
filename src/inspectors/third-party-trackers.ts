@@ -57,6 +57,7 @@ export const setUpThirdPartyTrackersInspector = async (
             //handle post methods requests
             const postData = request.postData();
             if (postData) {
+            
             try {
                 const payload = JSON.parse(postData);
                 const extracted = flattenJson(payload);
@@ -95,22 +96,7 @@ export const setUpThirdPartyTrackersInspector = async (
     });
 };
 
-// // From titok pixel payloads, extract event and signal_diagnostic_labels(for advanced matching)
-// function extractEventAndSignalLabels(payload: Record<string, any>): Record<string, any> {
-//   const result: Record<string, any> = {};
 
-//   // top-level event key
-//   if ('event' in payload) {
-//     result.event = payload.event;
-//   }
-
-//   // Include everything inside signal_diagnostic_labels if it exists
-//   if ('signal_diagnostic_labels' in payload && typeof payload.signal_diagnostic_labels === 'object') {
-//     result.signal_diagnostic_labels = payload.signal_diagnostic_labels;
-//   }
-
-//   return result;
-// }
 
 
 export function flattenJson(obj: any, parentKey = '', result: Record<string, any> = {}): Record<string, any> {
