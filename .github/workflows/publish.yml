@@ -2,27 +2,23 @@ name: publish
 on:
   release:
     types: [published]
+
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
-  build:
-    runs-on: ubuntu-22.04
+  publish:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "lts/hydrogen"
+          registry-url: https://registry.npmjs.org
+      - name: Update npm
+        run: npm install -g npm@latest
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
-  publish-npm:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "lts/hydrogen"
-          registry-url: https://registry.npmjs.org/
-      - run: npm ci
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
