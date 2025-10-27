@@ -244,7 +244,7 @@ export const TK_STANDARD_EVENTS = [
   { description: "When a visitor submits a form.", eventName: "SubmitForm" },
   { description: "When a visitor subscribes (e.g. to content or paid subscription).", eventName: "Subscribe" },
   { description: "When a visitor views a specific content page.", eventName: "ViewContent" },
-  { description: 'This is the default pixel tracking page visits.', eventName: 'PageView'}
+  { description: 'This is the default pixel tracking page visits.', eventName: 'Pageview'}
 ];
 
 //https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
@@ -253,3 +253,26 @@ export const TK_ADVANCED_MATCHING_PARAMETERS = {
     "phone_number": 'Phone Number',
     "external_id": 'Unique ID from the advertiser'
 }
+
+//https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
+export const Twitter_Advanced_Matching_Parameters = {   
+    'email': 'Email',
+    'phone_number': 'Phone Number',
+};
+
+//https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
+export const Twitter_Standard_Events = [
+  { description: "When a user views a page on the website.", eventName: "pageview" },
+  { description: "When a user completes a purchase.", eventName: "purchase" },
+  { description: "When a user downloads a file or content.", eventName: "download" },
+  { description: "When a user becomes a lead or submits a contact form.", eventName: "lead" },
+  { description: "When a user adds an item to their shopping cart.", eventName: "addtocart" },
+  { description: "When a user begins the checkout process.", eventName: "checkoutinitiated" },
+  { description: "When a user views a specific piece of content.", eventName: "contentview" },
+  { description: "When a user enters or saves payment information.", eventName: "addedpaymentinfo" },
+  { description: "When a user performs a search on the website.", eventName: "search" },
+  { description: "When a user subscribes to a service, newsletter, or plan.", eventName: "subscribe" },
+  { description: "When a user begins a free or paid trial.", eventName: "starttrial" },
+  { description: "When a user adds an item to their wishlist.", eventName: "addtowishlist" },
+  { description: "When a user customizes a product’s options or features.", eventName: "productcustomization" }
+];

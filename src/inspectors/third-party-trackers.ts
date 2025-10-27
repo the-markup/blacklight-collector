@@ -99,7 +99,7 @@ export const setUpThirdPartyTrackersInspector = async (
 
 
 
-export function flattenJson(obj: any, parentKey = '', result: Record<string, any> = {}): Record<string, any> {
+function flattenJson(obj: any, parentKey = '', result: Record<string, any> = {}): Record<string, any> {
   for (const [key, value] of Object.entries(obj)) {
     const newKey = parentKey ? `${parentKey}_${key}` : key;
 

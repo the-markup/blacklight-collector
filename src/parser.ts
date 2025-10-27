@@ -7,7 +7,9 @@ import {
     FB_ADVANCED_MATCHING_PARAMETERS, 
     FB_STANDARD_EVENTS,
     TK_ADVANCED_MATCHING_PARAMETERS,
-    TK_STANDARD_EVENTS
+    TK_STANDARD_EVENTS,
+    Twitter_Advanced_Matching_Parameters,
+    Twitter_Standard_Events
 } from './helpers/statics';
 import {
     BlacklightEvent,
@@ -324,8 +326,6 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
 
 const reportTKPixelEvents = (eventData: BlacklightEvent[]) => {
 
-   
-    
     const events = eventData.filter(
         (e: TrackingRequestEvent) =>
             //Microdata events are just record of page content, not user actions
@@ -374,10 +374,6 @@ const reportTKPixelEvents = (eventData: BlacklightEvent[]) => {
                 if (!advancedMatchingParams.some(s => s.key === key && s.value === value)) {
                     advancedMatchingParams.push({ key, value, description });
             }
-
-
-                
-
             }
         }
         return {
@@ -402,7 +398,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
         const advancedMatchingParams = [];
         const dataParams = [];
 
-        let eventName = '';
+        let eventName: string = ''; 
         let eventDescription = '';
         let pageUrl = '';
         let isStandardEvent = false;
@@ -414,29 +410,78 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
             }
 
             // The main "event" object often contains core info
-            if (key === 'event' && typeof value === 'object' && value !== null) {
-                for (const [eventKey, eventValue] of Object.entries(value)) {
-                if (eventKey === 'content_type') {
-                    eventName = (eventValue as string) ?? '';
-                } else {
-                    dataParams.push({
-                        key: eventKey,
-                        value: eventValue,
-                        cleanKey: eventKey,
-                    });
+            if ((key === 'event' || key === "events") && value) {
+
+                // array serilization data format
+                // e.g. [... "event", {... key: value}]
+                if (Array.isArray(value)) {
+                    value.forEach (event => {
+                        // process event name
+                        if (event[0]){
+                            eventName = event[0];
+                            const standardEvent = Twitter_Standard_Events.filter(f => f.eventName === event[0]);
+                            if (standardEvent.length > 0) {
+                                isStandardEvent = true;
+                                eventDescription = standardEvent[0].description;
+                            }
+                        }
+
+                        // process data parameters
+                        if (event[1]) {
+                            Object.entries(event[1]).forEach(([k, v]) => {
+                                dataParams.push({
+                                    key: k,
+                                    value: v,
+                                    cleanKey: k,
+                                });
+                            });
+                        }
+                    })
                 }
+
+                // json format data format
+                else {
+                    for (const [eventKey, eventValue] of Object.entries(value)) {
+                        if (eventKey === 'content_type') {
+                            eventName = eventValue;
+                            const standardEvent = Twitter_Standard_Events.filter(f => f.eventName === eventValue);
+                            if (standardEvent.length > 0) {
+                                isStandardEvent = true;
+                                eventDescription = standardEvent[0].description;
+                            }
+                        } 
+
+                        // data parameters of products details within contents array 
+                        //e.g. [...{... "id": "123", "quantity": 1}]
+                        else if (eventKey === 'contents' && Array.isArray(eventValue)) {
+                            eventValue.forEach(kv => {
+                                Object.entries(kv).forEach(([k, v]) => {
+                                    dataParams.push({
+                                        key: k,
+                                        value: v,
+                                        cleanKey: k,
+                                    });
+                                });
+                            });
+                        }
+                        // other data parameters
+                        else {
+                            dataParams.push({
+                                key: eventKey,
+                                value: eventValue,
+                                cleanKey: eventKey,
+                            });
+                        }
+                    }
                 }
             }
 
             // Advanced matching parameters (e.g. for email or phone)
-            if (key === 'email_address' || key === 'phone_number') {
-                if (!advancedMatchingParams.some(s => s.key === key && s.value === value)) {
-                advancedMatchingParams.push({ key, value });
-                }
+            if (Twitter_Advanced_Matching_Parameters[key]){
+               advancedMatchingParams.push({ key, value, "description": Twitter_Advanced_Matching_Parameters[key]});
             }
         }
 
-        // Return one structured event
         return {
             advancedMatchingParams,
             dataParams,
