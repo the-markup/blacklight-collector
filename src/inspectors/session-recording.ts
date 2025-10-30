@@ -8,6 +8,7 @@ export const setupSessionRecordingInspector = async (page: Page, eventDataHandle
         const cleanUrl = `${parsedUrl.hostname}${parsedUrl.pathname}`;
         const stack = [{ fileName: request.frame() ? request.frame().url() : '' }];
         
+        // check if the request URL matches any known session recording service patterns
         const matches = SESSION_RECORDERS_LIST.filter(session_recorder => cleanUrl.includes(session_recorder));
         if (matches.length > 0) {
             eventDataHandler({
