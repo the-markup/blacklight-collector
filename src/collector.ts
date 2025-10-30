@@ -41,7 +41,7 @@ const DEFAULT_OPTIONS = {
         'canvas_font_fingerprinters',
         'cookies',
         'fb_pixel_events',
-        'tk_pixel_events',
+        'tiktok_pixel_events',
         'twitter_pixel_events',
         'google_analytics_events',
         'key_logging',
