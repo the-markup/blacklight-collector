@@ -10,9 +10,9 @@ import { TrackingRequestEvent } from '../types';
  */
 
 const blockerOptions = {
-    debug: true, // Keep track of the rule that matched a request
-    enableOptimizations: false, // Required to return all information about block rule
-    loadCosmeticFilters: false // We're only interested in network filters
+    debug: true,
+    enableOptimizations: false, 
+    loadCosmeticFilters: false 
 };
 
 const blockers = {
@@ -53,25 +53,23 @@ export const setUpThirdPartyTrackersInspector = async (
                 }
             }
 
-        
             //handle post methods requests
+            let body = {}
             const postData = request.postData();
             if (postData) {
-            
-            try {
-                const payload = JSON.parse(postData);
-                const extracted = flattenJson(payload);
-                Object.assign(query, extracted); // merge into query
-            } catch {
-                query["raw_post"] = postData;// fallback
-              }
+                try {
+                    body = JSON.parse(postData);
+                } catch {
+                    body = postData;
+                }
             }
 
             eventDataHandler({
                 data: {
-                    query, // url parameters in dictionary format
-                    filter: filter.toString(), // the match request for request
-                    listName // list name the filter belong to
+                    query, 
+                    body,
+                    filter: filter.toString(), 
+                    listName 
                 },
                 stack: [
                     {
@@ -96,26 +94,3 @@ export const setUpThirdPartyTrackersInspector = async (
     });
 };
 
-
-
-
-function flattenJson(obj: any, parentKey = '', result: Record<string, any> = {}): Record<string, any> {
-  for (const [key, value] of Object.entries(obj)) {
-    const newKey = parentKey ? `${parentKey}_${key}` : key;
-
-    if (value && typeof value === 'object' && !Array.isArray(value)) {
-      flattenJson(value, newKey, result);
-    } else if (Array.isArray(value)) {
-      value.forEach((item, index) => {
-        if (item && typeof item === 'object') {
-          flattenJson(item, `${newKey}_${index}`, result);
-        } else {
-          result[`${newKey}_${index}`] = item;
-        }
-      });
-    } else {
-      result[newKey] = value;
-    }
-  }
-  return result;
-}

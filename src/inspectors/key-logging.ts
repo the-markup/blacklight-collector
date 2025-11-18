@@ -1,5 +1,5 @@
 import { HTTPRequest, Page } from 'puppeteer';
-import { DEFAULT_INPUT_VALUES } from '../pptr-utils/interaction-utils'; // self defined input values
+import { DEFAULT_INPUT_VALUES } from '../pptr-utils/interaction-utils';
 import { BlacklightEvent } from '../types';
 import { getHashedValues } from '../helpers/utils';
 

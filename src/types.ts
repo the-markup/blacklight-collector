@@ -50,7 +50,7 @@ export interface TrackingRequestEvent {
     type: 'TrackingRequest';
     url: string;
     stack: any[];
-    data: { query?: any; filter: string; listName: string };
+    data: { query?: any; body?: any, filter: string; listName: string };
 }
 interface BlacklightErrorEvent {
     type: 'Error' | 'Error.BlacklightInspector' | 'Error.KeyLogging' | 'Error.JsInstrument';

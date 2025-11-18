@@ -6,10 +6,10 @@ import {
     FINGERPRINTABLE_WINDOW_APIS, 
     FB_ADVANCED_MATCHING_PARAMETERS, 
     FB_STANDARD_EVENTS,
-    TK_ADVANCED_MATCHING_PARAMETERS,
-    TK_STANDARD_EVENTS,
-    Twitter_Advanced_Matching_Parameters,
-    Twitter_Standard_Events
+    TIKTOK_ADVANCED_MATCHING_PARAMETERS,
+    TIKTOK_STANDARD_EVENTS,
+    TWITTER_ADVANCED_MATCHING_PARAMETERS,
+    TWITTER_STANDARD_EVENTS
 } from './helpers/statics';
 import {
     BlacklightEvent,
@@ -24,9 +24,6 @@ import {
     loadJSONSafely, 
     hasOwnProperty, 
 } from './helpers/utils';
-
-
-
 
 export const generateReport = (reportType, messages, dataDir, url) => {
     const eventData = getEventData(reportType, messages);
@@ -90,17 +87,9 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
             filtered = filterByEvent(messages, 'SessionRecording');
             break;
         case 'third_party_trackers':
-            filtered = filterByEvent(messages, 'TrackingRequest');
-            break;
         case 'fb_pixel_events':
-            filtered = filterByEvent(messages, 'TrackingRequest');
-            break;
         case 'google_analytics_events':
-            filtered = filterByEvent(messages, 'TrackingRequest');
-            break;
         case 'tiktok_pixel_events':
-            filtered = filterByEvent(messages, 'TrackingRequest');
-            break;
         case 'twitter_pixel_events':
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
@@ -295,7 +284,6 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
                 }
             }
 
-            //
             if (/cd\[.*\]/.test(key)) {
                 const cdLabel = /cd\[(.*)\]/.exec(key);
                 dataParams.push({ key, value, cleanKey: cdLabel[1] });
@@ -309,7 +297,6 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
             }
         }
 
-        
         return {
             advancedMatchingParams,
             dataParams,
@@ -322,58 +309,55 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
     });
 };
 
-
-
 const reportTikTokPixelEvents = (eventData: BlacklightEvent[]) => {
-
     const events = eventData.filter(
         (e: TrackingRequestEvent) =>
-            //Microdata events are just record of page content, not user actions
-            e.url.includes('tiktok') && e.data.query && Object.keys(e.data.query).includes('event')
+            e.url.includes('tiktok') && e.data.body && Object.keys(e.data.body).includes('event')
     );
-
-    const advancedMatchingParams = [];
-    const dataParams = [];
-
-    // Regular expression to match advanced matching parameters
-    const AdvancedMatchingkeys = Object.keys(TK_ADVANCED_MATCHING_PARAMETERS);
-    const AdvancedMatchingRegex = new RegExp(`context_user_(${AdvancedMatchingkeys.join('|')})`) // matching group
-
     return events.map((e: TrackingRequestEvent) => {
+        const advancedMatchingParams = [];
+        const dataParams = [];
         let eventName = '';
         let eventDescription = '';
         let pageUrl = '';
         let isStandardEvent = false;
-        for (const [key, value] of Object.entries(e.data.query)) {
-            if (key === 'context_page_url') {
-                pageUrl = value as string;
+        for (const [key, value] of Object.entries(e.data.body)) {
+            if (key === 'context'){
+                // safely extract page url and user info
+                const context = value as {
+                    page?: { url?: string };
+                    device?: {[key: string]: string };
+                    user?: { [key: string]: string }; // user field may contains id, email, phone, etc.
+                };
+
+                pageUrl = context?.page?.url as string || '';
+
+                // extract advanced matching parameters
+                const userInfo = Object.assign({}, context.user, context.device);
+                Object.entries(userInfo).forEach(([key, value]) => {
+                    const description = TIKTOK_ADVANCED_MATCHING_PARAMETERS[key] ?? '';
+                    advancedMatchingParams.push({ key, value, description });
+                });
             }
-            // tiktok standard events (for "event" parameter)
+
+            // extract standard event
             if (key === 'event') {
-                const standardEvent = TK_STANDARD_EVENTS.filter(f => f.eventName === value);
+                const eventStr = value as string;
+                const standardEvent = TIKTOK_STANDARD_EVENTS.filter(f => f.eventName.toUpperCase() === eventStr.toUpperCase());
                 if (standardEvent.length > 0) {
                     isStandardEvent = true;
                     eventName = standardEvent[0].eventName;
                     eventDescription = standardEvent[0].eventDescription;
                 } else {
-                    eventName = value as string;
+                    eventName = eventStr;
                 }
             }
 
-            // data parameters for tiktok pixel
-            if (/properties_/.test(key)) {
-                const propertyLabel = /properties_(.*)/.exec(key);
-                dataParams.push({ key, value, cleanKey: propertyLabel[1] });
-            }
-            
-
-           //advanced matching parameters for tiktok
-            const match = AdvancedMatchingRegex.exec(key);
-            if (match) {
-                const description = TK_ADVANCED_MATCHING_PARAMETERS[match[1]]; 
-                if (!advancedMatchingParams.some(s => s.key === key && s.value === value)) {
-                    advancedMatchingParams.push({ key: match[1], value, description });
-            }
+            // extract data parameters
+            if (key === "properties") {
+                Object.entries(value).forEach(([key, value]) => {
+                    dataParams.push({ key, value });
+                });
             }
         }
         return {
@@ -389,7 +373,6 @@ const reportTikTokPixelEvents = (eventData: BlacklightEvent[]) => {
 }
 
 const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
-    // Filter out only relevant events
     const events = eventData.filter((e: TrackingRequestEvent) => {
         return e.url.includes('twitter') && e.data.query && !e.url.includes("static");
     });
@@ -397,13 +380,11 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
     return events.map((e: TrackingRequestEvent) => {
         const advancedMatchingParams = [];
         const dataParams = [];
-
-        let eventName: string = ''; 
+        let eventName = ''; 
         let eventDescription = '';
         let pageUrl = '';
         let isStandardEvent = false;
 
-        // Loop through query parameters
         for (const [key, value] of Object.entries(e.data.query)) {
             if (key === 'tw_document_href') {
                 pageUrl = value as string;
@@ -411,7 +392,6 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
 
             // The main "event" object often contains core info
             if ((key === 'event' || key === "events") && value) {
-
                 // array serilization data format
                 // e.g. [... "event", {... key: value}]
                 if (Array.isArray(value)) {
@@ -419,7 +399,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                         // process event name
                         if (event[0]){
                             eventName = event[0];
-                            const standardEvent = Twitter_Standard_Events.filter(f => f.eventName === event[0]);
+                            const standardEvent = TWITTER_STANDARD_EVENTS.filter(f => f.eventName === eventName);
                             if (standardEvent.length > 0) {
                                 isStandardEvent = true;
                                 eventDescription = standardEvent[0].eventDescription;
@@ -431,8 +411,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                             Object.entries(event[1]).forEach(([k, v]) => {
                                 dataParams.push({
                                     key: k,
-                                    value: v,
-                                    cleanKey: k,
+                                    value: v
                                 });
                             });
                         }
@@ -444,7 +423,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                     for (const [eventKey, eventValue] of Object.entries(value)) {
                         if (eventKey === 'content_type') {
                             eventName = eventValue;
-                            const standardEvent = Twitter_Standard_Events.filter(f => f.eventName === eventValue);
+                            const standardEvent = TWITTER_STANDARD_EVENTS.filter(f => f.eventName === eventValue);
                             if (standardEvent.length > 0) {
                                 isStandardEvent = true;
                                 eventDescription = standardEvent[0].eventDescription;
@@ -458,8 +437,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                                 Object.entries(kv).forEach(([k, v]) => {
                                     dataParams.push({
                                         key: k,
-                                        value: v,
-                                        cleanKey: k,
+                                        value: v
                                     });
                                 });
                             });
@@ -468,20 +446,18 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                         else {
                             dataParams.push({
                                 key: eventKey,
-                                value: eventValue,
-                                cleanKey: eventKey,
+                                value: eventValue
                             });
                         }
                     }
                 }
             }
 
-            // Advanced matching parameters (e.g. for email or phone)
-            if (Twitter_Advanced_Matching_Parameters[key]){
-               advancedMatchingParams.push({ key, value, "description": Twitter_Advanced_Matching_Parameters[key]});
+            // Advanced matching parameters (e.g. for email, phone or device info (dv))
+            if (TWITTER_ADVANCED_MATCHING_PARAMETERS[key] || key === 'dv'){
+               advancedMatchingParams.push({ key, value, "description": TWITTER_ADVANCED_MATCHING_PARAMETERS[key] ?? ""});
             }
         }
-
         return {
             advancedMatchingParams,
             dataParams,
@@ -493,9 +469,6 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
         };
     });
 };
-
-
-
 
 const getDomainSafely = (message: KeyLoggingEvent) => {
     try {

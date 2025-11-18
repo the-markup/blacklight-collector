@@ -224,8 +224,9 @@ export const SOCIAL_URLS = [
     'im\\.qq\\.com',
 ];
 
-// https://ads.tiktok.com/help/article/standard-events-parameters?lang=en
-export const TK_STANDARD_EVENTS = [
+
+// https://web.archive.org/web/20250901012520/https://ads.tiktok.com/help/article/standard-events-parameters?lang=en
+export const TIKTOK_STANDARD_EVENTS = [
   { eventDescription: "When a visitor adds their payment information at checkout.", eventName: "AddPaymentInfo" },
   { eventDescription: "When a visitor adds an item to the cart.", eventName: "AddToCart" },
   { eventDescription: "When a visitor adds an item to the wishlist.", eventName: "AddToWishlist" },
@@ -247,22 +248,24 @@ export const TK_STANDARD_EVENTS = [
   { eventDescription: 'This is the default pixel tracking page visits.', eventName: 'Pageview'}
 ];
 
-//https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
-export const TK_ADVANCED_MATCHING_PARAMETERS = {
+// https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
+// https://web.archive.org/web/20251110190127/https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178%2A
+// The latter link is not working
+export const TIKTOK_ADVANCED_MATCHING_PARAMETERS = {
     'email': 'Email',
     "phone_number": 'Phone Number',
     "external_id": 'Unique ID from the advertiser',
     "anonymous_id": "a unique identifier to track users for whom no other identifiable information is available"
 }
 
-//https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
-export const Twitter_Advanced_Matching_Parameters = {   
+// https://web.archive.org/web/20251012013043/https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
+export const TWITTER_ADVANCED_MATCHING_PARAMETERS = {   
     'email': 'Email',
     'phone_number': 'Phone Number',
 };
 
-//https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
-export const Twitter_Standard_Events = [
+// https://web.archive.org/web/20251012013043/https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
+export const TWITTER_STANDARD_EVENTS = [
   { eventDescription: "When a user views a page on the website.", eventName: "pageview" },
   { eventDescription: "When a user completes a purchase.", eventName: "purchase" },
   { eventDescription: "When a user downloads a file or content.", eventName: "download" },
