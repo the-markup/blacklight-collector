@@ -73,3 +73,9 @@ export interface LinkObject {
 type ScriptUrl = string;
 type CanvasCallValue = string;
 export type CanvasCallMap = Map<ScriptUrl, Set<CanvasCallValue>>;
+
+export interface TikTokContext {
+    page?: { url?: string };
+    device?: Record<string, string>;
+    user?: Record<string, string>;
+}

@@ -17,6 +17,7 @@ import {
     KeyLoggingEvent,
     SessionRecordingEvent,
     TrackingRequestEvent,
+    TikTokContext,
 } from './types';
 import { 
     getScriptUrl, 
@@ -258,7 +259,6 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
     // filter out events that are not fb pixel events
     const events = eventData.filter(
         (e: TrackingRequestEvent) =>
-            //Microdata events are just record of page content, not user actions
             e.url.includes('facebook') && e.data.query && Object.keys(e.data.query).includes('ev') && e.data.query.ev !== 'Microdata'
     );
     const advancedMatchingParams = [];
@@ -324,11 +324,7 @@ const reportTikTokPixelEvents = (eventData: BlacklightEvent[]) => {
         for (const [key, value] of Object.entries(e.data.body)) {
             if (key === 'context'){
                 // safely extract page url and user info
-                const context = value as {
-                    page?: { url?: string };
-                    device?: {[key: string]: string };
-                    user?: { [key: string]: string }; // user field may contains id, email, phone, etc.
-                };
+                const context = value as TikTokContext;
 
                 pageUrl = context?.page?.url as string || '';
 
