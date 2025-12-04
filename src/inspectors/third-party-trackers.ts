@@ -10,9 +10,9 @@ import { TrackingRequestEvent } from '../types';
  */
 
 const blockerOptions = {
-    debug: true,
-    enableOptimizations: false, 
-    loadCosmeticFilters: false 
+    debug: true, // Keep track of the rule that matched a request
+    enableOptimizations: false, // Required to return all information about block rule
+    loadCosmeticFilters: false // We're only interested in network filters
 };
 
 const blockers = {

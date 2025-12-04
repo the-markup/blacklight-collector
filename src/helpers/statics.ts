@@ -249,8 +249,7 @@ export const TIKTOK_STANDARD_EVENTS = [
 ];
 
 // https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
-// https://web.archive.org/web/20251110190127/https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178%2A
-// The latter link is not working
+// https://web.archive.org/web/20251204192306/https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
 export const TIKTOK_ADVANCED_MATCHING_PARAMETERS = {
     'email': 'Email',
     "phone_number": 'Phone Number',
