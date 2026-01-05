@@ -262,11 +262,13 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
     );
     const advancedMatchingParams = [];
     const dataParams = [];
+
     return events.map((e: TrackingRequestEvent) => {
         let eventName = '';
         let eventDescription = '';
         let pageUrl = '';
         let isStandardEvent = false;
+        
         for (const [key, value] of Object.entries(e.data.query)) {
             if (key === 'dl') {
                 pageUrl = value as string;
@@ -409,10 +411,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                             });
                         }
                     })
-                }
-
-                // json format data format
-                else {
+                } else {
                     for (const [eventKey, eventValue] of Object.entries(value)) {
                         if (eventKey === 'content_type') {
                             eventName = eventValue;

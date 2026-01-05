@@ -137,3 +137,4 @@ and the EU-EDPS's [website evidence collector](https://github.com/EU-EDPS/websit
 ### Special Thanks
 
 - [JeffreyHung](https://github.com/Jeffreyhung) for contributions related maintenance and security best-practices
+- [FrankYiquan](https://github.com/FrankYiquan), [ZenAAA13](https://github.com/ZenAAA13), [steventimes](https://github.com/steventimes), [yiyoufan](https://github.com/yiyoufan), and [Hengye Li](https://github.com/MrTouchFish) for their work on X and TikTok pixel detection
