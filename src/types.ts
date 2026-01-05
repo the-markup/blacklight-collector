@@ -50,7 +50,7 @@ export interface TrackingRequestEvent {
     type: 'TrackingRequest';
     url: string;
     stack: any[];
-    data: { query?: any; filter: string; listName: string };
+    data: { query?: any; body?: any, filter: string; listName: string };
 }
 interface BlacklightErrorEvent {
     type: 'Error' | 'Error.BlacklightInspector' | 'Error.KeyLogging' | 'Error.JsInstrument';
@@ -73,3 +73,9 @@ export interface LinkObject {
 type ScriptUrl = string;
 type CanvasCallValue = string;
 export type CanvasCallMap = Map<ScriptUrl, Set<CanvasCallValue>>;
+
+export interface TikTokContext {
+    page?: { url?: string };
+    device?: Record<string, string>;
+    user?: Record<string, string>;
+}

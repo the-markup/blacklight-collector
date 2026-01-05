@@ -41,6 +41,8 @@ const DEFAULT_OPTIONS = {
         'canvas_font_fingerprinters',
         'cookies',
         'fb_pixel_events',
+        'tiktok_pixel_events',
+        'twitter_pixel_events',
         'google_analytics_events',
         'key_logging',
         'session_recorders',
@@ -107,6 +109,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
     };
 
+    // set up browser and page
     let browser: Browser;
     let page: Page;
     let pageIndex = 1;
@@ -384,8 +387,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             clearDir(args.outDir, false);
         }
         return { 
-            status: 'success', 
-            ...output, 
+            status: 'success',
+            ...output,
             reports,
         };
     } finally {

@@ -6,6 +6,10 @@ import {
     FINGERPRINTABLE_WINDOW_APIS, 
     FB_ADVANCED_MATCHING_PARAMETERS, 
     FB_STANDARD_EVENTS,
+    TIKTOK_ADVANCED_MATCHING_PARAMETERS,
+    TIKTOK_STANDARD_EVENTS,
+    TWITTER_ADVANCED_MATCHING_PARAMETERS,
+    TWITTER_STANDARD_EVENTS
 } from './helpers/statics';
 import {
     BlacklightEvent,
@@ -13,6 +17,7 @@ import {
     KeyLoggingEvent,
     SessionRecordingEvent,
     TrackingRequestEvent,
+    TikTokContext,
 } from './types';
 import { 
     getScriptUrl, 
@@ -44,6 +49,10 @@ export const generateReport = (reportType, messages, dataDir, url) => {
             return reportSessionRecorders(eventData);
         case 'third_party_trackers':
             return reportThirdPartyTrackers(eventData, url);
+        case 'tiktok_pixel_events':
+            return reportTikTokPixelEvents(eventData);
+        case 'twitter_pixel_events':
+            return reportTwitterPixel(eventData);
         default:
             return {};
     }
@@ -79,12 +88,10 @@ const getEventData = (reportType, messages): BlacklightEvent[] => {
             filtered = filterByEvent(messages, 'SessionRecording');
             break;
         case 'third_party_trackers':
-            filtered = filterByEvent(messages, 'TrackingRequest');
-            break;
         case 'fb_pixel_events':
-            filtered = filterByEvent(messages, 'TrackingRequest');
-            break;
         case 'google_analytics_events':
+        case 'tiktok_pixel_events':
+        case 'twitter_pixel_events':
             filtered = filterByEvent(messages, 'TrackingRequest');
             break;
         default:
@@ -295,6 +302,163 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
             isStandardEvent,
             pageUrl,
             raw: e.url
+        };
+    });
+};
+
+const reportTikTokPixelEvents = (eventData: BlacklightEvent[]) => {
+    const events = eventData.filter(
+        (e: TrackingRequestEvent) =>
+            e.url.includes('tiktok') && e.data.body && Object.keys(e.data.body).includes('event')
+    );
+    return events.map((e: TrackingRequestEvent) => {
+        const advancedMatchingParams = [];
+        const dataParams = [];
+        let eventName = '';
+        let eventDescription = '';
+        let pageUrl = '';
+        let isStandardEvent = false;
+        for (const [key, value] of Object.entries(e.data.body)) {
+            if (key === 'context'){
+                // safely extract page url and user info
+                const context = value as TikTokContext;
+
+                pageUrl = context?.page?.url as string || '';
+
+                // extract advanced matching parameters
+                const userInfo = Object.assign({}, context.user, context.device);
+                Object.entries(userInfo).forEach(([key, value]) => {
+                    const description = TIKTOK_ADVANCED_MATCHING_PARAMETERS[key] ?? '';
+                    advancedMatchingParams.push({ key, value, description });
+                });
+            }
+
+            // extract standard event
+            if (key === 'event') {
+                const eventStr = value as string;
+                const standardEvent = TIKTOK_STANDARD_EVENTS.filter(f => f.eventName.toUpperCase() === eventStr.toUpperCase());
+                if (standardEvent.length > 0) {
+                    isStandardEvent = true;
+                    eventName = standardEvent[0].eventName;
+                    eventDescription = standardEvent[0].eventDescription;
+                } else {
+                    eventName = eventStr;
+                }
+            }
+
+            // extract data parameters
+            if (key === "properties") {
+                Object.entries(value).forEach(([key, value]) => {
+                    dataParams.push({ key, value });
+                });
+            }
+        }
+        return {
+            advancedMatchingParams,
+            dataParams,
+            eventDescription,
+            eventName,
+            isStandardEvent,
+            pageUrl,
+            raw: e.url
+        };
+    });
+}
+
+const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
+    const events = eventData.filter((e: TrackingRequestEvent) => {
+        return e.url.includes('twitter') && e.data.query && !e.url.includes("static");
+    });
+
+    return events.map((e: TrackingRequestEvent) => {
+        const advancedMatchingParams = [];
+        const dataParams = [];
+        let eventName = ''; 
+        let eventDescription = '';
+        let pageUrl = '';
+        let isStandardEvent = false;
+
+        for (const [key, value] of Object.entries(e.data.query)) {
+            if (key === 'tw_document_href') {
+                pageUrl = value as string;
+            }
+
+            // The main "event" object often contains core info
+            if ((key === 'event' || key === "events") && value) {
+                // array serilization data format
+                // e.g. [... "event", {... key: value}]
+                if (Array.isArray(value)) {
+                    value.forEach (event => {
+                        // process event name
+                        if (event[0]){
+                            eventName = event[0];
+                            const standardEvent = TWITTER_STANDARD_EVENTS.filter(f => f.eventName === eventName);
+                            if (standardEvent.length > 0) {
+                                isStandardEvent = true;
+                                eventDescription = standardEvent[0].eventDescription;
+                            }
+                        }
+
+                        // process data parameters
+                        if (event[1]) {
+                            Object.entries(event[1]).forEach(([k, v]) => {
+                                dataParams.push({
+                                    key: k,
+                                    value: v
+                                });
+                            });
+                        }
+                    })
+                }
+
+                // json format data format
+                else {
+                    for (const [eventKey, eventValue] of Object.entries(value)) {
+                        if (eventKey === 'content_type') {
+                            eventName = eventValue;
+                            const standardEvent = TWITTER_STANDARD_EVENTS.filter(f => f.eventName === eventValue);
+                            if (standardEvent.length > 0) {
+                                isStandardEvent = true;
+                                eventDescription = standardEvent[0].eventDescription;
+                            }
+                        } 
+
+                        // data parameters of products details within contents array 
+                        //e.g. [...{... "id": "123", "quantity": 1}]
+                        else if (eventKey === 'contents' && Array.isArray(eventValue)) {
+                            eventValue.forEach(kv => {
+                                Object.entries(kv).forEach(([k, v]) => {
+                                    dataParams.push({
+                                        key: k,
+                                        value: v
+                                    });
+                                });
+                            });
+                        }
+                        // other data parameters
+                        else {
+                            dataParams.push({
+                                key: eventKey,
+                                value: eventValue
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Advanced matching parameters (e.g. for email, phone or device info (dv))
+            if (TWITTER_ADVANCED_MATCHING_PARAMETERS[key] || key === 'dv'){
+               advancedMatchingParams.push({ key, value, "description": TWITTER_ADVANCED_MATCHING_PARAMETERS[key] ?? ""});
+            }
+        }
+        return {
+            advancedMatchingParams,
+            dataParams,
+            eventDescription,
+            eventName,
+            isStandardEvent,
+            pageUrl,
+            raw: e.url,
         };
     });
 };
