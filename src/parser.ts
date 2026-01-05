@@ -268,7 +268,7 @@ const reportFbPixelEvents = (eventData: BlacklightEvent[]) => {
         let eventDescription = '';
         let pageUrl = '';
         let isStandardEvent = false;
-        
+
         for (const [key, value] of Object.entries(e.data.query)) {
             if (key === 'dl') {
                 pageUrl = value as string;
@@ -375,12 +375,15 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
     return events.map((e: TrackingRequestEvent) => {
         const advancedMatchingParams = [];
         const dataParams = [];
+        const query = e.data.query ?? {};
+        let deviceIdentifyer;
         let eventName = ''; 
         let eventDescription = '';
         let pageUrl = '';
         let isStandardEvent = false;
 
         for (const [key, value] of Object.entries(e.data.query)) {
+
             if (key === 'tw_document_href') {
                 pageUrl = value as string;
             }
@@ -443,15 +446,19 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                         }
                     }
                 }
+            } else if (key === 'dv') {
+                deviceIdentifyer = value;
             }
 
-            // Advanced matching parameters (e.g. for email, phone or device info (dv))
-            if (TWITTER_ADVANCED_MATCHING_PARAMETERS[key] || key === 'dv'){
+            // Advanced matching parameters (e.g. for email, phone)
+            if (TWITTER_ADVANCED_MATCHING_PARAMETERS[key]){
                advancedMatchingParams.push({ key, value, "description": TWITTER_ADVANCED_MATCHING_PARAMETERS[key] ?? ""});
             }
         }
         return {
             advancedMatchingParams,
+            query,
+            deviceIdentifyer,
             dataParams,
             eventDescription,
             eventName,
