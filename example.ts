@@ -3,7 +3,7 @@ import { CollectorOptions, collect } from './src';
 import { join } from 'path';
 
 (async () => {
-    const URL = process.argv.length > 2 ? process.argv[2] : 'underarmour.com/en-us/';
+    const URL = process.argv.length > 2 ? process.argv[2] : 'themarkup.org';
     const EMULATE_DEVICE = 'iPhone 13 Mini';
 
     const config: CollectorOptions = {

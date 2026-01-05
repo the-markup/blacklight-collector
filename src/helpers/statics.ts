@@ -227,34 +227,34 @@ export const SOCIAL_URLS = [
 
 // https://web.archive.org/web/20250901012520/https://ads.tiktok.com/help/article/standard-events-parameters?lang=en
 export const TIKTOK_STANDARD_EVENTS = [
-  { eventDescription: "When a visitor adds their payment information at checkout.", eventName: "AddPaymentInfo" },
-  { eventDescription: "When a visitor adds an item to the cart.", eventName: "AddToCart" },
-  { eventDescription: "When a visitor adds an item to the wishlist.", eventName: "AddToWishlist" },
-  { eventDescription: "When an application submitted by a user is approved (e.g. loan, job, enrollment).", eventName: "ApplicationApproval" },
-  { eventDescription: "When a visitor signs up / completes registration.", eventName: "CompleteRegistration" },
-  { eventDescription: "When a visitor contacts you.", eventName: "Contact" },
-  { eventDescription: "When a visitor customizes a product.", eventName: "CustomizeProduct" },
-  { eventDescription: "When a visitor downloads something from your website.", eventName: "Download" },
-  { eventDescription: "When a visitor looks for location.", eventName: "FindLocation" },
-  { eventDescription: "When a visitor proceeds to checkout.", eventName: "InitiateCheckout" },
-  { eventDescription: "When a visitor makes a purchase.", eventName: "Purchase" },
-  { eventDescription: "When a visitor schedules an appointment.", eventName: "Schedule" },
-  { eventDescription: "When a visitor searches for something.", eventName: "Search" },
-  { eventDescription: "When a customer begins a free trial.", eventName: "StartTrial" },
-  { eventDescription: "When someone submits an application (e.g. for credit, job, admission).", eventName: "SubmitApplication" },
-  { eventDescription: "When a visitor submits a form.", eventName: "SubmitForm" },
-  { eventDescription: "When a visitor subscribes (e.g. to content or paid subscription).", eventName: "Subscribe" },
-  { eventDescription: "When a visitor views a specific content page.", eventName: "ViewContent" },
-  { eventDescription: 'This is the default pixel tracking page visits.', eventName: 'Pageview'}
+  { eventDescription: 'When a visitor adds their payment information at checkout.', eventName: 'AddPaymentInfo' },
+  { eventDescription: 'When a visitor adds an item to the cart.', eventName: 'AddToCart' },
+  { eventDescription: 'When a visitor adds an item to the wishlist.', eventName: 'AddToWishlist' },
+  { eventDescription: 'When an application submitted by a user is approved (e.g. loan, job, enrollment).', eventName: 'ApplicationApproval' },
+  { eventDescription: 'When a visitor signs up / completes registration.', eventName: 'CompleteRegistration' },
+  { eventDescription: 'When a visitor contacts you.', eventName: 'Contact' },
+  { eventDescription: 'When a visitor customizes a product.', eventName: 'CustomizeProduct' },
+  { eventDescription: 'When a visitor downloads something from your website.', eventName: 'Download' },
+  { eventDescription: 'When a visitor looks for location.', eventName: 'FindLocation' },
+  { eventDescription: 'When a visitor proceeds to checkout.', eventName: 'InitiateCheckout' },
+  { eventDescription: 'When a visitor makes a purchase.', eventName: 'Purchase' },
+  { eventDescription: 'When a visitor schedules an appointment.', eventName: 'Schedule' },
+  { eventDescription: 'When a visitor searches for something.', eventName: 'Search' },
+  { eventDescription: 'When a customer begins a free trial.', eventName: 'StartTrial' },
+  { eventDescription: 'When someone submits an application (e.g. for credit, job, admission).', eventName: 'SubmitApplication' },
+  { eventDescription: 'When a visitor submits a form.', eventName: 'SubmitForm' },
+  { eventDescription: 'When a visitor subscribes (e.g. to content or paid subscription).', eventName: 'Subscribe' },
+  { eventDescription: 'When a visitor views a specific content page.', eventName: 'ViewContent' },
+  { eventDescription: 'This is the default pixel tracking page visits.', eventName: 'Pageview' }
 ];
 
 // https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
 // https://web.archive.org/web/20251204192306/https://business-api.tiktok.com/portal/docs?rid=5ipocbxyw8v&id=1739585700402178
 export const TIKTOK_ADVANCED_MATCHING_PARAMETERS = {
     'email': 'Email',
-    "phone_number": 'Phone Number',
-    "external_id": 'Unique ID from the advertiser',
-    "anonymous_id": "a unique identifier to track users for whom no other identifiable information is available"
+    'phone_number': 'Phone Number',
+    'external_id': 'Unique ID from the advertiser',
+    'anonymous_id': 'a unique identifier to track users for whom no other identifiable information is available'
 }
 
 // https://web.archive.org/web/20251012013043/https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
@@ -265,17 +265,17 @@ export const TWITTER_ADVANCED_MATCHING_PARAMETERS = {
 
 // https://web.archive.org/web/20251012013043/https://business.x.com/en/help/campaign-measurement-and-analytics/conversion-tracking-for-websites
 export const TWITTER_STANDARD_EVENTS = [
-  { eventDescription: "When a user views a page on the website.", eventName: "pageview" },
-  { eventDescription: "When a user completes a purchase.", eventName: "purchase" },
-  { eventDescription: "When a user downloads a file or content.", eventName: "download" },
-  { eventDescription: "When a user becomes a lead or submits a contact form.", eventName: "lead" },
-  { eventDescription: "When a user adds an item to their shopping cart.", eventName: "addtocart" },
-  { eventDescription: "When a user begins the checkout process.", eventName: "checkoutinitiated" },
-  { eventDescription: "When a user views a specific piece of content.", eventName: "contentview" },
-  { eventDescription: "When a user enters or saves payment information.", eventName: "addedpaymentinfo" },
-  { eventDescription: "When a user performs a search on the website.", eventName: "search" },
-  { eventDescription: "When a user subscribes to a service, newsletter, or plan.", eventName: "subscribe" },
-  { eventDescription: "When a user begins a free or paid trial.", eventName: "starttrial" },
-  { eventDescription: "When a user adds an item to their wishlist.", eventName: "addtowishlist" },
-  { eventDescription: "When a user customizes a product’s options or features.", eventName: "productcustomization" }
+  { eventDescription: 'When a user views a page on the website.', eventName: 'pageview' },
+  { eventDescription: 'When a user completes a purchase.', eventName: 'purchase' },
+  { eventDescription: 'When a user downloads a file or content.', eventName: 'download' },
+  { eventDescription: 'When a user becomes a lead or submits a contact form.', eventName: 'lead' },
+  { eventDescription: 'When a user adds an item to their shopping cart.', eventName: 'addtocart' },
+  { eventDescription: 'When a user begins the checkout process.', eventName: 'checkoutinitiated' },
+  { eventDescription: 'When a user views a specific piece of content.', eventName: 'contentview' },
+  { eventDescription: 'When a user enters or saves payment information.', eventName: 'addedpaymentinfo' },
+  { eventDescription: 'When a user performs a search on the website.', eventName: 'search' },
+  { eventDescription: 'When a user subscribes to a service, newsletter, or plan.', eventName: 'subscribe' },
+  { eventDescription: 'When a user begins a free or paid trial.', eventName: 'starttrial' },
+  { eventDescription: 'When a user adds an item to their wishlist.', eventName: 'addtowishlist' },
+  { eventDescription: 'When a user customizes a product’s options or features.', eventName: 'productcustomization' }
 ];

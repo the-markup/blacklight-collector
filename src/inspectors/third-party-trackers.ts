@@ -42,7 +42,7 @@ export const setUpThirdPartyTrackersInspector = async (
 
             isBlocked = true;
 
-            //handle get methods requests
+            // handle get methods requests
             const params = new URL(request.url()).searchParams;
             const query = {};
             for (const [key, value] of params.entries()) {
@@ -53,7 +53,7 @@ export const setUpThirdPartyTrackersInspector = async (
                 }
             }
 
-            //handle post methods requests
+            // handle post methods requests
             let body = {}
             const postData = request.postData();
             if (postData) {

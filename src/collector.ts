@@ -54,7 +54,7 @@ const DEFAULT_OPTIONS = {
 };
 
 export const collect = async (inUrl: string, args: CollectorOptions) => {
-    args = { ...DEFAULT_OPTIONS, ...args }; 
+    args = { ...DEFAULT_OPTIONS, ...args };
     clearDir(args.outDir);
     const FIRST_PARTY = parse(inUrl);
     let REDIRECTED_FIRST_PARTY = parse(inUrl);
@@ -129,7 +129,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         options['executablePath'] = args.puppeteerExecutablePath;
     }
     try {
-        browser = await puppeteer.launch(options); 
+        browser = await puppeteer.launch(options);
         browser.on('disconnected', () => {
             didBrowserDisconnect = true;
         });
@@ -156,7 +156,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             page.setExtraHTTPHeaders(args.headers);
         }
 
-         // record all requested hosts
+        // record all requested hosts
         page.on('request', request => {
             const l = parse(request.url());
             // note that hosts may appear as first and third party depending on the path
@@ -174,11 +174,11 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         }
 
         // Init blacklight instruments on page
-        await setupBlacklightInspector(page, logger.warn); 
-        await setupKeyLoggingInspector(page, logger.warn); 
-        await setupHttpCookieCapture(page, logger.warn); 
-        await setupSessionRecordingInspector(page, logger.warn); 
-        await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock); 
+        await setupBlacklightInspector(page, logger.warn);
+        await setupKeyLoggingInspector(page, logger.warn);
+        await setupHttpCookieCapture(page, logger.warn);
+        await setupSessionRecordingInspector(page, logger.warn);
+        await setUpThirdPartyTrackersInspector(page, logger.warn, args.enableAdBlock);
 
         if (args.captureHar) {
             har = await captureNetwork(page);
@@ -212,7 +212,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
                     waitUntil: 'domcontentloaded' as PuppeteerLifeCycleEvent
                 });
             }
-            await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots); 
+            await savePageContent(pageIndex, args.outDir, page, args.saveScreenshots);
         };
 
         // Go to the first url
@@ -267,7 +267,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         } else {
             subDomainLinks = outputLinks.first_party;
         }
-        const browse_links = sampleSize(subDomainLinks, args.numPages); 
+        const browse_links = sampleSize(subDomainLinks, args.numPages);
         output.browsing_history = [output.uri_dest].concat(browse_links.map(l => l.href));
         console.log('About to browse more links');
 
@@ -288,7 +288,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
 
             await fillForms(page);
 
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
 
             duplicatedLinks = duplicatedLinks.concat(await getLinks(page));
             await autoScroll(page);
@@ -305,6 +305,7 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         if (typeof userDataDir !== 'undefined') {
             clearDir(userDataDir, false);
         }
+
         const links = dedupLinks(duplicatedLinks);
         output.end_time = new Date();
         for (const link of links) {
@@ -373,7 +374,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
         const event_data = event_data_all.filter(event => {
             return !!event.message.type;
         });
-      
         // We only consider something to be a third party tracker if:
         // The domain is different to that of the final url (after any redirection) of the page the user requested to load.
         const reports = args.blTests.reduce((acc, cur) => {
@@ -387,8 +387,8 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             clearDir(args.outDir, false);
         }
         return { 
-            status: 'success', 
-            ...output, 
+            status: 'success',
+            ...output,
             reports,
         };
     } finally {

@@ -30,10 +30,9 @@ export const setupKeyLoggingInspector = async (page: Page, eventDataHandler: (ev
         if (request.method() === 'POST') {
             try {
                 let filter = [];
-                filter = ts.filter((t: string) => request.postData().indexOf(t) > -1); // if any of the test strings appear in the post data
+                filter = ts.filter((t: string) => request.postData().indexOf(t) > -1);
                 if (filter.length > 0) {
                     let match_type = [];
-                    // for each matched string, check which hash type it belongs to
                     filter.forEach(val => {     
                         const m = Object.entries(hashesMap).filter(([, hashes]) => {
                             return hashes.indexOf(val) > -1;
@@ -41,7 +40,6 @@ export const setupKeyLoggingInspector = async (page: Page, eventDataHandler: (ev
                         match_type = match_type.concat(m.map(e => e[0]));
                     });
                     match_type = [...new Set(match_type)];
-                    //logging the event
                     eventDataHandler({ 
                         data: {
                             filter,
