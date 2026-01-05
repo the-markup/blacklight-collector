@@ -376,7 +376,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
         const advancedMatchingParams = [];
         const dataParams = [];
         const query = e.data.query ?? {};
-        let deviceIdentifyer;
+        let deviceIdentifier;
         let eventName = ''; 
         let eventDescription = '';
         let pageUrl = '';
@@ -447,7 +447,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
                     }
                 }
             } else if (key === 'dv') {
-                deviceIdentifyer = value;
+                deviceIdentifier = value;
             }
 
             // Advanced matching parameters (e.g. for email, phone)
@@ -458,7 +458,7 @@ const reportTwitterPixel = (eventData: BlacklightEvent[]) => {
         return {
             advancedMatchingParams,
             query,
-            deviceIdentifyer,
+            deviceIdentifier,
             dataParams,
             eventDescription,
             eventName,
