@@ -33,14 +33,14 @@ export const setupKeyLoggingInspector = async (page: Page, eventDataHandler: (ev
                 filter = ts.filter((t: string) => request.postData().indexOf(t) > -1);
                 if (filter.length > 0) {
                     let match_type = [];
-                    filter.forEach(val => {     
+                    filter.forEach(val => {
                         const m = Object.entries(hashesMap).filter(([, hashes]) => {
                             return hashes.indexOf(val) > -1;
                         });
                         match_type = match_type.concat(m.map(e => e[0]));
                     });
                     match_type = [...new Set(match_type)];
-                    eventDataHandler({ 
+                    eventDataHandler({
                         data: {
                             filter,
                             match_type,
