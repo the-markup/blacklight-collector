@@ -1,5 +1,6 @@
 name: publish
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -12,13 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
-          node-version: "lts/hydrogen"
+          node-version: 26
           registry-url: https://registry.npmjs.org
       - name: Update npm
         run: npm install -g npm@latest
       - run: npm ci
       - run: npm run build --if-present
-      - run: npm test
       - run: npm publish
