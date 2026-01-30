@@ -12,10 +12,11 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
-          node-version: 26
+          node-version: "26"
+          architecture: "x64"
           registry-url: https://registry.npmjs.org
       - name: Update npm
         run: npm install -g npm@latest
