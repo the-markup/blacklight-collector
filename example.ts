@@ -4,7 +4,7 @@ import { join } from 'path';
 
 (async () => {
     const URL = process.argv.length > 2 ? process.argv[2] : 'themarkup.org';
-    const EMULATE_DEVICE = 'iPhone 13 Mini';
+    const EMULATE_DEVICE = 'iPhone 15 Pro';
 
     const config: CollectorOptions = {
         numPages: 1,
