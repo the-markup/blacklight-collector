@@ -37,7 +37,7 @@
   "homepage": "https://github.com/the-markup/blacklight-collector#readme",
   "dependencies": {
     "@cliqz/adblocker-puppeteer": "^1.31.1",
-    "@themarkup/puppeteer-har": "^0.0.0",
+    "@themarkup/puppeteer-har": "^0.2.0",
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
     "npm": "^11.4.2",
@@ -59,7 +59,6 @@
     "@types/puppeteer": "^5.4.6",
     "@types/stacktrace-js": "^2.0.3",
     "@types/tough-cookie": "^4.0.5",
-    "@types/winston": "^2.4.4",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
     "@typescript-eslint/parser": "^5.59.9",
     "cz-conventional-changelog": "^3.2.0",
