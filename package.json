@@ -1,6 +1,6 @@
 {
   "name": "@themarkup/blacklight-collector",
-  "version": "3.11.0",
+  "version": "3.11.1",
   "description": "A real-time website privacy inspector.",
   "main": "build/index.js",
   "funding": {
@@ -37,7 +37,7 @@
   "homepage": "https://github.com/the-markup/blacklight-collector#readme",
   "dependencies": {
     "@cliqz/adblocker-puppeteer": "^1.31.1",
-    "@themarkup/puppeteer-har": "^0.2.0",
+    "@themarkup/puppeteer-har": "^0.2.1",
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
     "npm": "^11.4.2",

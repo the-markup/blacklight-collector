@@ -12,7 +12,7 @@ it("captures requests that match the easyprivacy list ", async () => {
   await setUpThirdPartyTrackersInspector(page, (e) =>
     rows.push({ message: e })
   );
-  await page.goto(`https://jetblue.com`, { waitUntil: "networkidle2" });
+  await page.goto(`http://jetblue.com`, { waitUntil: "networkidle2" });
   await browser.close();
   const output = await generateReport(
     "third_party_trackers",
