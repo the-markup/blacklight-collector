@@ -3,8 +3,6 @@ import sampleSize from 'lodash.samplesize';
 import os from 'os';
 import { join } from 'path';
 import puppeteer, { Browser, Page, PuppeteerLifeCycleEvent, KnownDevices, PuppeteerLaunchOptions } from 'puppeteer';
-// import("@themarkup/puppeteer-har");
-// import { captureNetwork } from '@themarkup/puppeteer-har';
 import { getDomain, getSubdomain, parse } from 'tldts';
 import { captureBrowserCookies, clearCookiesCache, setupHttpCookieCapture } from './inspectors/cookies';
 import { getLogger } from './helpers/logger';
@@ -185,7 +183,6 @@ export const collect = async (inUrl: string, args: CollectorOptions) => {
             import("@themarkup/puppeteer-har").then(async (module) => {
                 har = await module.captureNetwork(page);
             })
-            // har = await captureNetwork(page);
         }
         if (didBrowserDisconnect) {
             return {
