@@ -37,7 +37,7 @@
   "homepage": "https://github.com/the-markup/blacklight-collector#readme",
   "dependencies": {
     "@cliqz/adblocker-puppeteer": "^1.31.1",
-    "@themarkup/puppeteer-har": "^0.2.0",
+    "@themarkup/puppeteer-har": "^0.2.1",
     "lodash.flatten": "^4.4.0",
     "lodash.samplesize": "^4.2.0",
     "npm": "^11.4.2",
